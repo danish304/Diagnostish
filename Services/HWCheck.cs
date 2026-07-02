@@ -8,37 +8,33 @@ namespace Diagnostish.Services
 {
     public class HWCheck
     {
-        // Распознавание названия процессора и количества его ядер
-        public HWReport CheckSystemCFG()
+        public HWReport CheckPCCFG()
         {
             var rep = new HWReport();
 
-            using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_Processor"))
+            // Распознавание названия процессора, количества его ядер, базовой частоты
+            using (var searcher = new ManagementObjectSearcher("SELECT Name, NumberOfCores, CurrentClockSpeed FROM Win32_Processor"))
             {
                 foreach (var item in searcher.Get())
                 {
                     rep.ProcessorName = item["Name"]?.ToString() ?? "Unknown";
                     rep.CoresCount = Convert.ToInt32(item["NumberOfCores"]);
+                    rep.CurrentClockSpeed = Convert.ToInt32(item["CurrentClockSpeed"]);
                 }
             }
 
-            long BytesRAM = 0;      // Общее количество ОЗУ в байтах
-            // Распознавание общего количества ОЗУ
-            using (var searcher = new ManagementObjectSearcher("SELECT Capacity FROM Win32_PhysicalMemory"))
+            // Распознавание общего количества ОЗУ и ее скорости
+            using (var searcher = new ManagementObjectSearcher("SELECT Capacity, Speed FROM Win32_PhysicalMemory"))
             {
                 foreach (var item in searcher.Get())
                 {
-                    if (item["Capacity"] != null)
-                    {
-                        BytesRAM += Convert.ToInt64(item["Capacity"]);
-                    }
+                    rep.RAMSize = Math.Round(Convert.ToDouble(item["Capacity"]) / (1024 * 1024 * 1024), 2);
+                    rep.RAMSpeed = Convert.ToInt32(item["Speed"]);
                 }
             }
-            double GB = (double)BytesRAM / (1024 * 1024 * 1024);        // Перевод общего количества ОЗУ в ГБ
-            rep.GBRAM = Math.Round(GB, 2);
 
-            // Распознавание видеокарт
-            using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_VideoController"))
+            // Распознавание названий видеокарт
+            using (var searcher = new ManagementObjectSearcher("SELECT Name FROM Win32_VideoController"))
             {
                 foreach (var item in searcher.Get())
                 {
@@ -46,14 +42,13 @@ namespace Diagnostish.Services
                 }
             }
 
-            // Распознавание накопителей
+            // Распознавание названия и объема накопителей
             using (var searcher = new ManagementObjectSearcher("SELECT Model, Size FROM Win32_DiskDrive"))
             {
-                foreach (var obj in searcher.Get())
+                foreach (var item in searcher.Get())
                 {
-                    string model = obj["Model"]?.ToString() ?? "Unknown drive";
-                    long sizeBytes = Convert.ToInt64(obj["Size"]);
-                    double sizeGb = Math.Round((double)sizeBytes / (1024 * 1024 * 1024), 0);
+                    string model = item["Model"]?.ToString() ?? "Unknown drive";
+                    double sizeGb = Math.Round(Convert.ToDouble(item["Size"]) / (1024 * 1024 * 1024), 0);
 
                     rep.Drives.Add($"{model} ({sizeGb} GB)");
                 }

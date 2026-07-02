@@ -26,11 +26,13 @@ namespace Diagnostish.Services
             // Распознавание общего количества ОЗУ и ее скорости
             using (var searcher = new ManagementObjectSearcher("SELECT Capacity, Speed FROM Win32_PhysicalMemory"))
             {
+                double totalBytes = 0;
                 foreach (var item in searcher.Get())
                 {
-                    rep.RAMSize = Math.Round(Convert.ToDouble(item["Capacity"]) / (1024 * 1024 * 1024), 2);
+                    totalBytes += Convert.ToDouble(item["Capacity"]);
                     rep.RAMSpeed = Convert.ToInt32(item["Speed"]);
                 }
+                rep.RAMSize = Math.Round(totalBytes / (1024 * 1024 * 1024), 2);
             }
 
             // Распознавание названий видеокарт

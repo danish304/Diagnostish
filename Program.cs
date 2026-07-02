@@ -33,7 +33,14 @@ static class Program
         {
             Console.WriteLine($"  - {gpu}");
         }
-        
+
+        Console.WriteLine("Drives:");
+        foreach (var drives in rep.Drives)
+        {
+            Console.WriteLine($"  - {drives}");
+        }
+
+        Console.WriteLine("\nPress any key to continue . . .");
         Console.ReadKey();
     }
 }

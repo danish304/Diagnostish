@@ -46,6 +46,19 @@ namespace Diagnostish.Services
                 }
             }
 
+            // Распознавание накопителей
+            using (var searcher = new ManagementObjectSearcher("SELECT Model, Size FROM Win32_DiskDrive"))
+            {
+                foreach (var obj in searcher.Get())
+                {
+                    string model = obj["Model"]?.ToString() ?? "Unknown drive";
+                    long sizeBytes = Convert.ToInt64(obj["Size"]);
+                    double sizeGb = Math.Round((double)sizeBytes / (1024 * 1024 * 1024), 0);
+
+                    rep.Drives.Add($"{model} ({sizeGb} GB)");
+                }
+            }
+
             return rep;
         }
     }

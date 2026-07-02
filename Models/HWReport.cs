@@ -9,6 +9,7 @@ namespace Diagnostish.Models
         public int CoresCount { get; set; }                                     // Количество ядер процессора
         public double GBRAM { get; set; }                                       // Общее количество ОЗУ в гигабайтах
         public List<string> VideoCards { get; set; } = new List<string>();      // Видеокарты
+        public List<string> Drives { get; set; } = new List<string>();          // Накопители
         public DateTime CheckTime { get; set; } = DateTime.Now;                 // Время проведения сканирования
     }
 }

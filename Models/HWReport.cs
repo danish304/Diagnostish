@@ -9,6 +9,5 @@
         public int RAMSpeed { get; set; }                                       // Частота ОЗУ
         public List<string> VideoCards { get; set; } = new List<string>();      // Названия видеокарт
         public List<string> Drives { get; set; } = new List<string>();          // Накопители (название, объем)
-        public DateTime CheckTime { get; set; } = DateTime.Now;                 // Время проведения сканирования
     }
 }

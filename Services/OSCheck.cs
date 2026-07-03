@@ -19,7 +19,6 @@ namespace Diagnostish.Services
                         rep.Version = item["Version"]?.ToString() ?? "Unknown";
                         rep.Manufacturer = item["Manufacturer"]?.ToString() ?? "Unknown";
                         rep.RegisteredUser = item["RegisteredUser"]?.ToString() ?? "Unknown"; 
-
                         rep.InstallDate = ManagementDateTimeConverter.ToDateTime(item["InstallDate"]?.ToString());
                         rep.LastBootUpTime = ManagementDateTimeConverter.ToDateTime(item["LastBootUpTime"]?.ToString());
                     }

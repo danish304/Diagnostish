@@ -1,0 +1,28 @@
+name: Build and Release .NET
+
+on:
+  release:
+    types: [published] # Запускать, когда создается релиз
+
+jobs:
+  build:
+    runs-on: windows-latest # Запуск на Windows-сервере GitHub
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x' # Указываем версию .NET
+
+    - name: Publish App
+      run: dotnet publish Diagnostish.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true -o ./publish
+
+    - name: Upload EXE to Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: ./publish/Diagnostish.exe
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

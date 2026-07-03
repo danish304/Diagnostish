@@ -12,17 +12,23 @@ static class Program
 
         HWCheck check_HW = new HWCheck();
         HWReport report_HW = check_HW.CheckPCCFG();
+        PrintPCCFG(report_HW);
+        Continue();
 
         OSCheck check_OS = new OSCheck();
         OSReport report_OS = check_OS.CheckOSCFG();
+        PrintOSCFG(report_OS);
+        Continue();
 
         StartupCheck check_Startup = new StartupCheck();
         List<StartupReport> report_Startup = check_Startup.GetStartupPrograms();
-
-        PrintPCCFG(report_HW);
-        PrintOSCFG(report_OS);
         PringStartup(report_Startup);
+        Continue();
+    }
 
+    // Вывод сообщения о продолжении
+    static void Continue()
+    {
         Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.WriteLine("\nPress any key to continue . . .");
         Console.ResetColor();

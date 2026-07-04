@@ -99,7 +99,7 @@ namespace Diagnostish.Services
                         if (size.HasValue)
                         {
                             double sizeGB = Math.Round(size.Value / BytesInGigabytes, 0);
-                            string drive = $"{model} ({sizeGB})";
+                            string drive = $"{model} ({sizeGB} GB)";
                             rep.Drives.Add(drive);
                         }
                         else rep.Drives.Add($"{model} (size not found)");

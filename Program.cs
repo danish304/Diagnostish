@@ -6,15 +6,18 @@ static class Program
 {
     static void Main(string[] args)
     {
-        CheckConfigurationWMI wmiService = new CheckConfigurationWMI();
-        IHWCheck hwService = wmiService;
-        IOSCheck osService = wmiService;
+        CheckPCConfigurationWMI wmiServiceHW = new CheckPCConfigurationWMI();
+        IHWCheck hwService = wmiServiceHW;
+
+        CheckOSConfigurationWMI wmiServiceOS = new CheckOSConfigurationWMI();
+        IOSCheck osService = wmiServiceOS;
 
         PrintToConsole consoleView = new PrintToConsole();
         IPrintHW hwView = consoleView;
         IPrintOS osView = consoleView;
+        IUserInterface UI = consoleView;
 
-        DiagnosticController controller = new DiagnosticController(hwService, osService, hwView, osView);
+        DiagnosticController controller = new DiagnosticController(hwService, osService, hwView, osView, UI);
 
         controller.StartDiagnostic();
     }

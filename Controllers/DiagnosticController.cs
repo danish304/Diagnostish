@@ -10,18 +10,20 @@ namespace Diagnostish.Controllers
         private readonly IOSCheck _osCheck;
         private readonly IPrintHW _printHw;
         private readonly IPrintOS _printOs;
+        private readonly IUserInterface _ui;
 
-        public DiagnosticController(IHWCheck hwCheck, IOSCheck osCheck, IPrintHW printHw, IPrintOS printOs)
+        public DiagnosticController(IHWCheck hwCheck, IOSCheck osCheck, IPrintHW printHw, IPrintOS printOs, IUserInterface ui)
         {
             _hwCheck = hwCheck;
             _osCheck = osCheck;
             _printHw = printHw;
             _printOs = printOs;
+            _ui = ui;
         }
 
         public void StartDiagnostic()
         {
-            Preview();
+            _ui.Preview();
 
             HWReport hwReport = _hwCheck.CheckPCCFG();
             _printHw.PrintHardware(hwReport);
@@ -29,19 +31,7 @@ namespace Diagnostish.Controllers
             OSReport osReport = _osCheck.CheckOSCFG();
             _printOs.PrintOperationSystem(osReport);
 
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine("\nДля завершения нажмите любую клавишу . . .");
-            Console.ResetColor();
-            Console.ReadKey();
-        }
-
-        private void Preview()
-        {
-            Console.Title = "Diagnostish";
-            Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine("ЗАПУСК ДИАГНОСТИКИ . . .");
-            Console.ResetColor();
+            _ui.WaitForExit();
         }
     }
 }

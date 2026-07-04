@@ -2,8 +2,19 @@
 
 namespace Diagnostish.Views
 {
-    public class PrintToConsole : IPrintHW, IPrintOS
+    public class PrintToConsole : IPrintHW, IPrintOS, IUserInterface
     {
+        private void PrintErrors(List<string> warnings)
+        {
+            if (warnings.Count > 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Предупреждения:");
+                foreach (var warn in warnings) Console.WriteLine($"  - {warn}");
+            }
+            Console.ResetColor();
+        }
+
         public void PrintHardware(HWReport rep)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -12,7 +23,7 @@ namespace Diagnostish.Views
 
             Console.WriteLine($"\nПроцессор: {rep.ProcessorName} ({rep.CoresCount} ядер), частота - {rep.CurrentClockSpeed} MGz");
             Console.WriteLine($"ОЗУ: {rep.RAMSize} GB, {rep.RAMSpeed} MGz");
-            Console.WriteLine("Videocards:");
+            Console.WriteLine("Видеокарты:");
             foreach (var gpu in rep.VideoCards)
             {
                 Console.WriteLine($" - {gpu}");
@@ -23,18 +34,7 @@ namespace Diagnostish.Views
                 Console.WriteLine($" - {drives}");
             }
 
-            // Вывод некритичных ошибок
-            if (rep.Errors.Count > 0)
-            {
-                Console.WriteLine();
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("Предупреждения при сканировании конфигурации ПК:");
-                foreach (var error in rep.Errors)
-                {
-                    Console.WriteLine($"  - {error}");
-                }
-                Console.ResetColor();
-            }
+            PrintErrors(rep.Errors);
         }
 
         public void PrintOperationSystem(OSReport rep)
@@ -48,18 +48,24 @@ namespace Diagnostish.Views
             Console.WriteLine($"Пользователь: {rep.RegisteredUser}");
             Console.WriteLine($"Последнее включение: {rep.LastBootUpTime}");
 
-            // Вывод некритичных ошибок
-            if (rep.Errors.Count > 0)
-            {
-                Console.WriteLine();
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("Предупреждения при сканировании конфигурации ОС:");
-                foreach (var error in rep.Errors)
-                {
-                    Console.WriteLine($"  - {error}");
-                }
-                Console.ResetColor();
-            }
+            PrintErrors(rep.Errors);
+        }
+
+        public void Preview()
+        {
+            Console.Title = "Diagnostish";
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("ЗАПУСК ДИАГНОСТИКИ . . .");
+            Console.ResetColor();
+        }
+
+        public void WaitForExit()
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("\nДля завершения нажмите любую клавишу . . .");
+            Console.ResetColor();
+            Console.ReadKey();
         }
     }
 }

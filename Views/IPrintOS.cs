@@ -1,6 +1,6 @@
 ﻿using Diagnostish.Models;
 
-namespace Diagnostish.View
+namespace Diagnostish.Views
 {
     public interface IPrintOS
     {

@@ -2,11 +2,12 @@
 {
     public class OSReport
     {
-        public string Name { get; set; } = "Unknown";            // Имя ОС (сборка)
-        public string Version { get; set; } = "Unknown";         // Номер версии
-        public string Manufacturer { get; set; } = "Unknown";    // Производитель (Microsoft Corporation)
-        public string RegisteredUser { get; set; } = "Unknown";  // Зарегистрированный пользователь
-        public DateTime InstallDate { get; set; }                // Дата установки
-        public DateTime LastBootUpTime { get; set; }             // Время последнего включения
+        public string Name { get; set; } = "Unknown";               // Имя ОС (сборка)
+        public string Version { get; set; } = "Unknown";            // Номер версии
+        public string Manufacturer { get; set; } = "Unknown";       // Производитель (Microsoft Corporation)
+        public string RegisteredUser { get; set; } = "Unknown";     // Зарегистрированный пользователь
+        public DateTime? InstallDate { get; set; }                  // Дата установки
+        public DateTime? LastBootUpTime { get; set; }               // Время последнего включения
+        public List<string> Errors { get; } = new List<string>();   // Ошибки при получении данных
     }
 }

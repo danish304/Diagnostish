@@ -1,25 +1,35 @@
 ﻿using Diagnostish.Helpers;
 using Diagnostish.Models;
 using System.Management;
+using Diagnostish.Services.Interfaces;
 
-namespace Diagnostish.Services
+namespace Diagnostish.Services.Implementations
 {
     public class CheckOSConfigurationWMI : IOSCheck
     {
+        private readonly System.Management.EnumerationOptions _options;
+
+        public CheckOSConfigurationWMI()
+        {
+            _options = new System.Management.EnumerationOptions { ReturnImmediately = true };
+        }
+
         public OSReport CheckOSCFG()
         {
             var rep = new OSReport();
 
-            var options = new System.Management.EnumerationOptions
-            {
-                Timeout = TimeSpan.FromSeconds(3) 
-            };
+            GetOsGeneralInfo(rep);
+            GetOsDateTimeInfo(rep);
 
-            try
-            {
-                using var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem");
-                searcher.Options = options;
+            return rep;
+        }
 
+        private void GetOsGeneralInfo(OSReport rep)
+        {
+            string query = "SELECT Caption, Version, Manufacturer, RegisteredUser FROM Win32_OperatingSystem";
+
+            SafeExecutor.ExecuteSafeQuery(query, "базовых данных ОС", _options, rep.Errors, rep.CriticalErrors, searcher =>
+            {
                 foreach (ManagementObject item in searcher.Get())
                 {
                     using (item)
@@ -28,25 +38,35 @@ namespace Diagnostish.Services
                         rep.Version = Parser.ToString(item["Version"]);
                         rep.Manufacturer = Parser.ToString(item["Manufacturer"]);
                         rep.RegisteredUser = Parser.ToString(item["RegisteredUser"]);
-
-                        rep.InstallDate = Parser.ToDateTime(item["InstallDate"]);
-                        if (!rep.InstallDate.HasValue) rep.Errors.Add("Не удалось определить дату установки ОС!");
-
-                        rep.LastBootUpTime = Parser.ToDateTime(item["LastBootUpTime"]);
-                        if (!rep.LastBootUpTime.HasValue) rep.Errors.Add("Не удалось определить дату последнего запуска ОС!");
                     }
                 }
-            }
-            catch (ManagementException mex) when (mex.ErrorCode == ManagementStatus.Timedout)
-            {
-                rep.CriticalErrors.Add("Получение данных об ОС остановлено по таймауту (WMI завис).");
-            }
-            catch (Exception ex)
-            {
-                rep.Errors.Add("Ошибка получения данных об ОС: " + ex.Message);
-            }
+            });
+        }
 
-            return rep;
+        private void GetOsDateTimeInfo(OSReport rep)
+        {
+            string query = "SELECT InstallDate, LastBootUpTime FROM Win32_OperatingSystem";
+
+            SafeExecutor.ExecuteSafeQuery(query, "временных метках ОС", _options, rep.Errors, rep.CriticalErrors, searcher =>
+            {
+                foreach (ManagementObject item in searcher.Get())
+                {
+                    using (item)
+                    {
+                        rep.InstallDate = Parser.ToDateTime(item["InstallDate"]);
+                        if (!rep.InstallDate.HasValue)
+                        {
+                            rep.Errors.Add("Не удалось определить дату установки ОС!");
+                        }
+
+                        rep.LastBootUpTime = Parser.ToDateTime(item["LastBootUpTime"]);
+                        if (!rep.LastBootUpTime.HasValue)
+                        {
+                            rep.Errors.Add("Не удалось определить дату последнего запуска ОС!");
+                        }
+                    }
+                }
+            });
         }
     }
 }

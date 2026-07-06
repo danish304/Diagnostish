@@ -1,6 +1,6 @@
 ﻿using Diagnostish.Models;
 
-namespace Diagnostish.Services
+namespace Diagnostish.Services.Interfaces
 {
     public interface IOSCheck
     {

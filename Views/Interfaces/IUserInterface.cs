@@ -1,4 +1,4 @@
-﻿namespace Diagnostish.Views
+﻿namespace Diagnostish.Views.Interfaces
 {
     public interface IUserInterface
     {

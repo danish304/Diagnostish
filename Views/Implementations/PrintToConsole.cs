@@ -1,39 +1,18 @@
 ﻿using Diagnostish.Models;
+using Diagnostish.Views.Interfaces;
 
-namespace Diagnostish.Views
+namespace Diagnostish.Views.Implementations
 {
     public class PrintToConsole : IPrintHW, IPrintOS, IUserInterface
     {
-        private void PrintErrors(List<string> warnings)
-        {
-            if (warnings.Count > 0)
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("Предупреждения:");
-                foreach (var warn in warnings) Console.WriteLine($"  - {warn}");
-            }
-            Console.ResetColor();
-        }
-
-        private void PrintCriticalErrors(List<string> warnings)
-        {
-            if (warnings.Count > 0)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Предупреждения:");
-                foreach (var warn in warnings) Console.WriteLine($"  - {warn}");
-            }
-            Console.ResetColor();
-        }
-
         public void PrintHardware(HWReport rep)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("\nКОНФИГУРАЦИЯ ПК:");
             Console.ResetColor();
 
-            Console.WriteLine($"\nПроцессор: {rep.ProcessorName} ({rep.CoresCount} ядер), частота - {rep.CurrentClockSpeed} MGz");
-            Console.WriteLine($"ОЗУ: {rep.RAMSize} GB, {rep.RAMSpeed} MGz");
+            Console.WriteLine($"\nПроцессор: {rep.ProcessorName} ({rep.CoresCount} ядер), частота - {rep.CurrentClockSpeed} MHz");
+            Console.WriteLine($"ОЗУ: {rep.RAMSize} GB, {rep.RAMSpeed} MHz");
             Console.WriteLine("Видеокарты:");
             foreach (var gpu in rep.VideoCards)
             {
@@ -68,8 +47,13 @@ namespace Diagnostish.Views
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            Console.Title = "Diagnostish";
-            Console.Clear();
+            try
+            {
+                Console.Title = "Diagnostish";
+                Console.Clear();
+            }
+            catch (IOException) { }
+
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("ЗАПУСК ДИАГНОСТИКИ . . .");
             Console.ResetColor();
@@ -77,10 +61,41 @@ namespace Diagnostish.Views
 
         public void WaitForExit()
         {
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine("\nДля завершения нажмите любую клавишу . . .");
+            if (Console.IsInputRedirected)
+            {
+                return;
+            }
+
+            try
+            {
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("\nДля завершения нажмите любую клавишу . . .");
+                Console.ResetColor();
+                Console.ReadKey();
+            }
+            catch (InvalidOperationException) { }
+        }
+
+        private void PrintErrors(List<string> warnings)
+        {
+            if (warnings.Count > 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\nПредупреждения:");
+                foreach (var warn in warnings) Console.WriteLine($"  - {warn}");
+            }
             Console.ResetColor();
-            Console.ReadKey();
+        }
+
+        private void PrintCriticalErrors(List<string> errors)
+        {
+            if (errors.Count > 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nКритические ошибки:");
+                foreach (var warn in errors) Console.WriteLine($"  - {warn}");
+            }
+            Console.ResetColor();
         }
     }
 }

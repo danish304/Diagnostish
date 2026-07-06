@@ -1,6 +1,6 @@
 ﻿using Diagnostish.Models;
-using Diagnostish.Services;
-using Diagnostish.Views;
+using Diagnostish.Services.Interfaces;
+using Diagnostish.Views.Interfaces;
 
 namespace Diagnostish.Controllers
 {
@@ -31,7 +31,7 @@ namespace Diagnostish.Controllers
 
             foreach (var check in _hwCheck)
             {
-                HWReport hwReport = check.CheckPCCFG();
+                var hwReport = check.CheckPCCFG();
                 foreach (var printer in _printHw)
                 {
                     printer.PrintHardware(hwReport);
@@ -40,7 +40,7 @@ namespace Diagnostish.Controllers
 
             foreach (var check in _osCheck)
             {
-                OSReport osReport = check.CheckOSCFG();
+                var osReport = check.CheckOSCFG();
 
                 foreach (var printer in _printOs)
                 {

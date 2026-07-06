@@ -1,6 +1,7 @@
 ﻿using Diagnostish.Models;
 using Diagnostish.Helpers;
 using Diagnostish.Services.Interfaces;
+using Serilog;
 
 namespace Diagnostish.Services.Implementations
 {
@@ -84,6 +85,7 @@ namespace Diagnostish.Services.Implementations
                     if (speeds.Any(s => s != minSpeed))
                     {
                         rep.Errors.Add("Установлены модули ОЗУ с разной скоростью. Система ограничена самой медленной планкой.");
+                        Log.Warning("Обнаружен конфликт частот RAM: {Speeds}. Выбрана минимальная: {MinSpeed} MHz", string.Join(", ", speeds), minSpeed);
                     }
                 }
             });

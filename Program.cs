@@ -1,14 +1,24 @@
 ﻿using Diagnostish.Controllers;
-using Diagnostish.Services.Interfaces;
 using Diagnostish.Services.Implementations;
-using Diagnostish.Views.Interfaces;
+using Diagnostish.Services.Interfaces;
 using Diagnostish.Views.Implementations;
+using Diagnostish.Views.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 static class Program
 {
     static void Main(string[] args)
     {
+        // Подключаем логгирование
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .WriteTo.Console()    
+            .WriteTo.File("logs/diagnostish-.txt", rollingInterval: RollingInterval.Day) 
+            .CreateLogger();
+
+        Log.Information("Приложение Diagnostish запущено.");
+
         var services = new ServiceCollection(); // Коллекция для регистрации
 
         // 1. Регистрируем Services
@@ -30,5 +40,8 @@ static class Program
         // 5. Запрашиваем контроллеры
         var controller = serviceProvider.GetRequiredService<DiagnosticController>();
         controller.StartDiagnostic();
+
+        // Завершаем логгирование
+        Log.CloseAndFlush();
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Management;
+﻿using Serilog;
+using System.Management;
 
 namespace Diagnostish.Helpers
 {
@@ -19,10 +20,12 @@ namespace Diagnostish.Helpers
             catch (ManagementException mex) when (mex.ErrorCode == ManagementStatus.Timedout)
             {
                 criticalErrors.Add($"Получение данных о/об {context} остановлено по таймауту (WMI завис).");
+                Log.Fatal(mex, $"Критический таймаут WMI при запросе '{query}' для {context}");
             }
             catch (Exception ex)
             {
                 errors.Add($"Ошибка получения данных о/об {context}: {ex.Message}");
+                Log.Error(ex, $"Сбой выполнения WMI запроса '{query}'");
             }
         }
     }

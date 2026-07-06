@@ -11,10 +11,16 @@ namespace Diagnostish.Services
             const double BytesInGigabytes = 1024 * 1024 * 1024;    // Константа для перевода из байт в гигабайты
             var rep = new HWReport();
 
+            var options = new System.Management.EnumerationOptions
+            {
+                Timeout = TimeSpan.FromSeconds(3)
+            };
+
             // Распознавание названия процессора, количества его ядер, базовой частоты
             try
             {
                 using var searcher = new ManagementObjectSearcher("SELECT Name, NumberOfCores, CurrentClockSpeed FROM Win32_Processor");
+                searcher.Options = options;
 
                 foreach (var item in searcher.Get())
                 {
@@ -32,6 +38,10 @@ namespace Diagnostish.Services
                     }
                 }
             }
+            catch (ManagementException mex) when (mex.ErrorCode == ManagementStatus.Timedout)
+            {
+                rep.CriticalErrors.Add("Получение данных о процессоре остановлено по таймауту (WMI завис).");
+            }
             catch (Exception ex)
             {
                 rep.Errors.Add("Ошибка получения данных о процессоре: " + ex.Message);
@@ -41,6 +51,7 @@ namespace Diagnostish.Services
             try
             {
                 using var searcher = new ManagementObjectSearcher("SELECT Capacity, Speed FROM Win32_PhysicalMemory");
+                searcher.Options = options;
 
                 double totalBytes = 0;
                 foreach (var item in searcher.Get())
@@ -61,6 +72,10 @@ namespace Diagnostish.Services
                     rep.RAMSize = Math.Round(totalBytes / BytesInGigabytes, 2);
                 }
             }
+            catch (ManagementException mex) when (mex.ErrorCode == ManagementStatus.Timedout)
+            {
+                rep.CriticalErrors.Add("Получение данных об ОЗУ остановлено по таймауту (WMI завис).");
+            }
             catch (Exception ex)
             {
                 rep.Errors.Add("Ошибка получения данных об ОЗУ: " + ex.Message);
@@ -70,6 +85,7 @@ namespace Diagnostish.Services
             try
             {
                 using var searcher = new ManagementObjectSearcher("SELECT Name FROM Win32_VideoController");
+                searcher.Options = options;
 
                 foreach (var item in searcher.Get())
                 {
@@ -80,6 +96,10 @@ namespace Diagnostish.Services
                     }
                 }
             }
+            catch (ManagementException mex) when (mex.ErrorCode == ManagementStatus.Timedout)
+            {
+                rep.CriticalErrors.Add("Получение данных о видеокартах остановлено по таймауту (WMI завис).");
+            }
             catch (Exception ex)
             {
                 rep.Errors.Add("Ошибка получения данных о видеокартах: " + ex.Message);
@@ -89,6 +109,7 @@ namespace Diagnostish.Services
             try
             {
                 using var searcher = new ManagementObjectSearcher("SELECT Model, Size FROM Win32_DiskDrive");
+                searcher.Options = options;
 
                 foreach (var item in searcher.Get())
                 {
@@ -105,6 +126,10 @@ namespace Diagnostish.Services
                         else rep.Drives.Add($"{model} (size not found)");
                     }
                 }
+            }
+            catch (ManagementException mex) when (mex.ErrorCode == ManagementStatus.Timedout)
+            {
+                rep.CriticalErrors.Add("Получение данных о накопителях остановлено по таймауту (WMI завис).");
             }
             catch (Exception ex)
             {

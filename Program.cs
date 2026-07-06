@@ -1,24 +1,31 @@
 ﻿using Diagnostish.Controllers;
 using Diagnostish.Services;
 using Diagnostish.Views;
+using Microsoft.Extensions.DependencyInjection;
 
 static class Program
 {
     static void Main(string[] args)
     {
-        CheckPCConfigurationWMI wmiServiceHW = new CheckPCConfigurationWMI();
-        IHWCheck hwService = wmiServiceHW;
+        var services = new ServiceCollection(); // Коллекция для регистрации
 
-        CheckOSConfigurationWMI wmiServiceOS = new CheckOSConfigurationWMI();
-        IOSCheck osService = wmiServiceOS;
+        // 1. Регистрируем Services
+        services.AddTransient<IHWCheck, CheckPCConfigurationWMI>();
+        services.AddTransient<IOSCheck, CheckOSConfigurationWMI>();
 
-        PrintToConsole consoleView = new PrintToConsole();
-        IPrintHW hwView = consoleView;
-        IPrintOS osView = consoleView;
-        IUserInterface UI = consoleView;
+        // 2. Регистрируем Views
+        services.AddSingleton<IPrintHW, PrintToConsole>();
+        services.AddSingleton<IPrintOS, PrintToConsole>();
+        services.AddSingleton<IUserInterface, PrintToConsole>();
 
-        DiagnosticController controller = new DiagnosticController(hwService, osService, hwView, osView, UI);
+        // 3. Регистрируем Controllers
+        services.AddTransient<DiagnosticController>();
 
+        // 4. Строим DI-контейнер
+        var serviceProvider = services.BuildServiceProvider();
+
+        // 5. Запрашиваем контроллеры
+        var controller = serviceProvider.GetRequiredService<DiagnosticController>();
         controller.StartDiagnostic();
     }
 }

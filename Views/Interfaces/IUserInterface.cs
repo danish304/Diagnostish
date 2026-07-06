@@ -2,7 +2,7 @@
 {
     public interface IUserInterface
     {
-        void Preview();
+        void ShowWelcome();
         void WaitForExit();
     }
 }

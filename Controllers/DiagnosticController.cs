@@ -6,13 +6,17 @@ namespace Diagnostish.Controllers
 {
     public class DiagnosticController
     {
-        private readonly IHWCheck _hwCheck;
-        private readonly IOSCheck _osCheck;
-        private readonly IPrintHW _printHw;
-        private readonly IPrintOS _printOs;
+        private readonly IEnumerable<IHWCheck> _hwCheck;
+        private readonly IEnumerable<IOSCheck> _osCheck;
+        private readonly IEnumerable<IPrintHW> _printHw;
+        private readonly IEnumerable<IPrintOS> _printOs;
         private readonly IUserInterface _ui;
 
-        public DiagnosticController(IHWCheck hwCheck, IOSCheck osCheck, IPrintHW printHw, IPrintOS printOs, IUserInterface ui)
+        public DiagnosticController(IEnumerable<IHWCheck> hwCheck,
+                                    IEnumerable<IOSCheck> osCheck, 
+                                    IEnumerable<IPrintHW> printHw,
+                                    IEnumerable<IPrintOS> printOs,
+                                    IUserInterface ui)
         {
             _hwCheck = hwCheck;
             _osCheck = osCheck;
@@ -23,13 +27,26 @@ namespace Diagnostish.Controllers
 
         public void StartDiagnostic()
         {
-            _ui.Preview();
+            _ui.ShowWelcome();
 
-            HWReport hwReport = _hwCheck.CheckPCCFG();
-            _printHw.PrintHardware(hwReport);
+            foreach (var check in _hwCheck)
+            {
+                HWReport hwReport = check.CheckPCCFG();
+                foreach (var printer in _printHw)
+                {
+                    printer.PrintHardware(hwReport);
+                }
+            }
 
-            OSReport osReport = _osCheck.CheckOSCFG();
-            _printOs.PrintOperationSystem(osReport);
+            foreach (var check in _osCheck)
+            {
+                OSReport osReport = check.CheckOSCFG();
+
+                foreach (var printer in _printOs)
+                {
+                    printer.PrintOperationSystem(osReport);
+                }
+            }
 
             _ui.WaitForExit();
         }

@@ -10,9 +10,15 @@ namespace Diagnostish.Services
         {
             var rep = new OSReport();
 
+            var options = new System.Management.EnumerationOptions
+            {
+                Timeout = TimeSpan.FromSeconds(3) 
+            };
+
             try
             {
                 using var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem");
+                searcher.Options = options;
 
                 foreach (ManagementObject item in searcher.Get())
                 {
@@ -27,9 +33,13 @@ namespace Diagnostish.Services
                         if (!rep.InstallDate.HasValue) rep.Errors.Add("Не удалось определить дату установки ОС!");
 
                         rep.LastBootUpTime = Parser.ToDateTime(item["LastBootUpTime"]);
-                        if (!rep.LastBootUpTime.HasValue) rep.Errors.Add("Ну удалось определить дату последнего запуска ОС!");
+                        if (!rep.LastBootUpTime.HasValue) rep.Errors.Add("Не удалось определить дату последнего запуска ОС!");
                     }
                 }
+            }
+            catch (ManagementException mex) when (mex.ErrorCode == ManagementStatus.Timedout)
+            {
+                rep.CriticalErrors.Add("Получение данных об ОС остановлено по таймауту (WMI завис).");
             }
             catch (Exception ex)
             {

@@ -15,6 +15,17 @@ namespace Diagnostish.Views
             Console.ResetColor();
         }
 
+        private void PrintCriticalErrors(List<string> warnings)
+        {
+            if (warnings.Count > 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Предупреждения:");
+                foreach (var warn in warnings) Console.WriteLine($"  - {warn}");
+            }
+            Console.ResetColor();
+        }
+
         public void PrintHardware(HWReport rep)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -35,6 +46,7 @@ namespace Diagnostish.Views
             }
 
             PrintErrors(rep.Errors);
+            PrintCriticalErrors(rep.CriticalErrors);
         }
 
         public void PrintOperationSystem(OSReport rep)
@@ -49,10 +61,13 @@ namespace Diagnostish.Views
             Console.WriteLine($"Последнее включение: {rep.LastBootUpTime}");
 
             PrintErrors(rep.Errors);
+            PrintCriticalErrors(rep.CriticalErrors);
         }
 
-        public void Preview()
+        public void ShowWelcome()
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
             Console.Title = "Diagnostish";
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Magenta;

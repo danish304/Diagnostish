@@ -23,21 +23,33 @@ namespace Diagnostish.Services.Implementations
         {
             string query = "SELECT Name, NumberOfCores, CurrentClockSpeed FROM Win32_Processor";
 
-            SafeExecutor.ExecuteSafeQuery(query, "процессоре", rep.Errors, rep.CriticalErrors, searcher =>
+            SafeExecutor.ExecuteSafeQuery(query, "процессоре", rep.Errors, rep.CriticalErrors, collection =>
             {
-                foreach (var item in searcher.Get())
+                foreach (var item in collection)
                 {
                     using (item)
                     {
-                        rep.ProcessorName = Parser.ToString(item["Name"]);
+                        rep.ProcessorName = Parser.ToSafeString(item["Name"]);
 
-                        int? cores = Parser.ToInt(item["NumberOfCores"]);
-                        if (cores.HasValue) rep.CoresCount = cores.Value;
-                        else rep.Errors.Add("Не удалось получить количество ядер процессора!");
+                        int? cores = Parser.ToSafeInt(item["NumberOfCores"]);
+                        if (!cores.HasValue || cores.Value <= 0)
+                        {
+                            rep.Errors.Add("Не удалось получить корректное количество ядер процессора!");
+                        }
+                        else
+                        {
+                            rep.CoresCount = cores.Value;
+                        }
 
-                        int? clockspeed = Parser.ToInt(item["CurrentClockSpeed"]);
-                        if (clockspeed.HasValue) rep.CurrentClockSpeed = clockspeed.Value;
-                        else rep.Errors.Add("Не удалось получить частоту процессора!");
+                        int? clockspeed = Parser.ToSafeInt(item["CurrentClockSpeed"]);
+                        if (!clockspeed.HasValue || clockspeed.Value <= 0)
+                        {
+                            rep.Errors.Add("Не удалось получить корректную частоту процессора!");
+                        }
+                        else
+                        {
+                            rep.CurrentClockSpeed = clockspeed.Value;
+                        }
                     }
                 }
             });
@@ -49,19 +61,31 @@ namespace Diagnostish.Services.Implementations
             var speeds = new List<int>();
             double totalBytes = 0;
 
-            SafeExecutor.ExecuteSafeQuery(query, "ОЗУ", rep.Errors, rep.CriticalErrors, searcher =>
+            SafeExecutor.ExecuteSafeQuery(query, "ОЗУ", rep.Errors, rep.CriticalErrors, collection =>
             {
-                foreach (var item in searcher.Get())
+                foreach (var item in collection)
                 {
                     using (item)
                     {
-                        double? capacity = Parser.ToDouble(item["Capacity"]);
-                        if (capacity.HasValue) totalBytes += capacity.Value;
-                        else rep.Errors.Add("Не удалось определить емкость одной из планок ОЗУ!");
+                        double? capacity = Parser.ToSafeDouble(item["Capacity"]);
+                        if (capacity.HasValue && capacity.Value > 0)
+                        {
+                            totalBytes += capacity.Value;
+                        }
+                        else
+                        {
+                            rep.Errors.Add("Не удалось определить корректную емкость одной из планок ОЗУ!");
+                        }
 
-                        int? speed = Parser.ToInt(item["Speed"]);
-                        if (speed.HasValue) speeds.Add(speed.Value);
-                        else rep.Errors.Add("Не удалось определить скорость ОЗУ!");
+                        int? speed = Parser.ToSafeInt(item["Speed"]);
+                        if (speed.HasValue && speed.Value > 0)
+                        {
+                            speeds.Add(speed.Value);
+                        }
+                        else
+                        {
+                            rep.Errors.Add("Не удалось определить скорость ОЗУ!");
+                        }
                     }
                 }
 
@@ -88,13 +112,13 @@ namespace Diagnostish.Services.Implementations
         {
             string query = "SELECT Name FROM Win32_VideoController";
 
-            SafeExecutor.ExecuteSafeQuery(query, "видеокартах", rep.Errors, rep.CriticalErrors, searcher =>
+            SafeExecutor.ExecuteSafeQuery(query, "видеокартах", rep.Errors, rep.CriticalErrors, collection =>
             {
-                foreach (var item in searcher.Get())
+                foreach (var item in collection)
                 {
                     using (item)
                     {
-                        string gpu = Parser.ToString(item["Name"]);
+                        string gpu = Parser.ToSafeString(item["Name"]);
                         rep.VideoCards.Add(gpu);
                     }
                 }
@@ -105,16 +129,16 @@ namespace Diagnostish.Services.Implementations
         {
             string query = "SELECT Model, Size FROM Win32_DiskDrive";
 
-            SafeExecutor.ExecuteSafeQuery(query, "накопителях", rep.Errors, rep.CriticalErrors, searcher =>
+            SafeExecutor.ExecuteSafeQuery(query, "накопителях", rep.Errors, rep.CriticalErrors, collection =>
             {
-                foreach (var item in searcher.Get())
+                foreach (var item in collection)
                 {
                     using (item)
                     {
-                        string model = Parser.ToString(item["Model"]);
-                        double? size = Parser.ToDouble(item["Size"]);
+                        string model = Parser.ToSafeString(item["Model"]);
 
-                        if (size.HasValue)
+                        double? size = Parser.ToSafeDouble(item["Size"]);
+                        if (size.HasValue && size.Value > 0)
                         {
                             double sizeGB = Math.Round(size.Value / WMISettings.BytesInGigabyte, 0);
                             rep.Drives.Add($"{model} ({sizeGB} GB)");

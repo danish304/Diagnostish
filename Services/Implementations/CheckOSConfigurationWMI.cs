@@ -21,16 +21,16 @@ namespace Diagnostish.Services.Implementations
         {
             string query = "SELECT Caption, Version, Manufacturer, RegisteredUser FROM Win32_OperatingSystem";
 
-            SafeExecutor.ExecuteSafeQuery(query, "базовых данных ОС", rep.Errors, rep.CriticalErrors, searcher =>
+            SafeExecutor.ExecuteSafeQuery(query, "базовых данных ОС", rep.Errors, rep.CriticalErrors, collection =>
             {
-                foreach (ManagementObject item in searcher.Get())
+                foreach (ManagementObject item in collection)
                 {
                     using (item)
                     {
-                        rep.Name = Parser.ToString(item["Caption"]);
-                        rep.Version = Parser.ToString(item["Version"]);
-                        rep.Manufacturer = Parser.ToString(item["Manufacturer"]);
-                        rep.RegisteredUser = Parser.ToString(item["RegisteredUser"]);
+                        rep.Name = Parser.ToSafeString(item["Caption"]);
+                        rep.Version = Parser.ToSafeString(item["Version"]);
+                        rep.Manufacturer = Parser.ToSafeString(item["Manufacturer"]);
+                        rep.RegisteredUser = Parser.ToSafeString(item["RegisteredUser"]);
                     }
                 }
             });
@@ -40,22 +40,22 @@ namespace Diagnostish.Services.Implementations
         {
             string query = "SELECT InstallDate, LastBootUpTime FROM Win32_OperatingSystem";
 
-            SafeExecutor.ExecuteSafeQuery(query, "временных метках ОС", rep.Errors, rep.CriticalErrors, searcher =>
+            SafeExecutor.ExecuteSafeQuery(query, "временных метках ОС", rep.Errors, rep.CriticalErrors, collection =>
             {
-                foreach (ManagementObject item in searcher.Get())
+                foreach (ManagementObject item in collection)
                 {
                     using (item)
                     {
-                        rep.InstallDate = Parser.ToDateTime(item["InstallDate"]);
-                        if (!rep.InstallDate.HasValue)
+                        rep.InstallDate = Parser.ToSafeDateTime(item["InstallDate"]);
+                        if (!rep.InstallDate.HasValue || (rep.InstallDate.Value == DateTime.MinValue))
                         {
-                            rep.Errors.Add("Не удалось определить дату установки ОС!");
+                            rep.Errors.Add("Не удалось определить корректную дату установки ОС!");
                         }
 
-                        rep.LastBootUpTime = Parser.ToDateTime(item["LastBootUpTime"]);
-                        if (!rep.LastBootUpTime.HasValue)
+                        rep.LastBootUpTime = Parser.ToSafeDateTime(item["LastBootUpTime"]);
+                        if (!rep.LastBootUpTime.HasValue || (rep.LastBootUpTime.Value == DateTime.MinValue))
                         {
-                            rep.Errors.Add("Не удалось определить дату последнего запуска ОС!");
+                            rep.Errors.Add("Не удалось определить корректную дату последнего запуска ОС!");
                         }
                     }
                 }

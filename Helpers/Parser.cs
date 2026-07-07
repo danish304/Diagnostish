@@ -4,7 +4,7 @@ namespace Diagnostish.Helpers
 {
     public static class Parser
     {
-        public static double? ToDouble(object? value)
+        public static double? ToSafeDouble(object? value)
         {
             if (value == null || value == DBNull.Value) return null;
             try
@@ -17,7 +17,7 @@ namespace Diagnostish.Helpers
             }
         }
 
-        public static int? ToInt(object? value)
+        public static int? ToSafeInt(object? value)
         {
             if (value == null || value == DBNull.Value) return null;
             try
@@ -30,14 +30,14 @@ namespace Diagnostish.Helpers
             }
         }
 
-        public static string ToString(object? value)
+        public static string ToSafeString(object? value)
         {
             if (value == null || value == DBNull.Value) return "Unknown";
             string? result = value.ToString()?.Trim();
             return string.IsNullOrEmpty(result) ? "Unknown" : result;
         }
 
-        public static DateTime? ToDateTime(object? value)
+        public static DateTime? ToSafeDateTime(object? value)
         {
             if (value == null || value == DBNull.Value) return null;
 

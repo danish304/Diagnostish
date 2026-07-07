@@ -52,31 +52,27 @@ namespace Diagnostish.Views.Implementations
 
         public void WaitForExit()
         {
-            if (Console.IsInputRedirected)
-            {
-                return;
-            }
+            ConsoleWriter.WriteLineColored("\nСканирование завершено!", ConsoleColor.Green);
 
-            try
+            if (!Console.IsInputRedirected)
             {
-                ConsoleWriter.WriteLineColored("\nДля завершения нажмите любую клавишу . . .", ConsoleColor.DarkGray);
+                ConsoleWriter.WriteLineColored("Для завершения нажмите любую клавишу . . .", ConsoleColor.DarkGray);
                 Console.ReadKey();
             }
-            catch (InvalidOperationException) { }
         }
 
-        private void PrintIssues(List<string> warnings, List<string> errors)
+        private void PrintIssues(List<string> errors, List<string> criticalErrors)
         {
-            if (warnings.Count > 0)
-            {
-                Console.WriteLine("\nПРЕДУПРЕЖДЕНИЯ:");
-                foreach (var warn in warnings) ConsoleWriter.WriteLineColored($"  - {warn}", ConsoleColor.Yellow);
-            }
-            
             if (errors.Count > 0)
             {
+                Console.WriteLine("\nПРЕДУПРЕЖДЕНИЯ:");
+                foreach (var warn in errors) ConsoleWriter.WriteLineColored($"  - {warn}", ConsoleColor.Yellow);
+            }
+            
+            if (criticalErrors.Count > 0)
+            {
                 Console.WriteLine("\nКРИТИЧЕСКИЕ ОШИБКИ:");
-                foreach (var warn in errors) ConsoleWriter.WriteLineColored($"  - {warn}", ConsoleColor.Red);
+                foreach (var warn in criticalErrors) ConsoleWriter.WriteLineColored($"  - {warn}", ConsoleColor.Red);
             }
         }
     }

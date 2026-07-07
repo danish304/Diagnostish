@@ -7,7 +7,7 @@ namespace Diagnostish.Helpers
     {
         public static void ExecuteSafeQuery(string query, string context,
                                             List<string> errors, List<string> criticalErrors,
-                                            Action<ManagementObjectSearcher> wmiAction)
+                                            Action<ManagementObjectCollection> wmiAction)
         {
             try
             {
@@ -18,7 +18,8 @@ namespace Diagnostish.Helpers
                 };
 
                 using var searcher = new ManagementObjectSearcher(query) { Options = options };
-                wmiAction(searcher);
+                using var collection = searcher.Get();
+                wmiAction(collection);
             }
             catch (ManagementException mex) when (mex.ErrorCode == ManagementStatus.Timedout)
             {

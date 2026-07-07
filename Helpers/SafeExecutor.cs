@@ -6,13 +6,16 @@ namespace Diagnostish.Helpers
     public static class SafeExecutor
     {
         public static void ExecuteSafeQuery(string query, string context,
-                                            System.Management.EnumerationOptions options,
                                             List<string> errors, List<string> criticalErrors,
                                             Action<ManagementObjectSearcher> wmiAction)
         {
             try
             {
-                options.Timeout = WMISettings.RequestTimeout;
+                var options = new System.Management.EnumerationOptions
+                {
+                    ReturnImmediately = true,
+                    Timeout = WMISettings.RequestTimeout
+                };
 
                 using var searcher = new ManagementObjectSearcher(query) { Options = options };
                 wmiAction(searcher);

@@ -7,13 +7,6 @@ namespace Diagnostish.Services.Implementations
 {
     public class CheckOSConfigurationWMI : IOSCheck
     {
-        private readonly System.Management.EnumerationOptions _options;
-
-        public CheckOSConfigurationWMI()
-        {
-            _options = new System.Management.EnumerationOptions { ReturnImmediately = true };
-        }
-
         public OSReport CheckOSCFG()
         {
             var rep = new OSReport();
@@ -28,7 +21,7 @@ namespace Diagnostish.Services.Implementations
         {
             string query = "SELECT Caption, Version, Manufacturer, RegisteredUser FROM Win32_OperatingSystem";
 
-            SafeExecutor.ExecuteSafeQuery(query, "базовых данных ОС", _options, rep.Errors, rep.CriticalErrors, searcher =>
+            SafeExecutor.ExecuteSafeQuery(query, "базовых данных ОС", rep.Errors, rep.CriticalErrors, searcher =>
             {
                 foreach (ManagementObject item in searcher.Get())
                 {
@@ -47,7 +40,7 @@ namespace Diagnostish.Services.Implementations
         {
             string query = "SELECT InstallDate, LastBootUpTime FROM Win32_OperatingSystem";
 
-            SafeExecutor.ExecuteSafeQuery(query, "временных метках ОС", _options, rep.Errors, rep.CriticalErrors, searcher =>
+            SafeExecutor.ExecuteSafeQuery(query, "временных метках ОС", rep.Errors, rep.CriticalErrors, searcher =>
             {
                 foreach (ManagementObject item in searcher.Get())
                 {

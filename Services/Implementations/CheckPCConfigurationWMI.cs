@@ -7,13 +7,6 @@ namespace Diagnostish.Services.Implementations
 {
     public class CheckPCConfigurationWMI : IHWCheck
     {
-        private readonly System.Management.EnumerationOptions _options;
-
-        public CheckPCConfigurationWMI()
-        {
-            _options = new System.Management.EnumerationOptions { ReturnImmediately = true };
-        }
-
         public HWReport CheckPCCFG()
         {
             var rep = new HWReport();
@@ -30,7 +23,7 @@ namespace Diagnostish.Services.Implementations
         {
             string query = "SELECT Name, NumberOfCores, CurrentClockSpeed FROM Win32_Processor";
 
-            SafeExecutor.ExecuteSafeQuery(query, "процессоре", _options, rep.Errors, rep.CriticalErrors, searcher =>
+            SafeExecutor.ExecuteSafeQuery(query, "процессоре", rep.Errors, rep.CriticalErrors, searcher =>
             {
                 foreach (var item in searcher.Get())
                 {
@@ -56,7 +49,7 @@ namespace Diagnostish.Services.Implementations
             var speeds = new List<int>();
             double totalBytes = 0;
 
-            SafeExecutor.ExecuteSafeQuery(query, "ОЗУ", _options, rep.Errors, rep.CriticalErrors, searcher =>
+            SafeExecutor.ExecuteSafeQuery(query, "ОЗУ", rep.Errors, rep.CriticalErrors, searcher =>
             {
                 foreach (var item in searcher.Get())
                 {
@@ -95,7 +88,7 @@ namespace Diagnostish.Services.Implementations
         {
             string query = "SELECT Name FROM Win32_VideoController";
 
-            SafeExecutor.ExecuteSafeQuery(query, "видеокартах", _options, rep.Errors, rep.CriticalErrors, searcher =>
+            SafeExecutor.ExecuteSafeQuery(query, "видеокартах", rep.Errors, rep.CriticalErrors, searcher =>
             {
                 foreach (var item in searcher.Get())
                 {
@@ -112,7 +105,7 @@ namespace Diagnostish.Services.Implementations
         {
             string query = "SELECT Model, Size FROM Win32_DiskDrive";
 
-            SafeExecutor.ExecuteSafeQuery(query, "накопителях", _options, rep.Errors, rep.CriticalErrors, searcher =>
+            SafeExecutor.ExecuteSafeQuery(query, "накопителях", rep.Errors, rep.CriticalErrors, searcher =>
             {
                 foreach (var item in searcher.Get())
                 {

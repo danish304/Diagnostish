@@ -1,7 +1,6 @@
 ﻿using Diagnostish.Helpers;
 using Diagnostish.Models;
 using Diagnostish.Views.Interfaces;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Diagnostish.Views.Implementations
 {

@@ -1,5 +1,4 @@
-﻿using Diagnostish.Models;
-using Diagnostish.Services.Interfaces;
+﻿using Diagnostish.Services.Interfaces;
 using Diagnostish.Views.Interfaces;
 
 namespace Diagnostish.Controllers
@@ -29,22 +28,22 @@ namespace Diagnostish.Controllers
         {
             _ui.ShowWelcome();
 
-            foreach (var check in _hwCheck)
+            var hwReports = _hwCheck.Select(c => c.CheckPCCFG()).ToList();
+            var osReports = _osCheck.Select(c => c.CheckOSCFG()).ToList();
+
+            foreach (var report in hwReports)
             {
-                var hwReport = check.CheckPCCFG();
                 foreach (var printer in _printHw)
                 {
-                    printer.PrintHardware(hwReport);
+                    printer.PrintHardware(report);
                 }
             }
 
-            foreach (var check in _osCheck)
+            foreach (var report in osReports)
             {
-                var osReport = check.CheckOSCFG();
-
                 foreach (var printer in _printOs)
                 {
-                    printer.PrintOperationSystem(osReport);
+                    printer.PrintOperationSystem(report);
                 }
             }
 

@@ -10,6 +10,9 @@ static class Program
 {
     static void Main(string[] args)
     {
+        // Настройка кодировки
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+
         // Подключаем логгирование
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()

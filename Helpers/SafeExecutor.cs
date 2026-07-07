@@ -19,6 +19,11 @@ namespace Diagnostish.Helpers
 
                 using var searcher = new ManagementObjectSearcher(query) { Options = options };
                 using var collection = searcher.Get();
+                if (collection.Count == 0)
+                {
+                    errors.Add($"Не удалось получить данные о {context} (WMI вернул пустой результат).");
+                    return;
+                }
                 wmiAction(collection);
             }
             catch (ManagementException mex) when (mex.ErrorCode == ManagementStatus.Timedout)

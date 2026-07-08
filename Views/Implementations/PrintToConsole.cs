@@ -1,5 +1,4 @@
-﻿using Diagnostish.Helpers;
-using Diagnostish.Models;
+﻿using Diagnostish.Models;
 using Diagnostish.Views.Interfaces;
 
 namespace Diagnostish.Views.Implementations
@@ -8,7 +7,7 @@ namespace Diagnostish.Views.Implementations
     {
         public void PrintHardware(HWReport rep)
         {
-            ConsoleWriter.WriteLineColored("\nКОНФИГУРАЦИЯ ПК:", ConsoleColor.Cyan);
+            WriteLineColored("\nКОНФИГУРАЦИЯ ПК:", ConsoleColor.Cyan);
 
             Console.WriteLine($"\nПроцессор: {rep.ProcessorName} ({rep.CoresCount} ядер), частота - {rep.CurrentClockSpeed} MHz");
             Console.WriteLine($"ОЗУ: {rep.RAMSize} GB, {rep.RAMSpeed} MHz");
@@ -28,7 +27,7 @@ namespace Diagnostish.Views.Implementations
 
         public void PrintOperationSystem(OSReport rep)
         {
-            ConsoleWriter.WriteLineColored("\nКОНФИГУРАЦИЯ ОС:", ConsoleColor.Cyan);
+            WriteLineColored("\nКОНФИГУРАЦИЯ ОС:", ConsoleColor.Cyan);
 
             Console.WriteLine($"\nСистема: {rep.Name} ({rep.Manufacturer})");
             Console.WriteLine($"Версия: {rep.Version}, установлена {rep.InstallDate}");
@@ -47,16 +46,16 @@ namespace Diagnostish.Views.Implementations
             }
             catch (IOException) { }
 
-            ConsoleWriter.WriteLineColored("ЗАПУСК ДИАГНОСТИКИ . . .", ConsoleColor.Magenta);
+            WriteLineColored("ЗАПУСК ДИАГНОСТИКИ . . .", ConsoleColor.Magenta);
         }
 
         public void WaitForExit()
         {
-            ConsoleWriter.WriteLineColored("\nСканирование завершено!", ConsoleColor.Green);
+            WriteLineColored("\nСканирование завершено!", ConsoleColor.Green);
 
             if (!Console.IsInputRedirected)
             {
-                ConsoleWriter.WriteLineColored("Для завершения нажмите любую клавишу . . .", ConsoleColor.DarkGray);
+                WriteLineColored("Для завершения нажмите любую клавишу . . .", ConsoleColor.DarkGray);
                 Console.ReadKey();
             }
         }
@@ -66,14 +65,21 @@ namespace Diagnostish.Views.Implementations
             if (errors.Count > 0)
             {
                 Console.WriteLine("\nПРЕДУПРЕЖДЕНИЯ:");
-                foreach (var warn in errors) ConsoleWriter.WriteLineColored($"  - {warn}", ConsoleColor.Yellow);
+                foreach (var warn in errors) WriteLineColored($"  - {warn}", ConsoleColor.Yellow);
             }
             
             if (criticalErrors.Count > 0)
             {
                 Console.WriteLine("\nКРИТИЧЕСКИЕ ОШИБКИ:");
-                foreach (var warn in criticalErrors) ConsoleWriter.WriteLineColored($"  - {warn}", ConsoleColor.Red);
+                foreach (var warn in criticalErrors) WriteLineColored($"  - {warn}", ConsoleColor.Red);
             }
+        }
+
+        private static void WriteLineColored(string text, ConsoleColor color)
+        {
+            Console.ForegroundColor = color;
+            Console.WriteLine(text);
+            Console.ResetColor();
         }
     }
 }

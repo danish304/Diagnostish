@@ -11,17 +11,16 @@ namespace Diagnostish.Services.Implementations
         {
             var rep = new OSReport();
 
-            GetOsGeneralInfo(rep);
-            GetOsDateTimeInfo(rep);
+            GetOsInfo(rep);
 
             return rep;
         }
 
-        private void GetOsGeneralInfo(OSReport rep)
+        private void GetOsInfo(OSReport rep)
         {
-            string query = "SELECT Caption, Version, Manufacturer, RegisteredUser FROM Win32_OperatingSystem";
+            string query = "SELECT Caption, Version, Manufacturer, RegisteredUser, InstallDate, LastBootUpTime FROM Win32_OperatingSystem";
 
-            SafeExecutor.ExecuteSafeQuery(query, "базовых данных ОС", rep.Errors, rep.CriticalErrors, collection =>
+            SafeExecutor.ExecuteSafeQuery(query, "данных ОС", rep.Errors, rep.CriticalErrors, collection =>
             {
                 foreach (ManagementObject item in collection)
                 {
@@ -31,21 +30,7 @@ namespace Diagnostish.Services.Implementations
                         rep.Version = Parser.ToSafeString(item["Version"]);
                         rep.Manufacturer = Parser.ToSafeString(item["Manufacturer"]);
                         rep.RegisteredUser = Parser.ToSafeString(item["RegisteredUser"]);
-                    }
-                }
-            });
-        }
 
-        private void GetOsDateTimeInfo(OSReport rep)
-        {
-            string query = "SELECT InstallDate, LastBootUpTime FROM Win32_OperatingSystem";
-
-            SafeExecutor.ExecuteSafeQuery(query, "временных метках ОС", rep.Errors, rep.CriticalErrors, collection =>
-            {
-                foreach (ManagementObject item in collection)
-                {
-                    using (item)
-                    {
                         rep.InstallDate = Parser.ToSafeDateTime(item["InstallDate"]);
                         if (!rep.InstallDate.HasValue || (rep.InstallDate.Value == DateTime.MinValue))
                         {

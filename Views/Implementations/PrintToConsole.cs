@@ -30,7 +30,7 @@ namespace Diagnostish.Views.Implementations
             WriteLineColored("\nКОНФИГУРАЦИЯ ОС:", ConsoleColor.Cyan);
 
             Console.WriteLine($"\nСистема: {rep.Name} ({rep.Manufacturer})");
-            Console.WriteLine($"Версия: {rep.Version}, установлена {rep.InstallDate}");
+            Console.WriteLine($"Версия: {rep.Version}, установлена: {rep.InstallDate}");
             Console.WriteLine($"Пользователь: {rep.RegisteredUser}");
             Console.WriteLine($"Последнее включение: {rep.LastBootUpTime}");
 

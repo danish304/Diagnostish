@@ -21,7 +21,7 @@ namespace Diagnostish.Helpers
                 using var collection = searcher.Get();
                 if (collection.Count == 0)
                 {
-                    errors.Add($"Не удалось получить данные о {context} (WMI вернул пустой результат).");
+                    errors.Add($"Не удалось получить данные о/об {context} (WMI вернул пустой результат).");
                     return;
                 }
                 wmiAction(collection);

@@ -7,6 +7,8 @@ namespace Diagnostish.Services.Implementations
 {
     public class CheckPCConfigurationWMI : IHWCheck
     {
+        private const long BytesInGigabyte = 1024L * 1024L * 1024L;
+
         public HWReport CheckPCCFG()
         {
             var rep = new HWReport();
@@ -91,7 +93,7 @@ namespace Diagnostish.Services.Implementations
 
                 if (totalBytes > 0)
                 {
-                    rep.RAMSize = Math.Round(totalBytes / WMISettings.BytesInGigabyte, 2);
+                    rep.RAMSize = Math.Round(totalBytes / BytesInGigabyte, 2);
                 }
 
                 if (speeds.Count > 0)
@@ -140,7 +142,7 @@ namespace Diagnostish.Services.Implementations
                         double? size = Parser.ToSafeDouble(item["Size"]);
                         if (size.HasValue && size.Value > 0)
                         {
-                            double sizeGB = Math.Round(size.Value / WMISettings.BytesInGigabyte, 0);
+                            double sizeGB = Math.Round(size.Value / BytesInGigabyte, 0);
                             rep.Drives.Add($"{model} ({sizeGB} GB)");
                         }
                         else

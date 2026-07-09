@@ -10,41 +10,34 @@ static class Program
 {
     static void Main(string[] args)
     {
-        // Настройка кодировки
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-        // Подключаем логгирование
         Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .WriteTo.Console()    
-            .WriteTo.File("logs/diagnostish-.txt", rollingInterval: RollingInterval.Day) 
+            .MinimumLevel.Debug()  
+            .WriteTo.File("logs/diagnostish-.txt", 
+                          rollingInterval: RollingInterval.Day,
+                          outputTemplate: "{Timestamp:HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}------------------------------------{NewLine}") 
             .CreateLogger();
 
         Log.Information("Приложение Diagnostish запущено.");
 
-        var services = new ServiceCollection(); // Коллекция для регистрации
+        var services = new ServiceCollection(); 
 
-        // 1. Регистрируем Services
         services.AddTransient<IHWCheck, CheckPCConfigurationWMI>();
         services.AddTransient<IOSCheck, CheckOSConfigurationWMI>();
 
-        // 2. Регистрируем Views
         services.AddSingleton<PrintToConsole>();
         services.AddSingleton<IPrintHW>(sp => sp.GetRequiredService<PrintToConsole>());
         services.AddSingleton<IPrintOS>(sp => sp.GetRequiredService<PrintToConsole>());
         services.AddSingleton<IUserInterface>(sp => sp.GetRequiredService<PrintToConsole>());
 
-        // 3. Регистрируем Controllers
         services.AddTransient<DiagnosticController>();
 
-        // 4. Строим DI-контейнер
         var serviceProvider = services.BuildServiceProvider();
 
-        // 5. Запрашиваем контроллеры
         var controller = serviceProvider.GetRequiredService<DiagnosticController>();
         controller.StartDiagnostic();
 
-        // Завершаем логгирование
         Log.CloseAndFlush();
     }
 }

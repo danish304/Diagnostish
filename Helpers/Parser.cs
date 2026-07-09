@@ -1,4 +1,5 @@
-﻿using System.Management;
+﻿using System.Globalization;
+using System.Management;
 
 namespace Diagnostish.Helpers
 {
@@ -7,27 +8,25 @@ namespace Diagnostish.Helpers
         public static double? ToSafeDouble(object? value)
         {
             if (value == null || value == DBNull.Value) return null;
-            try
+
+            if (double.TryParse(value.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out double result))
             {
-                return Convert.ToDouble(value);
+                return result;
             }
-            catch
-            {
-                return null;
-            }
+
+            return null;
         }
 
         public static int? ToSafeInt(object? value)
         {
             if (value == null || value == DBNull.Value) return null;
-            try
+
+            if (int.TryParse(value.ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int result))
             {
-                return Convert.ToInt32(value);
+                return result;
             }
-            catch
-            {
-                return null;
-            }
+
+            return null;
         }
 
         public static string ToSafeString(object? value)

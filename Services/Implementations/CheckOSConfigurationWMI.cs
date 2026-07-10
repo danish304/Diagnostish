@@ -16,13 +16,13 @@ namespace Diagnostish.Services.Implementations
             return rep;
         }
 
-        private void GetOsInfo(OSReport rep)
+        private static void GetOsInfo(OSReport rep)
         {
             string query = "SELECT Caption, Version, Manufacturer, RegisteredUser, InstallDate, LastBootUpTime FROM Win32_OperatingSystem";
 
             SafeExecutor.ExecuteSafeQuery(query, "данных ОС", rep.Errors, rep.CriticalErrors, collection =>
             {
-                foreach (ManagementObject item in collection)
+                foreach (var item in collection)
                 {
                     using (item)
                     {

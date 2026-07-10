@@ -21,7 +21,7 @@ namespace Diagnostish.Services.Implementations
             return rep;
         }
 
-        private void GetCpuInfo(HWReport rep)
+        private static void GetCpuInfo(HWReport rep)
         {
             string query = "SELECT Name, NumberOfCores, CurrentClockSpeed FROM Win32_Processor";
 
@@ -57,7 +57,7 @@ namespace Diagnostish.Services.Implementations
             });
         }
 
-        private void GetRamInfo(HWReport rep)
+        private static void GetRamInfo(HWReport rep)
         {
             string query = "SELECT Capacity, Speed FROM Win32_PhysicalMemory";
             var speeds = new List<int>();
@@ -110,7 +110,7 @@ namespace Diagnostish.Services.Implementations
             });
         }
 
-        private void GetGpuInfo(HWReport rep)
+        private static void GetGpuInfo(HWReport rep)
         {
             string query = "SELECT Name FROM Win32_VideoController";
 
@@ -127,7 +127,7 @@ namespace Diagnostish.Services.Implementations
             });
         }
 
-        private void GetDrivesInfo(HWReport rep)
+        private static void GetDrivesInfo(HWReport rep)
         {
             string query = "SELECT Model, Size FROM Win32_DiskDrive";
 

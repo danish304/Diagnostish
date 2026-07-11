@@ -12,14 +12,14 @@ namespace Diagnostish.Views.Implementations
             Console.WriteLine($"\nПроцессор: {rep.ProcessorName} ({rep.CoresCount} ядер), частота - {rep.CurrentClockSpeed} MHz");
             Console.WriteLine($"ОЗУ: {rep.RAMSize} GB, {rep.RAMSpeed} MHz");
             Console.WriteLine("Видеокарты:");
-            foreach (var gpu in rep.VideoCards)
+            foreach (var videoCard in rep.VideoCards)
             {
-                Console.WriteLine($" - {gpu}");
+                Console.WriteLine($" - {videoCard}");
             }
             Console.WriteLine("Накопители:");
-            foreach (var drives in rep.Drives)
+            foreach (var (drive, size) in rep.ModelsDrives.Zip(rep.DrivesSize))
             {
-                Console.WriteLine($" - {drives}");
+                Console.WriteLine($" - {drive} ({size} GB)");
             }
 
             PrintIssues(rep.Errors, rep.CriticalErrors);
@@ -60,7 +60,7 @@ namespace Diagnostish.Views.Implementations
             }
         }
 
-        private void PrintIssues(List<string> errors, List<string> criticalErrors)
+        private static void PrintIssues(List<string> errors, List<string> criticalErrors)
         {
             if (errors.Count > 0)
             {

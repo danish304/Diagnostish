@@ -17,6 +17,8 @@ namespace Diagnostish.Services.Implementations
             GetRamInfo(rep);
             GetGpuInfo(rep);
             GetDrivesInfo(rep);
+            GetBaseBoardInfo(rep);
+            GetBIOSInfo(rep);
 
             return rep;
         }
@@ -186,7 +188,45 @@ namespace Diagnostish.Services.Implementations
 
         private static void GetBaseBoardInfo(HWReport rep)
         {
-            string query = "SELECT "
+            string query = "SELECT Product, Manufacturer, Version, Status FROM Win32_BaseBoard";
+
+            SafeExecutor.ExecuteSafeQuery(query, "основной плате", rep.Errors, rep.CriticalErrors, collection =>
+            {
+                foreach (var item in collection)
+                {
+                    using (item)
+                    {
+                        rep.BaseBoardModel = Parser.ToSafeString(item["Product"]);
+                        rep.BaseBoardManufacturer = Parser.ToSafeString(item["Manufacturer"]);
+                        rep.BaseBoardVersion = Parser.ToSafeString(item["Version"]);
+                        rep.BaseBoardStatus = Parser.ToSafeString(item["Status"]);
+                    }
+                }
+            });
+        }
+
+        private static void GetBIOSInfo(HWReport rep)
+        {
+            string query = "SELECT Version, ReleaseDate, Manufacturer FROM Win32_BIOS";
+
+            SafeExecutor.ExecuteSafeQuery(query, "BIOS", rep.Errors, rep.CriticalErrors, collection =>
+            {
+                foreach(var item in collection)
+                {
+                    using (item)
+                    {
+                        rep.BIOSVersion = Parser.ToSafeString(item["Version"]);
+
+                        rep.BIOSReleaseDate = Parser.ToSafeDateTime(item["ReleaseDate"]);
+                        if (!rep.BIOSReleaseDate.HasValue || (rep.BIOSReleaseDate.Value == DateTime.MinValue))
+                        {
+                            rep.Errors.Add("Не удалось определить корректную дату релиза BIOS!");
+                        }
+
+                        rep.BIOSManufacturer = Parser.ToSafeString(item["Manufacturer"]);
+                    }
+                }
+            });
         }
     }
 }

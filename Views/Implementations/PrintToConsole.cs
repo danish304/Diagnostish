@@ -57,7 +57,7 @@ namespace Diagnostish.Views.Implementations
 
         public void WaitForExit()
         {
-            WriteLineColored("\nСканирование завершено!", ConsoleColor.Green);
+            WriteLineColored("\nСКАНИРОВАНИЕ ЗАВЕРШЕНО!", ConsoleColor.Green);
 
             if (!Console.IsInputRedirected)
             {
@@ -70,14 +70,14 @@ namespace Diagnostish.Views.Implementations
         {
             if (errors.Count > 0)
             {
-                Console.WriteLine("\nПРЕДУПРЕЖДЕНИЯ:");
-                foreach (var warn in errors) WriteLineColored($"  - {warn}", ConsoleColor.Yellow);
+                WriteLineColored("\n* ПРЕДУПРЕЖДЕНИЯ *", ConsoleColor.DarkYellow);
+                foreach (var warn in errors) WriteLineColored($"    - {warn}", ConsoleColor.Yellow);
             }
             
             if (criticalErrors.Count > 0)
             {
-                Console.WriteLine("\nКРИТИЧЕСКИЕ ОШИБКИ:");
-                foreach (var warn in criticalErrors) WriteLineColored($"  - {warn}", ConsoleColor.Red);
+                WriteLineColored("\n* КРИТИЧЕСКИЕ ОШИБКИ *", ConsoleColor.DarkRed);
+                foreach (var warn in criticalErrors) WriteLineColored($"    - {warn}", ConsoleColor.Red);
             }
         }
 

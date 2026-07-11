@@ -11,6 +11,7 @@
         public string RAMType { get; set; } = "Unknown";                        // Тип ОЗУ
 
         public List<string> VideoCards { get; } = [];                           // Названия видеокарт
+        public double AdapterRAM { get; set; }                                  // Объем видеопамяти
 
         public List<string> ModelsDrives { get; } = [];                         // Модели накопителей
         public List<double> DrivesSize { get; } = [];                           // Объемы накопителей

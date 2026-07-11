@@ -1,6 +1,5 @@
 ﻿using Diagnostish.Helpers;
 using Diagnostish.Models;
-using System.Management;
 using Diagnostish.Services.Interfaces;
 
 namespace Diagnostish.Services.Implementations
@@ -26,19 +25,19 @@ namespace Diagnostish.Services.Implementations
                 {
                     using (item)
                     {
-                        rep.Name = Parser.ToSafeString(item["Caption"]);
-                        rep.Version = Parser.ToSafeString(item["Version"]);
-                        rep.Manufacturer = Parser.ToSafeString(item["Manufacturer"]);
-                        rep.RegisteredUser = Parser.ToSafeString(item["RegisteredUser"]);
+                        rep.OpSystemName = Parser.ToSafeString(item["Caption"]);
+                        rep.OpSystemVersion = Parser.ToSafeString(item["Version"]);
+                        rep.OpSystemManufacturer = Parser.ToSafeString(item["Manufacturer"]);
+                        rep.OpSystemRegisteredUser = Parser.ToSafeString(item["RegisteredUser"]);
 
-                        rep.InstallDate = Parser.ToSafeDateTime(item["InstallDate"]);
-                        if (!rep.InstallDate.HasValue || (rep.InstallDate.Value == DateTime.MinValue))
+                        rep.OpSystemInstallDate = Parser.ToSafeDateTime(item["InstallDate"]);
+                        if (!rep.OpSystemInstallDate.HasValue || (rep.OpSystemInstallDate.Value == DateTime.MinValue))
                         {
                             rep.Errors.Add("Не удалось определить корректную дату установки ОС!");
                         }
 
-                        rep.LastBootUpTime = Parser.ToSafeDateTime(item["LastBootUpTime"]);
-                        if (!rep.LastBootUpTime.HasValue || (rep.LastBootUpTime.Value == DateTime.MinValue))
+                        rep.OpSystemLastBootUpTime = Parser.ToSafeDateTime(item["LastBootUpTime"]);
+                        if (!rep.OpSystemLastBootUpTime.HasValue || (rep.OpSystemLastBootUpTime.Value == DateTime.MinValue))
                         {
                             rep.Errors.Add("Не удалось определить корректную дату последнего запуска ОС!");
                         }

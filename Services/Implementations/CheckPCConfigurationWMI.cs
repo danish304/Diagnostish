@@ -59,9 +59,20 @@ namespace Diagnostish.Services.Implementations
 
         private static void GetRamInfo(HWReport rep)
         {
-            string query = "SELECT Capacity, Speed FROM Win32_PhysicalMemory";
+            string query = "SELECT SMBIOSMemoryType, Capacity, Speed FROM Win32_PhysicalMemory";
             var speeds = new List<int>();
             double totalBytes = 0;
+
+            var RAMTypes = new Dictionary<string, string>
+            {
+                { "20", "DDR" },
+                { "21", "DDR2" },
+                { "24", "DDR3" },
+                { "26", "DDR4" },
+                { "34", "DDR5" }
+             };
+
+            string detectedType = "Unknown";
 
             SafeExecutor.ExecuteSafeQuery(query, "ОЗУ", rep.Errors, rep.CriticalErrors, collection =>
             {
@@ -69,6 +80,13 @@ namespace Diagnostish.Services.Implementations
                 {
                     using (item)
                     {
+                        string rawType = Parser.ToSafeString(item["SMBIOSMemoryType"]);
+                        if (RAMTypes.TryGetValue(rawType, out var humanReadableType))
+                        {
+                            detectedType = humanReadableType; 
+                        }
+                        rep.RAMType = detectedType;
+
                         double? capacity = Parser.ToSafeDouble(item["Capacity"]);
                         if (capacity.HasValue && capacity.Value > 0)
                         {

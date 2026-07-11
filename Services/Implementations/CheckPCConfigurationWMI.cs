@@ -130,7 +130,7 @@ namespace Diagnostish.Services.Implementations
 
         private static void GetGpuInfo(HWReport rep)
         {
-            string query = "SELECT Name FROM Win32_VideoController";
+            string query = "SELECT Name, AdapterRAM FROM Win32_VideoController";
 
             SafeExecutor.ExecuteSafeQuery(query, "видеокартах", rep.Errors, rep.CriticalErrors, collection =>
             {
@@ -140,6 +140,17 @@ namespace Diagnostish.Services.Implementations
                     {
                         string gpu = Parser.ToSafeString(item["Name"]);
                         rep.VideoCards.Add(gpu);
+
+                        double? size = Parser.ToSafeDouble(item["AdapterRAM"]);
+                        if (size.HasValue && size.Value > 0)
+                        {
+                            rep.AdaptersRAM.Add(Math.Round(size.Value / BytesInGigabyte, 0));
+                        }
+                        else
+                        {
+                            rep.AdaptersRAM.Add(0);
+                            rep.Errors.Add($"Не удалось определить объем видеопамяти у: {gpu}");
+                        }
                     }
                 }
             });

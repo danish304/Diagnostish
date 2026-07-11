@@ -35,10 +35,10 @@ namespace Diagnostish.Views.Implementations
         {
             WriteLineColored("\nКОНФИГУРАЦИЯ ОС:", ConsoleColor.Cyan);
 
-            Console.WriteLine($"\nСистема: {rep.Name} ({rep.Manufacturer})");
-            Console.WriteLine($"Версия: {rep.Version}, установлена: {rep.InstallDate}");
-            Console.WriteLine($"Пользователь: {rep.RegisteredUser}");
-            Console.WriteLine($"Последнее включение: {rep.LastBootUpTime}");
+            Console.WriteLine($"\n1) Система: {rep.OpSystemName} ({rep.OpSystemManufacturer})");
+            Console.WriteLine($"   Версия: {rep.OpSystemVersion}, установлена: {rep.OpSystemInstallDate}");
+            Console.WriteLine($"2) Пользователь: {rep.OpSystemRegisteredUser}");
+            Console.WriteLine($"3) Последнее включение: {rep.OpSystemLastBootUpTime}");
 
             PrintIssues(rep.Errors, rep.CriticalErrors);
         }

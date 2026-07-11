@@ -7,7 +7,7 @@ namespace Diagnostish.Services.Implementations
 {
     public class CheckPCConfigurationWMI : IHWCheck
     {
-        private const long BytesInGigabyte = 1024L * 1024L * 1024L;
+        private const double BytesInGigabyte = 1024 * 1024 * 1024;
 
         public HWReport CheckPCCFG()
         {

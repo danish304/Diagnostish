@@ -138,21 +138,26 @@ namespace Diagnostish.Services.Implementations
                     using (item)
                     {
                         string model = Parser.ToSafeString(item["Model"]);
+                        rep.ModelsDrives.Add(model);
 
                         double? size = Parser.ToSafeDouble(item["Size"]);
                         if (size.HasValue && size.Value > 0)
                         {
-                            double sizeGB = Math.Round(size.Value / BytesInGigabyte, 0);
-                            rep.Drives.Add($"{model} ({sizeGB} GB)");
+                            rep.DrivesSize.Add(Math.Round(size.Value / BytesInGigabyte, 0));
                         }
                         else
                         {
-                            rep.Drives.Add($"{model} (-)");
+                            rep.DrivesSize.Add(0);
                             rep.Errors.Add($"Не удалось определить емкость накопителя: {model}");
                         }
                     }
                 }
             });
+        }
+
+        private static void GetBaseBoardInfo(HWReport rep)
+        {
+            string query = "SELECT "
         }
     }
 }

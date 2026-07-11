@@ -8,19 +8,25 @@ namespace Diagnostish.Views.Implementations
         public void PrintHardware(HWReport rep)
         {
             WriteLineColored("\nКОНФИГУРАЦИЯ ПК:", ConsoleColor.Cyan);
+            Console.WriteLine($"\n1) Процессор: {rep.ProcessorName} ({rep.CoresCount} ядер), частота - {rep.CurrentClockSpeed} MHz");
+            Console.WriteLine($"2) ОЗУ: {rep.RAMType} {rep.RAMSize} GB, {rep.RAMSpeed} MHz");
 
-            Console.WriteLine($"\nПроцессор: {rep.ProcessorName} ({rep.CoresCount} ядер), частота - {rep.CurrentClockSpeed} MHz");
-            Console.WriteLine($"ОЗУ: {rep.RAMSize} GB, {rep.RAMSpeed} MHz");
-            Console.WriteLine("Видеокарты:");
-            foreach (var videoCard in rep.VideoCards)
+            Console.WriteLine("3) Видеокарты:");
+            foreach (var (videoCard, size) in rep.VideoCards.Zip(rep.AdaptersRAM))
             {
-                Console.WriteLine($" - {videoCard}");
+                Console.WriteLine($"    - {videoCard} ({size} GB)");
             }
-            Console.WriteLine("Накопители:");
+
+            Console.WriteLine("4) Накопители:");
             foreach (var (drive, size) in rep.ModelsDrives.Zip(rep.DrivesSize))
             {
-                Console.WriteLine($" - {drive} ({size} GB)");
+                Console.WriteLine($"    - {drive} ({size} GB)");
             }
+
+            Console.WriteLine($"5) Материнская плата: {rep.BaseBoardModel} ({rep.BaseBoardManufacturer}), версия {rep.BaseBoardVersion}");
+            Console.WriteLine($"   Статус платы: {rep.BaseBoardStatus}");
+
+            Console.WriteLine($"6) BIOS: {rep.BIOSVersion} ({rep.BIOSManufacturer}), дата релиза - {rep.BIOSReleaseDate}");
 
             PrintIssues(rep.Errors, rep.CriticalErrors);
         }

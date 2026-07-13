@@ -12,15 +12,15 @@ namespace Diagnostish.Views.Implementations
             Console.WriteLine($"2) ОЗУ: {rep.RAMType} {rep.RAMSize} GB, {rep.RAMSpeed} MHz");
 
             Console.WriteLine("3) Видеокарты:");
-            foreach (var (videoCard, size) in rep.VideoCards.Zip(rep.AdaptersRAM))
+            foreach (var gpu in rep.VideoCards)
             {
-                Console.WriteLine($"    - {videoCard} ({size} GB)");
+                Console.WriteLine($"    - {gpu.Name} ({gpu.SizeGB} GB)");
             }
 
             Console.WriteLine("4) Накопители:");
-            foreach (var (drive, size) in rep.ModelsDrives.Zip(rep.DrivesSize))
+            foreach (var drive in rep.Drives)
             {
-                Console.WriteLine($"    - {drive} ({size} GB)");
+                Console.WriteLine($"    - {drive.Name} ({drive.SizeGB} GB)");
             }
 
             Console.WriteLine($"5) Материнская плата: {rep.BaseBoardModel} ({rep.BaseBoardManufacturer}), версия {rep.BaseBoardVersion}");

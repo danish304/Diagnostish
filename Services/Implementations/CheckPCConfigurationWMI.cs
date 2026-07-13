@@ -25,7 +25,11 @@ namespace Diagnostish.Services.Implementations
 
         private static void GetCpuInfo(HWReport rep)
         {
-            string query = "SELECT Name, NumberOfCores, CurrentClockSpeed FROM Win32_Processor";
+            const string CPUNAME = "Name";
+            const string COUNTCORES = "NumberOfCores";
+            const string SPEED = "CurrentClockSpeed";
+
+            string query = "SELECT" + CPUNAME + COUNTCORES + SPEED + "FROM Win32_Processor";
 
             SafeExecutor.ExecuteSafeQuery(query, "процессоре", rep.Errors, rep.CriticalErrors, collection =>
             {
@@ -33,9 +37,9 @@ namespace Diagnostish.Services.Implementations
                 {
                     using (item)
                     {
-                        rep.ProcessorName = Parser.ToSafeString(item["Name"]);
+                        rep.ProcessorName = Parser.ToSafeString(item[CPUNAME]);
 
-                        int? cores = Parser.ToSafeInt(item["NumberOfCores"]);
+                        int? cores = Parser.ToSafeInt(item[COUNTCORES]);
                         if (!cores.HasValue || cores.Value <= 0)
                         {
                             rep.Errors.Add("Не удалось получить корректное количество ядер процессора!");
@@ -45,7 +49,7 @@ namespace Diagnostish.Services.Implementations
                             rep.CoresCount = cores.Value;
                         }
 
-                        int? clockspeed = Parser.ToSafeInt(item["CurrentClockSpeed"]);
+                        int? clockspeed = Parser.ToSafeInt(item[SPEED]);
                         if (!clockspeed.HasValue || clockspeed.Value <= 0)
                         {
                             rep.Errors.Add("Не удалось получить корректную частоту процессора!");
@@ -61,8 +65,14 @@ namespace Diagnostish.Services.Implementations
 
         private static void GetRamInfo(HWReport rep)
         {
-            string query = "SELECT SMBIOSMemoryType, Capacity, Speed FROM Win32_PhysicalMemory";
+            const string TYPE = "SMBIOSMemoryType";
+            const string CAPACITY = "Capacity";
+            const string SPEED = "Speed";
+
+            string query = "SELECT" + TYPE + CAPACITY + SPEED + "FROM Win32_PhysicalMemory";
+
             var speeds = new List<int>();
+
             double totalBytes = 0;
 
             var RAMTypes = new Dictionary<string, string>
@@ -82,14 +92,14 @@ namespace Diagnostish.Services.Implementations
                 {
                     using (item)
                     {
-                        string rawType = Parser.ToSafeString(item["SMBIOSMemoryType"]);
+                        string rawType = Parser.ToSafeString(item[TYPE]);
                         if (RAMTypes.TryGetValue(rawType, out var humanReadableType))
                         {
                             detectedType = humanReadableType; 
                         }
                         rep.RAMType = detectedType;
 
-                        double? capacity = Parser.ToSafeDouble(item["Capacity"]);
+                        double? capacity = Parser.ToSafeDouble(item[CAPACITY]);
                         if (capacity.HasValue && capacity.Value > 0)
                         {
                             totalBytes += capacity.Value;
@@ -99,7 +109,7 @@ namespace Diagnostish.Services.Implementations
                             rep.Errors.Add("Не удалось определить корректную емкость одной из планок ОЗУ!");
                         }
 
-                        int? speed = Parser.ToSafeInt(item["Speed"]);
+                        int? speed = Parser.ToSafeInt(item[SPEED]);
                         if (speed.HasValue && speed.Value > 0)
                         {
                             speeds.Add(speed.Value);
@@ -132,7 +142,10 @@ namespace Diagnostish.Services.Implementations
 
         private static void GetGpuInfo(HWReport rep)
         {
-            string query = "SELECT Name, AdapterRAM FROM Win32_VideoController";
+            const string GPUNAME = "Name";
+            const string GPURAM = "AdapterRAM";
+
+            string query = "SELECT" + GPUNAME + GPURAM + "FROM Win32_VideoController";
 
             SafeExecutor.ExecuteSafeQuery(query, "видеокартах", rep.Errors, rep.CriticalErrors, collection =>
             {
@@ -140,19 +153,20 @@ namespace Diagnostish.Services.Implementations
                 {
                     using (item)
                     {
-                        string gpu = Parser.ToSafeString(item["Name"]);
-                        rep.VideoCards.Add(gpu);
+                        string gpu = Parser.ToSafeString(item[GPUNAME]);
+                        double sizeGB = 0;
 
-                        double? size = Parser.ToSafeDouble(item["AdapterRAM"]);
+                        double? size = Parser.ToSafeDouble(item[GPURAM]);
                         if (size.HasValue && size.Value > 0)
                         {
-                            rep.AdaptersRAM.Add(Math.Round(size.Value / BytesInGigabyte, 0));
+                            sizeGB = Math.Round(size.Value / BytesInGigabyte, 0);
                         }
                         else
                         {
-                            rep.AdaptersRAM.Add(0);
                             rep.Errors.Add($"Не удалось определить объем видеопамяти у: {gpu}");
                         }
+
+                        rep.VideoCards.Add(new HWReport.ComponentInfo(gpu, sizeGB));
                     }
                 }
             });
@@ -160,7 +174,10 @@ namespace Diagnostish.Services.Implementations
 
         private static void GetDrivesInfo(HWReport rep)
         {
-            string query = "SELECT Model, Size FROM Win32_DiskDrive";
+            const string MODEL = "Model";
+            const string SIZE = "Size";
+
+            string query = "SELECT" + MODEL + SIZE + "FROM Win32_DiskDrive";
 
             SafeExecutor.ExecuteSafeQuery(query, "накопителях", rep.Errors, rep.CriticalErrors, collection =>
             {
@@ -168,19 +185,20 @@ namespace Diagnostish.Services.Implementations
                 {
                     using (item)
                     {
-                        string model = Parser.ToSafeString(item["Model"]);
-                        rep.ModelsDrives.Add(model);
+                        string model = Parser.ToSafeString(item[MODEL]);
+                        double sizeGB = 0;
 
-                        double? size = Parser.ToSafeDouble(item["Size"]);
+                        double? size = Parser.ToSafeDouble(item[SIZE]);
                         if (size.HasValue && size.Value > 0)
                         {
-                            rep.DrivesSize.Add(Math.Round(size.Value / BytesInGigabyte, 0));
+                            sizeGB = Math.Round(size.Value / BytesInGigabyte, 0);
                         }
                         else
                         {
-                            rep.DrivesSize.Add(0);
                             rep.Errors.Add($"Не удалось определить емкость накопителя: {model}");
                         }
+
+                        rep.Drives.Add(new HWReport.ComponentInfo(model, sizeGB));
                     }
                 }
             });
@@ -188,7 +206,12 @@ namespace Diagnostish.Services.Implementations
 
         private static void GetBaseBoardInfo(HWReport rep)
         {
-            string query = "SELECT Product, Manufacturer, Version, Status FROM Win32_BaseBoard";
+            const string MODEL = "Product";
+            const string MANUFACTURER = "Manufacturer";
+            const string VERSION = "VersionVersion";
+            const string STATUS = "Status";
+
+            string query = "SELECT" + MODEL + MANUFACTURER + VERSION + STATUS + "FROM Win32_BaseBoard";
 
             SafeExecutor.ExecuteSafeQuery(query, "основной плате", rep.Errors, rep.CriticalErrors, collection =>
             {
@@ -196,10 +219,10 @@ namespace Diagnostish.Services.Implementations
                 {
                     using (item)
                     {
-                        rep.BaseBoardModel = Parser.ToSafeString(item["Product"]);
-                        rep.BaseBoardManufacturer = Parser.ToSafeString(item["Manufacturer"]);
-                        rep.BaseBoardVersion = Parser.ToSafeString(item["Version"]);
-                        rep.BaseBoardStatus = Parser.ToSafeString(item["Status"]);
+                        rep.BaseBoardModel = Parser.ToSafeString(item[MODEL]);
+                        rep.BaseBoardManufacturer = Parser.ToSafeString(item[MANUFACTURER]);
+                        rep.BaseBoardVersion = Parser.ToSafeString(item[VERSION]);
+                        rep.BaseBoardStatus = Parser.ToSafeString(item[STATUS]);
                     }
                 }
             });
@@ -207,7 +230,11 @@ namespace Diagnostish.Services.Implementations
 
         private static void GetBIOSInfo(HWReport rep)
         {
-            string query = "SELECT Version, ReleaseDate, Manufacturer FROM Win32_BIOS";
+            const string VERSION = "Version";
+            const string RELEASE = "ReleaseDate";
+            const string MANUFACTURER = "Manufacturer";
+
+            string query = "SELECT" + VERSION + RELEASE + MANUFACTURER + "FROM Win32_BIOS";
 
             SafeExecutor.ExecuteSafeQuery(query, "BIOS", rep.Errors, rep.CriticalErrors, collection =>
             {
@@ -215,15 +242,15 @@ namespace Diagnostish.Services.Implementations
                 {
                     using (item)
                     {
-                        rep.BIOSVersion = Parser.ToSafeString(item["Version"]);
+                        rep.BIOSVersion = Parser.ToSafeString(item[VERSION]);
 
-                        rep.BIOSReleaseDate = Parser.ToSafeDateTime(item["ReleaseDate"]);
+                        rep.BIOSReleaseDate = Parser.ToSafeDateTime(item[RELEASE]);
                         if (!rep.BIOSReleaseDate.HasValue || (rep.BIOSReleaseDate.Value == DateTime.MinValue))
                         {
                             rep.Errors.Add("Не удалось определить корректную дату релиза BIOS!");
                         }
 
-                        rep.BIOSManufacturer = Parser.ToSafeString(item["Manufacturer"]);
+                        rep.BIOSManufacturer = Parser.ToSafeString(item[MANUFACTURER]);
                     }
                 }
             });

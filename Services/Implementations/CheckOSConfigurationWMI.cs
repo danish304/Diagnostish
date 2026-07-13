@@ -24,7 +24,7 @@ namespace Diagnostish.Services.Implementations
             const string INSTALL = "InstallDate";
             const string LASTBOOT = "LastBootUpTime";
 
-            string query = "SELECT" + CAPTION + VERSION + MANUFACTURER + USER + INSTALL + LASTBOOT + "FROM Win32_OperatingSystem";
+            string query = $"SELECT {CAPTION}, {VERSION}, {MANUFACTURER}, {USER}, {INSTALL}, {LASTBOOT} FROM Win32_OperatingSystem";
 
             SafeExecutor.ExecuteSafeQuery(query, "данных ОС", rep.Errors, rep.CriticalErrors, collection =>
             {

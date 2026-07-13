@@ -29,7 +29,7 @@ namespace Diagnostish.Services.Implementations
             const string COUNTCORES = "NumberOfCores";
             const string SPEED = "CurrentClockSpeed";
 
-            string query = "SELECT" + CPUNAME + COUNTCORES + SPEED + "FROM Win32_Processor";
+            string query = $"SELECT {CPUNAME}, {COUNTCORES}, {SPEED} FROM Win32_Processor";
 
             SafeExecutor.ExecuteSafeQuery(query, "процессоре", rep.Errors, rep.CriticalErrors, collection =>
             {
@@ -69,7 +69,7 @@ namespace Diagnostish.Services.Implementations
             const string CAPACITY = "Capacity";
             const string SPEED = "Speed";
 
-            string query = "SELECT" + TYPE + CAPACITY + SPEED + "FROM Win32_PhysicalMemory";
+            string query = $"SELECT {TYPE}, {CAPACITY}, {SPEED} FROM Win32_PhysicalMemory";
 
             var speeds = new List<int>();
 
@@ -145,7 +145,7 @@ namespace Diagnostish.Services.Implementations
             const string GPUNAME = "Name";
             const string GPURAM = "AdapterRAM";
 
-            string query = "SELECT" + GPUNAME + GPURAM + "FROM Win32_VideoController";
+            string query = $"SELECT {GPUNAME}, {GPURAM} FROM Win32_VideoController";
 
             SafeExecutor.ExecuteSafeQuery(query, "видеокартах", rep.Errors, rep.CriticalErrors, collection =>
             {
@@ -177,7 +177,7 @@ namespace Diagnostish.Services.Implementations
             const string MODEL = "Model";
             const string SIZE = "Size";
 
-            string query = "SELECT" + MODEL + SIZE + "FROM Win32_DiskDrive";
+            string query = $"SELECT {MODEL}, {SIZE} FROM Win32_DiskDrive";
 
             SafeExecutor.ExecuteSafeQuery(query, "накопителях", rep.Errors, rep.CriticalErrors, collection =>
             {
@@ -208,10 +208,10 @@ namespace Diagnostish.Services.Implementations
         {
             const string MODEL = "Product";
             const string MANUFACTURER = "Manufacturer";
-            const string VERSION = "VersionVersion";
+            const string VERSION = "Version";
             const string STATUS = "Status";
 
-            string query = "SELECT" + MODEL + MANUFACTURER + VERSION + STATUS + "FROM Win32_BaseBoard";
+            string query = $"SELECT {MODEL}, {MANUFACTURER}, {VERSION}, {STATUS} FROM Win32_BaseBoard";
 
             SafeExecutor.ExecuteSafeQuery(query, "основной плате", rep.Errors, rep.CriticalErrors, collection =>
             {
@@ -234,7 +234,7 @@ namespace Diagnostish.Services.Implementations
             const string RELEASE = "ReleaseDate";
             const string MANUFACTURER = "Manufacturer";
 
-            string query = "SELECT" + VERSION + RELEASE + MANUFACTURER + "FROM Win32_BIOS";
+            string query = $"SELECT {VERSION}, {RELEASE}, {MANUFACTURER} FROM Win32_BIOS";
 
             SafeExecutor.ExecuteSafeQuery(query, "BIOS", rep.Errors, rep.CriticalErrors, collection =>
             {

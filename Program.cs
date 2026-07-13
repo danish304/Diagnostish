@@ -8,7 +8,7 @@ using Serilog;
 
 static class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
@@ -19,25 +19,39 @@ static class Program
                           outputTemplate: "{Timestamp:HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}------------------------------------{NewLine}") 
             .CreateLogger();
 
-        Log.Information("Приложение Diagnostish запущено.");
+        try
+        {
+            Log.Information("Приложение Diagnostish запущено.");
 
-        var services = new ServiceCollection(); 
+            var services = new ServiceCollection();
 
-        services.AddTransient<IHWCheck, CheckPCConfigurationWMI>();
-        services.AddTransient<IOSCheck, CheckOSConfigurationWMI>();
+            services.AddTransient<IHWCheck, CheckPCConfigurationWMI>();
+            services.AddTransient<IOSCheck, CheckOSConfigurationWMI>();
 
-        services.AddSingleton<PrintToConsole>();
-        services.AddSingleton<IPrintHW>(sp => sp.GetRequiredService<PrintToConsole>());
-        services.AddSingleton<IPrintOS>(sp => sp.GetRequiredService<PrintToConsole>());
-        services.AddSingleton<IUserInterface>(sp => sp.GetRequiredService<PrintToConsole>());
+            services.AddSingleton<PrintToConsole>();
+            services.AddSingleton<IPrintHW>(sp => sp.GetRequiredService<PrintToConsole>());
+            services.AddSingleton<IPrintOS>(sp => sp.GetRequiredService<PrintToConsole>());
+            services.AddSingleton<IUserInterface>(sp => sp.GetRequiredService<PrintToConsole>());
 
-        services.AddTransient<DiagnosticController>();
+            services.AddTransient<DiagnosticController>();
 
-        var serviceProvider = services.BuildServiceProvider();
+            var serviceProvider = services.BuildServiceProvider();
 
-        var controller = serviceProvider.GetRequiredService<DiagnosticController>();
-        controller.StartDiagnostic();
+            var controller = serviceProvider.GetRequiredService<DiagnosticController>();
+            controller.StartDiagnostic();
 
-        Log.CloseAndFlush();
+            Log.Information("Приложение Diagnostish завершило свою работу.");
+        }
+        catch (Exception ex)
+        {
+            Log.Fatal(ex, "Необработанное исключение. Приложение аварийно завершило свою работу.");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\nПРОИЗОШЛА КРИТИЧЕСКАЯ ОШИБКА! (ПОДРОБНОСТИ В ЛОГАХ)");
+            Console.ResetColor();
+        }
+        finally
+        {
+            Log.CloseAndFlush();
+        }
     }
 }

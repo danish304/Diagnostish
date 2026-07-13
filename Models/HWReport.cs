@@ -10,11 +10,9 @@
         public double RAMSize { get; set; }                                     // Объем ОЗУ
         public int RAMSpeed { get; set; }                                       // Частота ОЗУ
 
-        public List<string> VideoCards { get; } = [];                           // Название видеокарты
-        public List<double> AdaptersRAM { get; } = [];                          // Объем видеопамяти
-
-        public List<string> ModelsDrives { get; } = [];                         // Модель накопителя
-        public List<double> DrivesSize { get; } = [];                           // Объем накопителя
+        public record ComponentInfo(string Name, double SizeGB);
+        public List<ComponentInfo> VideoCards { get; } = [];                    // Название видеокарты и объем видеопамяти
+        public List<ComponentInfo> Drives { get; } = [];                        // Модель накопителя и объем накопителя
 
         public string BaseBoardModel { get; set; } = "Unknown";                 // Модель основной платы
         public string BaseBoardManufacturer { get; set; } = "Unknown";          // Производитель основной платы

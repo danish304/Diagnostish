@@ -1,4 +1,7 @@
 <Solution>
-  <Project Path="../Diagnostish.Tests/Diagnostish.Tests.csproj" Id="db761100-ea3e-430b-b77a-ec57dd3cd67d" />
-  <Project Path="Diagnostish.csproj" />
+  <Project Path="Diagnostish.Application/Diagnostish.Application.csproj" Id="ccb679d2-35a1-497a-aa4d-56de34bc5e29" />
+  <Project Path="Diagnostish.Domain/Diagnostish.Domain.csproj" Id="617bbd60-040b-44c0-9c86-481d1fc112c7" />
+  <Project Path="Diagnostish.Infrastructure/Diagnostish.Infrastructure.csproj" Id="377e85a-a118-4a08-bfd6-62e43cce7461" />
+  <Project Path="Diagnostish.Tests/Diagnostish.Tests.csproj" Id="db761100-ea3e-430b-b77a-ec57dd3cd67d" />
+  <Project Path="Diagnostish.Desktop/Diagnostish.Desktop.csproj" />
 </Solution>

@@ -18,7 +18,7 @@ jobs:
         dotnet-version: '10.0.x' # Указываем версию .NET
 
     - name: Publish App
-      run: dotnet publish Diagnostish.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true -o ./publish
+      run: dotnet publish Diagnostish.Desktop/Diagnostish.Desktop.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true -o ./publish
 
     - name: Upload EXE to Release
       uses: softprops/action-gh-release@v2

@@ -2,7 +2,7 @@
 
 Портативная консольная утилита на `C#` для автоматизации первичной диагностики и сбора технических/программных характеристик компьютера. Разработана специально для запуска с сервисных флеш-накопителей.
 
-### ⚖️ Лицензия ###
+## ⚖️ Лицензия ##
 
 Этот проект распространяется под лицензией *[`MIT`](LICENSE.txt)*. Вы можете свободно использовать, изменять и распространять код.
 
@@ -21,32 +21,32 @@
 * ***Технологический стек:*** *`C# (.NET 10)`*, *`Serilog`*, *`System.Management (WMI)`*, *`Microsoft.Extensions.DependencyInjection`*, *`xUnit + FluentAssertions`*.
 
 
-# ℹ️ Структура #
-##  Diagnostish.Domain ##
+## ℹ️ Структура ##
+###  Diagnostish.Domain ###
 
-**Ядро приложения — не зависит ни от одного другого проекта решения.**
+  **Ядро приложения — не зависит ни от одного другого проекта решения.**
+  
+  * [`Entities`](Diagnostish.Domain/Models/Entities/) — доменные сущности с провалидированными данными (*`CpuInfo`*, *`RamInfo`*, *`GpuInfo`*, *`StorageDriveInfo`*, *`BiosInfo`*, *`BaseBoardInfo`*, *`OperatingSystemInfo`*).
+  * Models/Reports/ — плоские модели для представления результатов (HardwareReport, OperatingSystemReport, объединяющий их FinalReport), а также базовый IssuesReport со списками Warnings/CriticalErrors.
+  * Common/ProvideResult<TInfo> — единый «конверт» результата на каждом этапе конвейера: данные (или null при полном сбое) плюс списки предупреждений и критических ошибок.
+  * Interfaces/ — контракты, не привязанные ни к WMI, ни к консоли:
+    * IProvideDiagnosticInfo<TRaw> — сбор сырых данных;
+    * IAnalyzeDiagnosticInfo<TRaw, TInfo> — анализ и валидация;
+    * IReportMapper<TReport, TInfo> — перенос провалидированных данных в отчёт;
+    * IReportPrinter<TReport> — вывод готового отчёта;
+    * IUserInterface — взаимодействие с пользователем (приветствие, ожидание выхода).
 
-Models/Entities/ — доменные сущности с провалидированными данными (CpuInfo, RamInfo, GpuInfo, StorageDriveInfo, BiosInfo, BaseBoardInfo, OperatingSystemInfo).
-Models/Reports/ — плоские модели для представления результатов (HardwareReport, OperatingSystemReport, объединяющий их FinalReport), а также базовый IssuesReport со списками Warnings/CriticalErrors.
-Common/ProvideResult<TInfo> — единый «конверт» результата на каждом этапе конвейера: данные (или null при полном сбое) плюс списки предупреждений и критических ошибок.
-Interfaces/ — контракты, не привязанные ни к WMI, ни к консоли:
-IProvideDiagnosticInfo<TRaw> — сбор сырых данных;
-IAnalyzeDiagnosticInfo<TRaw, TInfo> — анализ и валидация;
-IReportMapper<TReport, TInfo> — перенос провалидированных данных в отчёт;
-IReportPrinter<TReport> — вывод готового отчёта;
-IUserInterface — взаимодействие с пользователем (приветствие, ожидание выхода).
-
-## Diagnostish.Infrastructure ##
+### Diagnostish.Infrastructure ###
 
 **Реализация сбора данных через *`WMI`*. Зависит только от [`Domain`](Diagnostish.Domain/Diagnostish.Domain.csproj).**
 
-Providers/Common/BaseWmiProvider<TRawInfo> — абстрактный базовый класс (Template Method), инкапсулирующий общую механику WMI-запроса; конкретный провайдер описывает только BuildQuery(), ContextName и Map(...).
+* [`BaseWmiProvider`](Diagnostish.Infrastructure/Providers/Common/BaseWmiProvider.cs) — абстрактный базовый класс (*`Template Method`*), инкапсулирующий общую механику WMI-запроса; конкретный провайдер описывает только *`BuildQuery()`*, *`ContextName`* и *`Map(...)`*.
 Providers/HardwareInfoProviders/, Providers/OperatingSystemInfoProviders/ — конкретные WMI-провайдеры (CpuInfoWmiProvider, RamInfoWmiProvider и т.д.) и их «сырые» DTO (RawCpuInfo, RawRamInfo и т.д.) в подпапке RawHardwareInfo/.
 Analyzers/ — бизнес-логика валидации: превращение сырых данных в доменные сущности с одновременной генерацией предупреждений. Общие проверки вынесены в Analyzers/Common/AnalyzerValidationExtensions (GetValueOrWarning для строк, чисел через INumber<T> и дат). Тексты предупреждений сгруппированы по компоненту в Messages/.
 Shared/Wmi/ — ExecutorWmi/IExecutorWmi (безопасное выполнение запросов с раздельной обработкой UnauthorizedAccessException, ManagementException по кодам AccessDenied/Timedout), ExecutorMessages, WmiSettings.
 Shared/Utils/ — Parser (безопасное приведение WMI-значений к nullable-типам C#) и ByteConverter (перевод байт в гигабайты).
 
-* ## Diagnostish.Application ##
+### Diagnostish.Application ###
 
 **Оркестрация бизнес-процесса. Зависит только от [`Domain`](Diagnostish.Domain/Diagnostish.Domain.csproj).**
 
@@ -54,7 +54,7 @@ Pipelines/ComponentPipeline<TReport> — типизированная обёрт
 Mappers/ — реализации IReportMapper<TReport, TInfo> для каждого компонента; общая логика (перенос Warnings/CriticalErrors, безопасное извлечение данных) вынесена в Mappers/Common/MapperExtensions.TryExtractData.
 Services/ServicesAggregator — собирает FinalReport, прогоняя все зарегистрированные ComponentPipeline для аппаратной части и части ОС.
 
-## Diagnostish.Desktop ##
+### Diagnostish.Desktop ###
 
 ***`Composition Root`* и точка входа. Единственный проект, которому разрешено знать одновременно про [`Infrastructure`](Diagnostish.Infrastructure/Diagnostish.Infrastructure.csproj) и конкретные реализации представления.**
 
@@ -66,7 +66,7 @@ Views/PrintersAggregator — рассылает готовый FinalReport по 
 Controllers/DiagnosticController — тонкий оркестратор: приветствие → сбор отчёта → вывод во все принтеры → ожидание выхода.
 Program.cs — точка сборки: настройка DI-контейнера, регистрация всех компонентов и принтеров, запуск контроллера.
 
-## Diagnostish.Tests ##
+### Diagnostish.Tests ###
 
 **Юнит-тесты (*`xUnit + FluentAssertions1`*) для [`Infrastructure`](Diagnostish.Infrastructure/Diagnostish.Infrastructure.csproj) — на данный момент покрывают [`Parser`](Diagnostish.Infrastructure/Shared/Utils/Parser.cs) (безопасное приведение типов из *`WMI`*, включая некорректные CIM-даты).**
 

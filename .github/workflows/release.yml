@@ -2,14 +2,14 @@ name: Build and Release .NET
 
 on:
   release:
-    types: [published] # Запускать, когда создается релиз
+    types: [published] 
 
 permissions:
-  contents: write # Явно даем права на запись файлов в релизы, чтобы не зависеть от настроек GitHub
+  contents: write 
 
 jobs:
   build:
-    runs-on: windows-latest # Запуск на Windows-сервере GitHub
+    runs-on: windows-latest 
     
     steps:
     - name: Checkout code
@@ -18,7 +18,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '10.0.x' # Указываем версию .NET
+        dotnet-version: '10.0.x' 
 
     - name: Publish App
       run: dotnet publish Diagnostish.Desktop/Diagnostish.Desktop.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true -o ./publish
@@ -26,6 +26,6 @@ jobs:
     - name: Upload EXE to Release
       uses: softprops/action-gh-release@v2
       with:
-        files: ./publish/Diagnostish.Desktop.exe # ИСПРАВЛЕНО: Теперь ищет новый переименованный файл
+        files: ./publish/Diagnostish.Desktop.exe 
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

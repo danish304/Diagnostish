@@ -1,6 +1,20 @@
+<div align="center">
+ 
 # Diagnostish 3.0 #
 
-Портативная консольная утилита на `C#` для автоматизации первичной диагностики и сбора технических/программных характеристик компьютера. Разработана специально для запуска с сервисных флеш-накопителей.
+<img src="Diagnostish.Desktop/Appicon.ico" width="64" height="64" alt="Логотип">
+
+</div>
+
+<div>
+<br>
+</div>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Портативная консольная утилита на `C#` для автоматизации первичной диагностики и сбора технических/программных характеристик компьютера. Разработана специально для запуска с сервисных флеш-накопителей.
+
+<div>
+<br>
+</div>
 
 > [!IMPORTANT]
 > ## ⚖️ Лицензия ##
@@ -12,7 +26,7 @@
 > * ***Права:*** Администратор (требуется для доступа к WMI-сенсорам; манифест приложения запрашивает повышение автоматически).
 > * ***.NET Runtime:*** Встроен (self-contained билд).
 
-## 🚀 Основной функционал ##
+## ✨ Основной функционал ##
 
 * ***Сбор аппаратных данных.*** Низкоуровневый опрос компонентов (процессор, оперативная память, видеокарты, накопители, материнская плата, BIOS) и данных операционной системы через *`Windows Management Instrumentation (WMI).`*
 * ***Многоуровневая отказоустойчивость.***  Безопасный парсинг данных ([`Parser`](Diagnostish.Infrastructure/Shared/Utils/Parser.cs)) и безопасное выполнение WMI-запросов ([`ExecutorWmi`](Diagnostish.Infrastructure/Shared/Wmi/Executor/ExecutorWmi.cs)) с раздельной обработкой ошибок доступа, таймаутов и повреждённых записей. Отсутствие или некорректность отдельных WMI-полей не прерывает сбор — утилита продолжает работу, фиксируя предупреждения (*`Warnings`*) и критические ошибки (*`CriticalErrors`*) в итоговом отчёте.
@@ -21,10 +35,14 @@
 * ***Информативность.*** Результаты сканирования структурированы и выводятся в кастомном цветовом интерфейсе консоли.
 * ***Логирование.*** Все события и ошибки записываются в директорию *`/logs`* в формате текстового журнала (*`Serilog`*). В случае сбоя лог-файл помогает быстро локализовать проблему.
 
-## 🏗 Архитектура и технологии ##
+## 🛠️ Архитектура и технологии ##
 
 * Проект спроектирован по принципам *`Clean Architecture (Domain → Application/Infrastructure → Desktop)`* с соблюдением *`SOLID`*, что обеспечивает независимость бизнес-логики от конкретных технологий сбора и вывода данных, а также лёгкость расширения и тестирования.
 * ***Технологический стек:*** *`C# (.NET 10)`*, *`Serilog`*, *`System.Management (WMI)`*, *`Microsoft.Extensions.DependencyInjection`*, *`xUnit + FluentAssertions`*.
+
+<div>
+<br>
+</div>
 
 > [!TIP]
 > ## 📦 Как использовать ##
@@ -32,20 +50,24 @@
 > * Поместите скомпилированный `.exe` на сервисную флешку.
 > * Запустите утилиту на целевом ПК — она автоматически запросит права администратора, соберёт диагностические данные и выведет их в консольном интерфейсе.
 
-## ℹ️ Структура ##
+<div>
+<br>
+</div>
+
+## 📂 Структура ##
 ###  Diagnostish.Domain ###
 
-  **Ядро приложения — не зависит ни от одного другого проекта решения.**
+**Ядро приложения — не зависит ни от одного другого проекта решения.**
   
-  * [`Entities`](Diagnostish.Domain/Models/Entities/) — доменные сущности с провалидированными данными (*`CpuInfo`*, *`RamInfo`*, *`GpuInfo`*, *`StorageDriveInfo`*, *`BiosInfo`*, *`BaseBoardInfo`*, *`OperatingSystemInfo`*).
-  * [`Reports`](Diagnostish.Domain/Models/Reports/) — плоские модели для представления результатов (*`HardwareReport`*, *`OperatingSystemReport`*, объединяющий их *`FinalReport`*), а также базовый *`IssuesReport`* со списками *`Warnings/CriticalErrors`*.
-  * [`ProvideResult`](Diagnostish.Domain/Common/ProvideResult.cs) — единый «конверт» результата на каждом этапе конвейера: данные (или *`null`* при полном сбое) плюс списки предупреждений и критических ошибок.
-  * [`Interfaces`](Diagnostish.Domain/Interfaces/) — контракты, не привязанные ни к *`WMI`*, ни к консоли:
-    * [`IProvideDiagnosticInfo`](Diagnostish.Domain/Interfaces/IProvideDiagnosticInfo.cs) — сбор сырых данных;
-    * [`IAnalyzeDiagnosticInfo`](Diagnostish.Domain/Interfaces/IAnalyzeDiagnosticInfo.cs) — анализ и валидация;
-    * [`IReportMapper`](Diagnostish.Domain/Interfaces/IReportMapper.cs) — перенос провалидированных данных в отчёт;
-    * [`IReportPrinter`](Diagnostish.Domain/Interfaces/IReportPrinter.cs) — вывод готового отчёта;
-    * [`IUserInterface`](Diagnostish.Domain/Interfaces/IUserInterface.cs) — взаимодействие с пользователем (приветствие, ожидание выхода).
+* [`Entities`](Diagnostish.Domain/Models/Entities/) — доменные сущности с провалидированными данными (*`CpuInfo`*, *`RamInfo`*, *`GpuInfo`*, *`StorageDriveInfo`*, *`BiosInfo`*, *`BaseBoardInfo`*, *`OperatingSystemInfo`*).
+* [`Reports`](Diagnostish.Domain/Models/Reports/) — плоские модели для представления результатов (*`HardwareReport`*, *`OperatingSystemReport`*, объединяющий их *`FinalReport`*), а также базовый *`IssuesReport`* со списками *`Warnings/CriticalErrors`*.
+* [`ProvideResult`](Diagnostish.Domain/Common/ProvideResult.cs) — единый «конверт» результата на каждом этапе конвейера: данные (или *`null`* при полном сбое) плюс списки предупреждений и критических ошибок.
+* [`Interfaces`](Diagnostish.Domain/Interfaces/) — контракты, не привязанные ни к *`WMI`*, ни к консоли:
+  * [`IProvideDiagnosticInfo`](Diagnostish.Domain/Interfaces/IProvideDiagnosticInfo.cs) — сбор сырых данных;
+  * [`IAnalyzeDiagnosticInfo`](Diagnostish.Domain/Interfaces/IAnalyzeDiagnosticInfo.cs) — анализ и валидация;
+  * [`IReportMapper`](Diagnostish.Domain/Interfaces/IReportMapper.cs) — перенос провалидированных данных в отчёт;
+  * [`IReportPrinter`](Diagnostish.Domain/Interfaces/IReportPrinter.cs) — вывод готового отчёта;
+  * [`IUserInterface`](Diagnostish.Domain/Interfaces/IUserInterface.cs) — взаимодействие с пользователем (приветствие, ожидание выхода).
 
 ### Diagnostish.Infrastructure ###
 
@@ -80,6 +102,10 @@
 ### Diagnostish.Tests ###
 
 **Юнит-тесты (*`xUnit + FluentAssertions1`*) для [`Infrastructure`](Diagnostish.Infrastructure/Diagnostish.Infrastructure.csproj) — на данный момент покрывают [`Parser`](Diagnostish.Infrastructure/Shared/Utils/Parser.cs) (безопасное приведение типов из *`WMI`*, включая некорректные CIM-даты).**
+
+<div>
+<br>
+</div>
 
 > [!NOTE]
 > ## 🔭 Планы развития ##

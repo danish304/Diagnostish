@@ -69,13 +69,13 @@
 
 ***`Composition Root`* и точка входа. Единственный проект, которому разрешено знать одновременно про [`Infrastructure`](Diagnostish.Infrastructure/Diagnostish.Infrastructure.csproj) и конкретные реализации представления.**
 
-Composition/ServiceCollectionExtensions — универсальные generic-методы регистрации: AddComponent<TReport, TRaw, TInfo, TProvider, TAnalyzer, TMapper>() регистрирует провайдер, анализатор, маппер и собирает из них ComponentPipeline одной строкой; AddPrinter<TReport, TPrinter>() регистрирует принтер отчёта.
-Composition/LoggerConfigurator — настройка Serilog (запись в /logs с ротацией по дням).
-Views/Common/ReportPrinter<TReport> — базовый класс принтера (Template Method: PrintReport + общий вывод Warnings/CriticalErrors).
-Views/HardwareInfoPrinters/, Views/OperatingSystemInfoPrinters/ — консольные принтеры отчётов.
-Views/PrintersAggregator — рассылает готовый FinalReport по всем зарегистрированным принтерам (позволяет добавлять новые способы вывода — например, в файл — не меняя контроллер).
-Controllers/DiagnosticController — тонкий оркестратор: приветствие → сбор отчёта → вывод во все принтеры → ожидание выхода.
-Program.cs — точка сборки: настройка DI-контейнера, регистрация всех компонентов и принтеров, запуск контроллера.
+* [`ServiceCollectionExtensions`](Diagnostish.Desktop/Composition/ServiceCollectionExtensions.cs) — универсальные generic-методы регистрации: *`AddComponent<TReport, TRaw, TInfo, TProvider, TAnalyzer, TMapper>()`* регистрирует провайдер, анализатор, маппер и собирает из них [`ComponentPipeline`](Diagnostish.Application/Pipelines/ComponentPipeline.cs) одной строкой; *`AddPrinter<TReport, TPrinter>()`* регистрирует принтер отчёта.
+* [`LoggerConfigurator`](Diagnostish.Desktop/Composition/LoggerConfigurator.cs) — настройка *`Serilog`* (запись в *`/logs`* с ротацией по дням).
+* [`ReportPrinter`](Diagnostish.Desktop/Views/Common/ReportPrinter.cs) — базовый класс принтера (*`Template Method: PrintReport`* + общий вывод *`Warnings/CriticalErrors`*).
+* [`HardwareInfoPrinters`](Diagnostish.Desktop/Views/HardwareInfoPrinters/), [`OperatingSystemInfoPrinters`](Diagnostish.Desktop/Views/OperatingSystemInfoPrinters/) — консольные принтеры отчётов.
+* [`PrintersAggregator`](Diagnostish.Desktop/Views/PrintersAggregator.cs) — рассылает готовый [`FinalReport`](Diagnostish.Domain/Models/Reports/FinalReport.cs) по всем зарегистрированным принтерам (позволяет добавлять новые способы вывода — например, в файл — не меняя контроллер).
+* [`DiagnosticController`](Diagnostish.Desktop/Controllers/DiagnosticController.cs) — тонкий оркестратор: приветствие → сбор отчёта → вывод во все принтеры → ожидание выхода.
+* [`Program.cs`](Diagnostish.Desktop/Program.cs) — точка сборки: настройка DI-контейнера, регистрация всех компонентов и принтеров, запуск контроллера.
 
 ### Diagnostish.Tests ###
 

@@ -1,8 +1,7 @@
-﻿namespace Diagnostish.Domain.Interfaces
+﻿namespace Diagnostish.Domain.Interfaces;
+
+public interface IUserInterface
 {
-    public interface IUserInterface
-    {
-        void ShowWelcome();
-        void WaitForExit();
-    }
+    void ShowWelcome();
+    void WaitForExit();
 }

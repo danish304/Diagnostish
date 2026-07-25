@@ -38,14 +38,14 @@
   **Ядро приложения — не зависит ни от одного другого проекта решения.**
   
   * [`Entities`](Diagnostish.Domain/Models/Entities/) — доменные сущности с провалидированными данными (*`CpuInfo`*, *`RamInfo`*, *`GpuInfo`*, *`StorageDriveInfo`*, *`BiosInfo`*, *`BaseBoardInfo`*, *`OperatingSystemInfo`*).
-  * Models/Reports/ — плоские модели для представления результатов (HardwareReport, OperatingSystemReport, объединяющий их FinalReport), а также базовый IssuesReport со списками Warnings/CriticalErrors.
-  * Common/ProvideResult<TInfo> — единый «конверт» результата на каждом этапе конвейера: данные (или null при полном сбое) плюс списки предупреждений и критических ошибок.
-  * Interfaces/ — контракты, не привязанные ни к WMI, ни к консоли:
-    * IProvideDiagnosticInfo<TRaw> — сбор сырых данных;
-    * IAnalyzeDiagnosticInfo<TRaw, TInfo> — анализ и валидация;
-    * IReportMapper<TReport, TInfo> — перенос провалидированных данных в отчёт;
-    * IReportPrinter<TReport> — вывод готового отчёта;
-    * IUserInterface — взаимодействие с пользователем (приветствие, ожидание выхода).
+  * [`Reports`](Diagnostish.Domain/Models/Reports/) — плоские модели для представления результатов (*`HardwareReport`*, *`OperatingSystemReport`*, объединяющий их *`FinalReport`*), а также базовый *`IssuesReport`* со списками *`Warnings/CriticalErrors`*.
+  * [`ProvideResult`](Diagnostish.Domain/Common/ProvideResult.cs) — единый «конверт» результата на каждом этапе конвейера: данные (или *`null`* при полном сбое) плюс списки предупреждений и критических ошибок.
+  * [`Interfaces`](Diagnostish.Domain/Interfaces/) — контракты, не привязанные ни к *`WMI`*, ни к консоли:
+    * [`IProvideDiagnosticInfo`](Diagnostish.Domain/Interfaces/IProvideDiagnosticInfo.cs) — сбор сырых данных;
+    * [`IAnalyzeDiagnosticInfo`](Diagnostish.Domain/Interfaces/IAnalyzeDiagnosticInfo.cs) — анализ и валидация;
+    * [`IReportMapper`](Diagnostish.Domain/Interfaces/IReportMapper.cs) — перенос провалидированных данных в отчёт;
+    * [`IReportPrinter`](Diagnostish.Domain/Interfaces/IReportPrinter.cs) — вывод готового отчёта;
+    * [`IUserInterface`](Diagnostish.Domain/Interfaces/IUserInterface.cs) — взаимодействие с пользователем (приветствие, ожидание выхода).
 
 ### Diagnostish.Infrastructure ###
 

@@ -1,25 +1,32 @@
 ﻿using Diagnostish.Application.Services;
 using Diagnostish.Desktop.Views;
 using Diagnostish.Domain.Interfaces;
-using Diagnostish.Domain.Models.Reports;
 
-namespace Diagnostish.Desktop.Controllers
+namespace Diagnostish.Desktop.Controllers;
+
+public class DiagnosticController
 {
-    public class DiagnosticController(ServicesAggregator servicesAggregator,
-                                      IReportPrinter<HardwareReport> hardwarePrinter,
-                                      IReportPrinter<OperatingSystemReport> operatingSystemPrinter,
-                                      IUserInterface userInterface)
+    private readonly ServicesAggregator _servicesAggregator;
+    private readonly PrintersAggregator _printersAggregator;
+    private readonly IUserInterface _userInterface;
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0290:Use primary constructor", Justification = "<Pending>")]
+    public DiagnosticController(ServicesAggregator servicesAggregator,
+                                PrintersAggregator printersAggregator,
+                                IUserInterface userInterface)
     {
-        public void StartDiagnostic()
-        {
-            userInterface.ShowWelcome();
+        _servicesAggregator = servicesAggregator;
+        _printersAggregator = printersAggregator;
+        _userInterface = userInterface;
+    }
 
-            var finalReport = servicesAggregator.GetFinalReport();
+    public void StartDiagnostic()
+    {
+        _userInterface.ShowWelcome();
 
-            hardwarePrinter.Print(finalReport.HardwareReport);
-            operatingSystemPrinter.Print(finalReport.OperatingSystemReport);
+        var finalReport = _servicesAggregator.GetFinalReport();
+        _printersAggregator.PrintAllReports(finalReport);
 
-            userInterface.WaitForExit();
-        }
+        _userInterface.WaitForExit();
     }
 }

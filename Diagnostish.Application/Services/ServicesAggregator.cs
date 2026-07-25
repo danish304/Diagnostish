@@ -1,23 +1,33 @@
-﻿using Diagnostish.Domain.Interfaces;
+﻿using Diagnostish.Application.Pipelines;
 using Diagnostish.Domain.Models.Reports;
 
-namespace Diagnostish.Application.Services
+namespace Diagnostish.Application.Services;
+
+public class ServicesAggregator
 {
-    public class ServicesAggregator(IEnumerable<IProvideHardwareInfo> hardwareInfoProviders,
-                                    IProvideOperatingSystemInfo operatingSystemInfoProvider)
+    private readonly IEnumerable<ComponentPipeline<HardwareReport>> _hardwarePipelines;
+    private readonly IEnumerable<ComponentPipeline<OperatingSystemReport>> _operatingSystemPipeline;
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0290:Use primary constructor", Justification = "<Pending>")]
+    public ServicesAggregator(IEnumerable<ComponentPipeline<HardwareReport>> hardwarePipelines,
+                              IEnumerable<ComponentPipeline<OperatingSystemReport>> operatingSystemPipeline)
     {
-        public FinalReport GetFinalReport()
-        {
-            var finalReport = new FinalReport();
+        _hardwarePipelines = hardwarePipelines;
+        _operatingSystemPipeline = operatingSystemPipeline;
+    }
 
-            foreach (var provider in hardwareInfoProviders)
-            {
-                provider.ProvideInfo(finalReport.HardwareReport);
-            }
+    public FinalReport GetFinalReport()
+    {
+        var hardwareReport = new HardwareReport();
+        foreach (var pipeline in _hardwarePipelines) pipeline.Run(hardwareReport);
 
-            operatingSystemInfoProvider.ProvideInfo(finalReport.OperatingSystemReport);
+        var operatingSystemReport = new OperatingSystemReport();
+        foreach (var pipeline in _operatingSystemPipeline) pipeline.Run(operatingSystemReport);
 
-            return finalReport;
-        }
+        return new FinalReport 
+        { 
+            HardwareReport = hardwareReport,
+            OperatingSystemReport = operatingSystemReport
+        };
     }
 }

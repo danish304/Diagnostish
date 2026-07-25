@@ -24,7 +24,7 @@
 # ℹ️ Структура #
 ##  Diagnostish.Domain ##
 
-Ядро приложения — не зависит ни от одного другого проекта решения.
+**Ядро приложения — не зависит ни от одного другого проекта решения.**
 
 Models/Entities/ — доменные сущности с провалидированными данными (CpuInfo, RamInfo, GpuInfo, StorageDriveInfo, BiosInfo, BaseBoardInfo, OperatingSystemInfo).
 Models/Reports/ — плоские модели для представления результатов (HardwareReport, OperatingSystemReport, объединяющий их FinalReport), а также базовый IssuesReport со списками Warnings/CriticalErrors.
@@ -36,9 +36,9 @@ IReportMapper<TReport, TInfo> — перенос провалидированн�
 IReportPrinter<TReport> — вывод готового отчёта;
 IUserInterface — взаимодействие с пользователем (приветствие, ожидание выхода).
 
-* ## Diagnostish.Infrastructure ##
+## Diagnostish.Infrastructure ##
 
-Реализация сбора данных через WMI. Зависит только от Domain.
+**Реализация сбора данных через *`WMI`*. Зависит только от [`Domain`](Diagnostish.Domain/Diagnostish.Domain.csproj).**
 
 Providers/Common/BaseWmiProvider<TRawInfo> — абстрактный базовый класс (Template Method), инкапсулирующий общую механику WMI-запроса; конкретный провайдер описывает только BuildQuery(), ContextName и Map(...).
 Providers/HardwareInfoProviders/, Providers/OperatingSystemInfoProviders/ — конкретные WMI-провайдеры (CpuInfoWmiProvider, RamInfoWmiProvider и т.д.) и их «сырые» DTO (RawCpuInfo, RawRamInfo и т.д.) в подпапке RawHardwareInfo/.
@@ -48,15 +48,15 @@ Shared/Utils/ — Parser (безопасное приведение WMI-знач
 
 * ## Diagnostish.Application ##
 
-Оркестрация бизнес-процесса. Зависит только от Domain.
+**Оркестрация бизнес-процесса. Зависит только от [`Domain`](Diagnostish.Domain/Diagnostish.Domain.csproj).**
 
 Pipelines/ComponentPipeline<TReport> — типизированная обёртка над Action<TReport>, представляющая полный цикл «собрать → проанализировать → замапить» для одного компонента.
 Mappers/ — реализации IReportMapper<TReport, TInfo> для каждого компонента; общая логика (перенос Warnings/CriticalErrors, безопасное извлечение данных) вынесена в Mappers/Common/MapperExtensions.TryExtractData.
 Services/ServicesAggregator — собирает FinalReport, прогоняя все зарегистрированные ComponentPipeline для аппаратной части и части ОС.
 
-* ## Diagnostish.Desktop ##
+## Diagnostish.Desktop ##
 
-Composition Root и точка входа. Единственный проект, которому разрешено знать одновременно про Infrastructure и конкретные реализации представления.
+***`Composition Root`* и точка входа. Единственный проект, которому разрешено знать одновременно про [`Infrastructure`](Diagnostish.Infrastructure/Diagnostish.Infrastructure.csproj) и конкретные реализации представления.**
 
 Composition/ServiceCollectionExtensions — универсальные generic-методы регистрации: AddComponent<TReport, TRaw, TInfo, TProvider, TAnalyzer, TMapper>() регистрирует провайдер, анализатор, маппер и собирает из них ComponentPipeline одной строкой; AddPrinter<TReport, TPrinter>() регистрирует принтер отчёта.
 Composition/LoggerConfigurator — настройка Serilog (запись в /logs с ротацией по дням).
@@ -66,9 +66,9 @@ Views/PrintersAggregator — рассылает готовый FinalReport по 
 Controllers/DiagnosticController — тонкий оркестратор: приветствие → сбор отчёта → вывод во все принтеры → ожидание выхода.
 Program.cs — точка сборки: настройка DI-контейнера, регистрация всех компонентов и принтеров, запуск контроллера.
 
-* ## Diagnostish.Tests ##
+## Diagnostish.Tests ##
 
-Юнит-тесты (xUnit + FluentAssertions) для Infrastructure — на данный момент покрывают Parser (безопасное приведение типов из WMI, включая некорректные CIM-даты).
+**Юнит-тесты (*`xUnit + FluentAssertions1`*) для [`Infrastructure`](Diagnostish.Infrastructure/Diagnostish.Infrastructure.csproj) — на данный момент покрывают [`Parser`](Diagnostish.Infrastructure/Shared/Utils/Parser.cs) (безопасное приведение типов из *`WMI`*, включая некорректные CIM-даты).**
 
 ## 📋 Требования ##
 

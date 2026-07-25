@@ -2,7 +2,7 @@
  
 # Diagnostish 3.0 #
 
-<img src="Diagnostish.Desktop/Appicon.ico" width="64" height="64" alt="Логотип">
+<img src="https://raw.githubusercontent.com/danish304/Diagnostish/refs/heads/master/Diagnostish.Desktop/AppIcon.ico" width="100" height="100" alt="Логотип">
 
 </div>
 

@@ -61,9 +61,9 @@
 
 **Оркестрация бизнес-процесса. Зависит только от [`Domain`](Diagnostish.Domain/Diagnostish.Domain.csproj).**
 
-Pipelines/ComponentPipeline<TReport> — типизированная обёртка над Action<TReport>, представляющая полный цикл «собрать → проанализировать → замапить» для одного компонента.
-Mappers/ — реализации IReportMapper<TReport, TInfo> для каждого компонента; общая логика (перенос Warnings/CriticalErrors, безопасное извлечение данных) вынесена в Mappers/Common/MapperExtensions.TryExtractData.
-Services/ServicesAggregator — собирает FinalReport, прогоняя все зарегистрированные ComponentPipeline для аппаратной части и части ОС.
+* [`ComponentPipeline`](Diagnostish.Application/Pipelines/ComponentPipeline.cs) — типизированная обёртка над *`Action<TReport>`*, представляющая полный цикл «собрать → проанализировать → замапить» для одного компонента.
+* [`Mappers`](Diagnostish.Application/Mappers/) — реализации [`IReportMapper`](Diagnostish.Domain/Interfaces/IReportMapper.cs) для каждого компонента; общая логика (перенос *`Warnings/CriticalErrors`*, безопасное извлечение данных) вынесена в [`MapperExtensions`](Diagnostish.Application/Mappers/Common/MapperExtensions.cs).
+* [`ServicesAggregator`](Diagnostish.Application/Services/ServicesAggregator.cs) — собирает [`FinalReport`](Diagnostish.Domain/Models/Reports/FinalReport.cs), прогоняя все зарегистрированные [`ComponentPipeline`](Diagnostish.Application/Pipelines/ComponentPipeline.cs) для аппаратной части и части ОС.
 
 ### Diagnostish.Desktop ###
 

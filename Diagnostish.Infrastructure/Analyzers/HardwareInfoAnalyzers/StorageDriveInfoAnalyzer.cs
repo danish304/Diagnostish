@@ -23,7 +23,7 @@ public class StorageDriveInfoAnalyzer(Serilog.ILogger logger) : IAnalyzeDiagnost
 
         foreach (var item in storageDriveInfo)
         {
-            string storageDriveModel = "Unknown";
+            string storageDriveModel = "Неизвестно";
             double storageDriveSize = 0;
 
             if (item.Model is not null) storageDriveModel = item.Model;

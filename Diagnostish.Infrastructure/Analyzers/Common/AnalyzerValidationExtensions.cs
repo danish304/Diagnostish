@@ -8,7 +8,7 @@ public static class AnalyzerValidationExtensions
     public static string GetValueOrWarning(this string? value,
                                            List<string> warnings, ILogger logger,
                                            string warningMessage,
-                                           string defaultValue = "Unknown")
+                                           string defaultValue = "Неизвестно")
     {
         if (value is not null) return value;
 

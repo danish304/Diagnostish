@@ -23,7 +23,7 @@ public class GpuInfoAnalyzer(Serilog.ILogger logger) : IAnalyzeDiagnosticInfo<Ra
 
         foreach (var item in gpuInfo)
         {
-            string gpuName = "Unknown";
+            string gpuName = "Неизвестно";
             double adapterRam = 0;
 
             if (item.Name is not null) gpuName = item.Name;

@@ -26,7 +26,7 @@ public class RamInfoAnalyzer(Serilog.ILogger logger) : IAnalyzeDiagnosticInfo<Ra
             return ProvideResult<RamInfo>.Fail(warnings, providedRamData.CriticalErrors);
 
         var types = new List<string>();
-        string type = "Unknown";
+        string type = "Неизвестно";
 
         double totalCapacityInBytes = 0;
         double totalCapacityInGB = 0;
@@ -74,7 +74,7 @@ public class RamInfoAnalyzer(Serilog.ILogger logger) : IAnalyzeDiagnosticInfo<Ra
             type = types[0];
             if (types.Any(s => s != type))
             {
-                type = "Unknown";
+                type = "Неизвестно";
                 warnings.Add(RamAnalyzerMessages.TypeConflict);
                 logger.Warning(RamAnalyzerMessages.TypeConflict + "({Types})", string.Join(", ", types));
             }

@@ -2,10 +2,10 @@
 
 public class OperatingSystemReport : IssuesReport
 {
-    public string OperatingSystemName { get; set; } = "Unknown";                           
-    public string OperatingSystemManufacturer { get; set; } = "Unknown";                  
-    public string OperatingSystemVersion { get; set; } = "Unknown";                       
+    public string OperatingSystemName { get; set; } = "Неизвестно";                           
+    public string OperatingSystemManufacturer { get; set; } = "Неизвестно";                  
+    public string OperatingSystemVersion { get; set; } = "Неизвестно";                       
     public DateTime OperatingSystemInstallDate { get; set; }                               
-    public string OperatingSystemRegisteredUser { get; set; } = "Unknown";                 
+    public string OperatingSystemRegisteredUser { get; set; } = "Неизвестно";                 
     public DateTime OperatingSystemLastBootUpTime { get; set; }                           
 }

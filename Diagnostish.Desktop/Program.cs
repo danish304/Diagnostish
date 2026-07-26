@@ -17,7 +17,9 @@ using Diagnostish.Infrastructure.Analyzers.OperatingSystemInfoAnalyzers;
 using Diagnostish.Infrastructure.Providers.HardwareInfoProviders;
 using Diagnostish.Infrastructure.Providers.HardwareInfoProviders.RawHardwareInfo;
 using Diagnostish.Infrastructure.Providers.OperatingSystemInfoProviders;
+using Diagnostish.Infrastructure.Shared.Wmi;
 using Diagnostish.Infrastructure.Shared.Wmi.Executor;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
@@ -32,8 +34,15 @@ static class Program
         {
             Log.Information("Приложение Diagnostish запущено.");
 
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+                .Build();
+
             var services = new ServiceCollection()
                 .AddSingleton(Log.Logger)
+                .AddSingleton<IConfiguration>(configuration)
+                    .Configure<WmiSettings>(configuration.GetSection("Wmi"))
 
                 .AddSingleton<IExecutorWmi, ExecutorWmi>()
 

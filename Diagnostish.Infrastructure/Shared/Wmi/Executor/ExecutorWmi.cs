@@ -1,8 +1,9 @@
-﻿using System.Management;
+﻿using Microsoft.Extensions.Options;
+using System.Management;
 
 namespace Diagnostish.Infrastructure.Shared.Wmi.Executor;
 
-public class ExecutorWmi(Serilog.ILogger logger) : IExecutorWmi
+public class ExecutorWmi(Serilog.ILogger logger, IOptions<WmiSettings> settings) : IExecutorWmi
 {
     public void ExecuteSafeQuery(string query, string context, 
                                  List<string> warnings, List<string> criticalErrors, 
@@ -13,7 +14,7 @@ public class ExecutorWmi(Serilog.ILogger logger) : IExecutorWmi
             var options = new System.Management.EnumerationOptions
             {
                 ReturnImmediately = true,
-                Timeout = WmiSettings.RequestTimeout
+                Timeout = settings.Value.WmiQueryTimeout
             };
 
             using var searcher = new ManagementObjectSearcher(query) { Options = options };

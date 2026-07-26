@@ -1,6 +1,7 @@
 ﻿namespace Diagnostish.Infrastructure.Shared.Wmi;
 
-public static class WmiSettings
+public class WmiSettings
 {
-    public static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(5);
+    public int WmiQueryTimeoutSeconds { get; set; } = 5;
+    public TimeSpan WmiQueryTimeout => TimeSpan.FromSeconds(WmiQueryTimeoutSeconds);
 }

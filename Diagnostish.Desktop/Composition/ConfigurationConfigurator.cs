@@ -9,7 +9,7 @@ public static class ConfigurationConfigurator
     private const string DefaultConfigContent = """
         {
           "Wmi": {
-            "RequestTimeoutSeconds": 5
+            "WmiQueryTimeoutSeconds": 5
           }
         }
         """;

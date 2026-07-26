@@ -39,6 +39,8 @@ static class Program
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
                 .Build();
 
+            Log.Information("Конфигурация: Таймаут WMI-запросов выставлен на {Timeout} сек.", configuration.GetValue<int>("Wmi:WmiQueryTimeoutSeconds"));
+
             var services = new ServiceCollection()
                 .AddSingleton(Log.Logger)
                 .AddSingleton<IConfiguration>(configuration)

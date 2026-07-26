@@ -29,21 +29,17 @@ static class Program
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
         Log.Logger = LoggerConfigurator.Create();
+        var configuration = ConfigurationConfigurator.Create();
 
         try
         {
             Log.Information("Приложение Diagnostish запущено.");
-
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
-                .Build();
-
-            Log.Information("Конфигурация: Таймаут WMI-запросов выставлен на {Timeout} сек.", configuration.GetValue<int>("Wmi:WmiQueryTimeoutSeconds"));
+            Log.Information("Таймаут WMI-запросов выставлен на {Timeout} сек.", 
+                             configuration.GetValue("Wmi:WmiQueryTimeoutSeconds", new WmiSettings().WmiQueryTimeoutSeconds));
 
             var services = new ServiceCollection()
                 .AddSingleton(Log.Logger)
-                .AddSingleton<IConfiguration>(configuration)
+                .AddSingleton(configuration)
                     .Configure<WmiSettings>(configuration.GetSection("Wmi"))
 
                 .AddSingleton<IExecutorWmi, ExecutorWmi>()

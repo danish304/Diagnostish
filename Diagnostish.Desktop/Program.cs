@@ -25,9 +25,10 @@ using Serilog;
 
 static class Program
 {
-    static void Main()
+    static async Task Main()
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
+
         Log.Logger = LoggerConfigurator.Create();
         var configuration = ConfigurationConfigurator.Create();
 
@@ -39,45 +40,40 @@ static class Program
 
             var services = new ServiceCollection()
                 .AddSingleton(Log.Logger)
-                .AddSingleton(configuration)
-                    .Configure<WmiSettings>(configuration.GetSection("Wmi"))
+                .AddSingleton(configuration).Configure<WmiSettings>(configuration.GetSection("Wmi"))
 
                 .AddSingleton<IExecutorWmi, ExecutorWmi>()
 
-                .AddComponent<HardwareReport, 
-                              RawBaseBoardInfo, BaseBoardInfo, 
+                .AddComponent<HardwareReport, RawBaseBoardInfo, BaseBoardInfo, 
                               BaseBoardInfoWmiProvider, BaseBoardInfoAnalyzer, BaseBoardReportMapper>()
-                .AddComponent<HardwareReport,
-                              RawBiosInfo, BiosInfo, 
+                .AddComponent<HardwareReport, RawBiosInfo, BiosInfo, 
                               BiosInfoWmiProvider, BiosInfoAnalyzer, BiosReportMapper>()
-                .AddComponent<HardwareReport, 
-                              RawCpuInfo, CpuInfo, 
+                .AddComponent<HardwareReport, RawCpuInfo, CpuInfo, 
                               CpuInfoWmiProvider, CpuInfoAnalyzer, CpuReportMapper>()
-                .AddComponent<HardwareReport, 
-                              RawGpuInfo, IReadOnlyList<GpuInfo>, 
+                .AddComponent<HardwareReport, RawGpuInfo, IReadOnlyList<GpuInfo>, 
                               GpuInfoWmiProvider, GpuInfoAnalyzer, GpuReportMapper>()
-                .AddComponent<HardwareReport, 
-                              RawRamInfo, RamInfo, 
+                .AddComponent<HardwareReport, RawRamInfo, RamInfo, 
                               RamInfoWmiProvider, RamInfoAnalyzer, RamReportMapper>()
-                .AddComponent<HardwareReport, 
-                              RawStorageDriveInfo, IReadOnlyList<StorageDriveInfo>, 
+                .AddComponent<HardwareReport, RawStorageDriveInfo, IReadOnlyList<StorageDriveInfo>, 
                               StorageDriveInfoWmiProvider, StorageDriveInfoAnalyzer, StorageDriveReportMapper>()
-                .AddComponent<OperatingSystemReport, 
-                              RawOperatingSystemInfo, OperatingSystemInfo, 
+                .AddComponent<OperatingSystemReport, RawOperatingSystemInfo, OperatingSystemInfo, 
                               OperatingSystemInfoWmiProvider, OperatingSystemInfoAnalyzer, OperatingSystemReportMapper>()
 
                 .AddPrinter<HardwareReport, HardwareInfoPrintToConsole>()
                 .AddPrinter<OperatingSystemReport, OperatingSystemInfoPrintToConsole>()
 
                 .AddSingleton<IUserInterface, ConsoleUserInterface>()
+
                 .AddSingleton<ServicesAggregator>()
                 .AddSingleton<PrintersAggregator>()
+
                 .AddSingleton<DiagnosticController>();
 
             var serviceProvider = services.BuildServiceProvider();
 
             var controller = serviceProvider.GetRequiredService<DiagnosticController>();
-            controller.StartDiagnostic();
+
+            await controller.StartDiagnostic();
 
             Log.Information("Приложение Diagnostish завершило свою работу.");
         }

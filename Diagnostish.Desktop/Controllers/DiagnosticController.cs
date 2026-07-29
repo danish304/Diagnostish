@@ -20,7 +20,7 @@ public class DiagnosticController
         _userInterface = userInterface;
     }
 
-    public async Task StartDiagnostic(CancellationToken cancellationToken = default)
+    public async Task StartDiagnosticAsync(CancellationToken cancellationToken = default)
     {
         _userInterface.ShowWelcome();
 

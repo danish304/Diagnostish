@@ -73,7 +73,7 @@ static class Program
 
             var controller = serviceProvider.GetRequiredService<DiagnosticController>();
 
-            await controller.StartDiagnostic();
+            await controller.StartDiagnosticAsync();
 
             Log.Information("Приложение Diagnostish завершило свою работу.");
         }

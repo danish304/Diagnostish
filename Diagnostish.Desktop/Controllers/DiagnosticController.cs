@@ -20,11 +20,11 @@ public class DiagnosticController
         _userInterface = userInterface;
     }
 
-    public void StartDiagnostic()
+    public async Task StartDiagnostic(CancellationToken cancellationToken = default)
     {
         _userInterface.ShowWelcome();
 
-        var finalReport = _servicesAggregator.GetFinalReport();
+        var finalReport = await _servicesAggregator.GetFinalReportAsync(cancellationToken);
         _printersAggregator.PrintAllReports(finalReport);
 
         _userInterface.WaitForExit();

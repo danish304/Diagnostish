@@ -32,7 +32,7 @@ public class ServicesAggregator
 
     private static async Task<TReport> CollectReportAsync<TReport>(IEnumerable<ComponentPipeline<TReport>> pipelines, 
                                                                    TReport report, 
-                                                                   CancellationToken cancellationToken) where TReport : new()
+                                                                   CancellationToken cancellationToken)
     {
         var mapActions = await Task.WhenAll(pipelines.Select(p => p.CollectAndAnalyze(cancellationToken)));
 

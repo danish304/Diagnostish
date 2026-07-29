@@ -6,8 +6,7 @@ namespace Diagnostish.Desktop.Composition;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddComponent<TReport,
-                                                  TRaw, TInfo,
+    public static IServiceCollection AddComponent<TReport, TRaw, TInfo,
                                                   TProvider, TAnalyzer, TMapper>(this IServiceCollection services)
 
                                                   where TProvider : class, IProvideDiagnosticInfo<TRaw>
@@ -33,8 +32,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddPrinter<TReport, 
-                                                TPrinter>(this IServiceCollection services) 
+    public static IServiceCollection AddPrinter<TReport, TPrinter>(this IServiceCollection services) 
         
                                                 where TPrinter : class, IReportPrinter<TReport>
     {

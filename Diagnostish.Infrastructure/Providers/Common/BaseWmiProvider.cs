@@ -7,13 +7,13 @@ namespace Diagnostish.Infrastructure.Providers.Common;
 
 public abstract class BaseWmiProvider<TRawInfo>(IExecutorWmi executor) : IProvideDiagnosticInfo<TRawInfo>
 {
-    public async Task<ProvideResult<IReadOnlyList<TRawInfo>>> ProvideInfo(CancellationToken cancellationToken = default)
+    public async Task<ProvideResult<IReadOnlyList<TRawInfo>>> ProvideInfoAsync(CancellationToken cancellationToken = default)
     {
         var rawInfo = new List<TRawInfo>();
         var warnings = new List<string>();
         var criticalErrors = new List<string>();
 
-        await executor.ExecuteSafeQuery(BuildQuery(), ContextName, warnings, criticalErrors, collection =>
+        await executor.ExecuteSafeQueryAsync(BuildQuery(), ContextName, warnings, criticalErrors, collection =>
         {
             foreach (var item in collection)
             {

@@ -4,5 +4,5 @@ namespace Diagnostish.Domain.Interfaces;
 
 public interface IProvideDiagnosticInfo<TRawInfo>
 {
-    ProvideResult <IReadOnlyList<TRawInfo>> ProvideInfo();
+    Task<ProvideResult<IReadOnlyList<TRawInfo>>> ProvideInfo(CancellationToken cancellationToken = default);
 }

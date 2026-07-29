@@ -7,13 +7,13 @@ namespace Diagnostish.Infrastructure.Providers.Common;
 
 public abstract class BaseWmiProvider<TRawInfo>(IExecutorWmi executor) : IProvideDiagnosticInfo<TRawInfo>
 {
-    public ProvideResult<IReadOnlyList<TRawInfo>> ProvideInfo()
+    public async Task<ProvideResult<IReadOnlyList<TRawInfo>>> ProvideInfo(CancellationToken cancellationToken = default)
     {
         var rawInfo = new List<TRawInfo>();
         var warnings = new List<string>();
         var criticalErrors = new List<string>();
 
-        executor.ExecuteSafeQuery(BuildQuery(), ContextName, warnings, criticalErrors, collection =>
+        await executor.ExecuteSafeQuery(BuildQuery(), ContextName, warnings, criticalErrors, collection =>
         {
             foreach (var item in collection)
             {
@@ -23,7 +23,7 @@ public abstract class BaseWmiProvider<TRawInfo>(IExecutorWmi executor) : IProvid
                     rawInfo.Add(mappedItem);
                 }
             }
-        });
+        }, cancellationToken);
 
         return rawInfo.Count > 0
             ? ProvideResult<IReadOnlyList<TRawInfo>>.Ok(rawInfo, warnings)

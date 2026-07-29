@@ -5,12 +5,15 @@ namespace Diagnostish.Infrastructure.Shared.Wmi.Executor;
 
 public class ExecutorWmi(Serilog.ILogger logger, IOptions<WmiSettings> settings) : IExecutorWmi
 {
-    public void ExecuteSafeQuery(string query, string context, 
+    public async Task ExecuteSafeQuery(string query, string context, 
                                  List<string> warnings, List<string> criticalErrors, 
-                                 Action<ManagementObjectCollection> wmiAction)
+                                 Action<ManagementObjectCollection> wmiAction, 
+                                 CancellationToken cancellationToken = default)
     {
         try
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var options = new System.Management.EnumerationOptions
             {
                 ReturnImmediately = true,
@@ -18,7 +21,9 @@ public class ExecutorWmi(Serilog.ILogger logger, IOptions<WmiSettings> settings)
             };
 
             using var searcher = new ManagementObjectSearcher(query) { Options = options };
-            using var collection = searcher.Get();
+
+            using var collection = await Task.Run(() => searcher.Get(), cancellationToken);
+
             if (collection.Count == 0)
             {
                 warnings.Add(ExecutorMessages.EmptyCollection(context));
@@ -26,6 +31,11 @@ public class ExecutorWmi(Serilog.ILogger logger, IOptions<WmiSettings> settings)
                 return;
             }
             wmiAction(collection);
+        }
+        catch (OperationCanceledException)
+        {
+            warnings.Add(ExecutorMessages.Cancelled(context));
+            logger.Information("Запрос отменён: {Query}.", query);
         }
         catch (ManagementException mex) when (mex.ErrorCode == ManagementStatus.Timedout)
         {

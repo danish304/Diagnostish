@@ -18,13 +18,16 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IAnalyzeDiagnosticInfo<TRaw, TInfo>, TAnalyzer>();
         services.AddSingleton<IReportMapper<TReport, TInfo>, TMapper>();
 
-        services.AddSingleton(sp => new ComponentPipeline<TReport>(report =>
+        services.AddSingleton(sp => new ComponentPipeline<TReport>(async cancellationToken =>
         {
             var provider = sp.GetRequiredService<IProvideDiagnosticInfo<TRaw>>();
             var analyzer = sp.GetRequiredService<IAnalyzeDiagnosticInfo<TRaw, TInfo>>();
             var mapper = sp.GetRequiredService<IReportMapper<TReport, TInfo>>();
 
-            mapper.MapInto(report, analyzer.AnalyzeInfo(provider.ProvideInfo()));
+            var rawInfo = await provider.ProvideInfoAsync(cancellationToken);
+            var analyzedInfo = analyzer.AnalyzeInfo(rawInfo);
+
+            return report => mapper.MapInto(report, analyzedInfo);
         }));
 
         return services;

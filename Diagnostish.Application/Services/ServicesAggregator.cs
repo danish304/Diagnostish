@@ -23,10 +23,13 @@ public class ServicesAggregator
 
         await Task.WhenAll(hardwareReportTask, operatingSystemReportTask);
 
+        var hardwareReport = await hardwareReportTask;
+        var operatingSystemReport = await operatingSystemReportTask;
+
         return new FinalReport
         {
-            HardwareReport = hardwareReportTask.Result,
-            OperatingSystemReport = operatingSystemReportTask.Result
+            HardwareReport = hardwareReport,
+            OperatingSystemReport = operatingSystemReport
         };
     }
 

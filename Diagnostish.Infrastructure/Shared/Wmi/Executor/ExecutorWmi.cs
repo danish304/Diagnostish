@@ -5,7 +5,7 @@ namespace Diagnostish.Infrastructure.Shared.Wmi.Executor;
 
 public class ExecutorWmi(Serilog.ILogger logger, IOptions<WmiSettings> settings) : IExecutorWmi
 {
-    public async Task ExecuteSafeQuery(string query, string context, 
+    public async Task ExecuteSafeQueryAsync(string query, string context, 
                                        List<string> warnings, List<string> criticalErrors, 
                                        Action<ManagementObjectCollection> wmiAction, 
                                        CancellationToken cancellationToken = default)

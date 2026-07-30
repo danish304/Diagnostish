@@ -32,6 +32,14 @@ static class Program
         Log.Logger = LoggerConfigurator.Create();
         var configuration = ConfigurationConfigurator.Create();
 
+        using var cts = new CancellationTokenSource();
+        Console.CancelKeyPress += (_, e) =>
+        {
+            e.Cancel = true;
+            Log.Warning("Сканирование остановлено пользователем (Ctrl+C).");
+            cts.Cancel();
+        };
+
         try
         {
             Log.Information("Приложение Diagnostish запущено.");
@@ -73,7 +81,7 @@ static class Program
 
             var controller = serviceProvider.GetRequiredService<DiagnosticController>();
 
-            await controller.StartDiagnosticAsync();
+            await controller.StartDiagnosticAsync(cts.Token);
 
             Log.Information("Приложение Diagnostish завершило свою работу.");
         }

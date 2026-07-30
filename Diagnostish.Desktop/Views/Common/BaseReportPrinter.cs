@@ -2,7 +2,7 @@
 
 namespace Diagnostish.Desktop.Views.Common;
 
-public abstract class ReportPrinter<TReport> : IReportPrinter<TReport>
+public abstract class BaseReportPrinter<TReport> : IReportPrinter<TReport>
 {
     public void Print(TReport report)
     {

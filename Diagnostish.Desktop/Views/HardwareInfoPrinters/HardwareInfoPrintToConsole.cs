@@ -3,7 +3,7 @@ using Diagnostish.Domain.Models.Reports;
 
 namespace Diagnostish.Desktop.Views.HardwareInfoPrinters;
 
-public class HardwareInfoPrintToConsole : ReportPrinter<HardwareReport>
+public class HardwareInfoPrintToConsole : BaseReportPrinter<HardwareReport>
 {
     protected override void PrintReport(HardwareReport hardwareReport)
     {

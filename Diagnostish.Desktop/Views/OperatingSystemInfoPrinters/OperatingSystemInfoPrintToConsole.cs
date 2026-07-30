@@ -3,7 +3,7 @@ using Diagnostish.Domain.Models.Reports;
 
 namespace Diagnostish.Desktop.Views.OperatingSystemInfoPrinters;
 
-public class OperatingSystemInfoPrintToConsole : ReportPrinter<OperatingSystemReport>
+public class OperatingSystemInfoPrintToConsole : BaseReportPrinter<OperatingSystemReport>
 {
     protected override void PrintReport(OperatingSystemReport operatingSystemReport)
     {

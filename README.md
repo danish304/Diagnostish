@@ -1,6 +1,6 @@
 <div align="center">
  
-# Diagnostish 3.1 #
+# Diagnostish 3.0.2b #
 
 <img src="https://raw.githubusercontent.com/danish304/Diagnostish/refs/heads/master/Diagnostish.Desktop/AppIcon.ico" width="100" height="100" alt="Логотип">
 

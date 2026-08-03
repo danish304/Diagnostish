@@ -2,7 +2,7 @@
 using FluentAssertions;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Diagnostish.Tests.InfrastructureTests.SharedTests.UtilsTests.ParserTests;
+namespace Diagnostish.Tests.Infrastructure.ParserTests;
 
 public class ToSafeIntTests
 {

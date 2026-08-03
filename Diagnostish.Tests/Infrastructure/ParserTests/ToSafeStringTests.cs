@@ -1,7 +1,7 @@
 ﻿using Diagnostish.Infrastructure.Shared.Utils;
 using FluentAssertions;
 
-namespace Diagnostish.Tests.InfrastructureTests.SharedTests.UtilsTests.ParserTests;
+namespace Diagnostish.Tests.Infrastructure.ParserTests;
 
 public class ToSafeStringTests
 {

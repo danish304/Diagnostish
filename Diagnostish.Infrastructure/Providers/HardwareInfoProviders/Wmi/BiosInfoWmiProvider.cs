@@ -4,7 +4,7 @@ using Diagnostish.Infrastructure.Shared.Utils;
 using Diagnostish.Infrastructure.Shared.Wmi.Executor;
 using System.Management;
 
-namespace Diagnostish.Infrastructure.Providers.HardwareInfoProviders;
+namespace Diagnostish.Infrastructure.Providers.HardwareInfoProviders.Wmi;
 
 public class BiosInfoWmiProvider(IExecutorWmi executor) : BaseWmiProvider<RawBiosInfo>(executor)
 {

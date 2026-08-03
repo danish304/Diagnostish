@@ -26,7 +26,7 @@ public class ExecutorWmi(Serilog.ILogger logger, IOptions<WmiSettings> settings)
 
             if (collection.Count == 0)
             {
-                warnings.Add(ExecutorMessages.EmptyCollection(context));
+                warnings.Add(WmiExecutorMessages.EmptyCollection(context));
                 logger.Warning("Не удалось получить данные по запросу: {Query}.", query);
                 return;
             }
@@ -34,17 +34,17 @@ public class ExecutorWmi(Serilog.ILogger logger, IOptions<WmiSettings> settings)
         }
         catch (OperationCanceledException)
         {
-            warnings.Add(ExecutorMessages.Cancelled(context));
+            warnings.Add(WmiExecutorMessages.Cancelled(context));
             logger.Information("Запрос отменён: {Query}.", query);
         }
         catch (ManagementException mex) when (mex.ErrorCode == ManagementStatus.Timedout)
         {
-            criticalErrors.Add(ExecutorMessages.Timeout(context));
+            criticalErrors.Add(WmiExecutorMessages.Timeout(context));
             logger.Error(mex, "Критический таймаут WMI при запросе: {Query}.", query);
         }
         catch (Exception ex)
         {
-            warnings.Add(ExecutorMessages.GenericFail(context, ex.Message));
+            warnings.Add(WmiExecutorMessages.GenericFail(context, ex.Message));
             logger.Error(ex, "Сбой выполнения WMI запроса: {Query}.", query);
         }
     }

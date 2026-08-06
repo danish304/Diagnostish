@@ -23,8 +23,6 @@ public class DiagnosticController
     {
         _userInterface.ShowWelcome();
 
-        _servicesAggregator.ComponentsCollected += name => Console.Write(".");
-
         var finalReport = await _servicesAggregator.GetFinalReportAsync(cancellationToken);
         _printersAggregator.PrintAllReports(finalReport);
 

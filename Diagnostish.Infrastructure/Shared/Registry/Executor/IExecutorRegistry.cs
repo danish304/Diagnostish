@@ -2,7 +2,7 @@
 
 namespace Diagnostish.Infrastructure.Shared.Registry.Executor;
 
-public interface IExucutorRegistry
+public interface IExecutorRegistry
 {
     Task ExecuteSafeReadAsync(string rootPath, string context,
                               List<string> warnings, List<string> criticalErrors,

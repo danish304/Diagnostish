@@ -2,7 +2,7 @@
 
 namespace Diagnostish.Infrastructure.Shared.Registry.Executor;
 
-public class ExecutorRegistry(Serilog.ILogger logger) : IExucutorRegistry
+public class ExecutorRegistry(Serilog.ILogger logger) : IExecutorRegistry
 {
     public async Task ExecuteSafeReadAsync(string rootPath, string context,
                                            List<string> warnings, List<string> criticalErrors,

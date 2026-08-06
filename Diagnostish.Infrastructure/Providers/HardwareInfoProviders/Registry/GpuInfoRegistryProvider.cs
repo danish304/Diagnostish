@@ -6,7 +6,7 @@ using Microsoft.Win32;
 
 namespace Diagnostish.Infrastructure.Providers.HardwareInfoProviders.Registry;
 
-public class GpuInfoRegistryProvider(IExucutorRegistry executor) : BaseRegistryProvider<RawGpuInfo>(executor)
+public class GpuInfoRegistryProvider(IExecutorRegistry executor) : BaseRegistryProvider<RawGpuInfo>(executor)
 {
     private const string GPUNAME = "DriverDesc";
     private const string GPURAM = "HardwareInformation.qwMemorySize";

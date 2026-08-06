@@ -16,6 +16,8 @@ public class ServicesAggregator
         _operatingSystemPipelines = operatingSystemPipelines;
     }
 
+    public event Action<string>? ComponentsCollected;
+
     public async Task<FinalReport> GetFinalReportAsync(CancellationToken cancellationToken = default)
     {
         var hardwareReportTask = CollectReportAsync(_hardwarePipelines, new HardwareReport(), cancellationToken);

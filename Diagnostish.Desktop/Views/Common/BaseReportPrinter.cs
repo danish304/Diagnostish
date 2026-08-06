@@ -1,6 +1,4 @@
-﻿using Diagnostish.Domain.Interfaces;
-
-namespace Diagnostish.Desktop.Views.Common;
+﻿namespace Diagnostish.Desktop.Views.Common;
 
 public abstract class BaseReportPrinter<TReport> : IReportPrinter<TReport>
 {

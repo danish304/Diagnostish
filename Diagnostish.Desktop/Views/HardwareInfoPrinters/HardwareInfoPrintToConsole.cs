@@ -1,5 +1,4 @@
 ﻿using Diagnostish.Desktop.Views.Common;
-using Diagnostish.Domain.Models.Reports;
 
 namespace Diagnostish.Desktop.Views.HardwareInfoPrinters;
 

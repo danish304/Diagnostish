@@ -1,6 +1,4 @@
-﻿using Diagnostish.Domain.Common;
-using Diagnostish.Domain.Interfaces;
-using Diagnostish.Domain.Models.Entities;
+﻿using Diagnostish.Domain.Models.Entities;
 using Diagnostish.Infrastructure.Analyzers.Common;
 using Diagnostish.Infrastructure.Providers.OperatingSystemInfoProviders;
 

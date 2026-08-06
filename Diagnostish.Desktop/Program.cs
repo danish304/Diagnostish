@@ -3,7 +3,6 @@ using Diagnostish.Desktop.Controllers;
 using Diagnostish.Desktop.Views.Common;
 using Diagnostish.Infrastructure.Shared.Wmi;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
 static class Program

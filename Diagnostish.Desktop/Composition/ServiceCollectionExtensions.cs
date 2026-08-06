@@ -7,10 +7,8 @@ using Diagnostish.Desktop.Views;
 using Diagnostish.Desktop.Views.HardwareInfoPrinters;
 using Diagnostish.Desktop.Views.OperatingSystemInfoPrinters;
 using Diagnostish.Desktop.Views.UserInterfaces;
-using Diagnostish.Domain.Interfaces;
 using Diagnostish.Domain.Models.Entities;
 using Diagnostish.Domain.Models.Entities.Hardware;
-using Diagnostish.Domain.Models.Reports;
 using Diagnostish.Infrastructure.Analyzers.HardwareInfoAnalyzers;
 using Diagnostish.Infrastructure.Analyzers.OperatingSystemInfoAnalyzers;
 using Diagnostish.Infrastructure.Providers.HardwareInfoProviders;
@@ -20,7 +18,6 @@ using Diagnostish.Infrastructure.Providers.HardwareInfoProviders.Wmi;
 using Diagnostish.Infrastructure.Providers.OperatingSystemInfoProviders;
 using Diagnostish.Infrastructure.Shared.Registry.Executor;
 using Diagnostish.Infrastructure.Shared.Wmi.Executor;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Diagnostish.Desktop.Composition;
 

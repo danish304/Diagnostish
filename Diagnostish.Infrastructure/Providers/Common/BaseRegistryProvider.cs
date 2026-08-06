@@ -1,6 +1,4 @@
-﻿using Diagnostish.Domain.Common;
-using Diagnostish.Domain.Interfaces;
-using Diagnostish.Infrastructure.Shared.Registry.Executor;
+﻿using Diagnostish.Infrastructure.Shared.Registry.Executor;
 using Microsoft.Win32;
 
 namespace Diagnostish.Infrastructure.Providers.Common;

@@ -1,6 +1,4 @@
-﻿using Diagnostish.Domain.Common;
-using Diagnostish.Domain.Interfaces;
-using Diagnostish.Infrastructure.Providers.HardwareInfoProviders.RawHardwareInfo;
+﻿using Diagnostish.Infrastructure.Providers.HardwareInfoProviders.RawHardwareInfo;
 using Diagnostish.Infrastructure.Providers.HardwareInfoProviders.Registry;
 using Diagnostish.Infrastructure.Providers.HardwareInfoProviders.Wmi;
 

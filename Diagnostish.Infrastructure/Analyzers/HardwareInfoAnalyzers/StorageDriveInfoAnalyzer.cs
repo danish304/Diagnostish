@@ -1,6 +1,4 @@
-﻿using Diagnostish.Domain.Common;
-using Diagnostish.Domain.Interfaces;
-using Diagnostish.Domain.Models.Entities.Hardware;
+﻿using Diagnostish.Domain.Models.Entities.Hardware;
 using Diagnostish.Infrastructure.Analyzers.HardwareInfoAnalyzers.Messages;
 using Diagnostish.Infrastructure.Providers.HardwareInfoProviders.RawHardwareInfo;
 using Diagnostish.Infrastructure.Shared.Utils;

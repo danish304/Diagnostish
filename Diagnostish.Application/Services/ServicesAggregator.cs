@@ -1,5 +1,4 @@
 ﻿using Diagnostish.Application.Pipelines;
-using Diagnostish.Domain.Models.Reports;
 
 namespace Diagnostish.Application.Services;
 

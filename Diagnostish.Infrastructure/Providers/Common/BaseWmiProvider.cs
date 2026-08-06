@@ -1,6 +1,4 @@
-﻿using Diagnostish.Domain.Common;
-using Diagnostish.Domain.Interfaces;
-using Diagnostish.Infrastructure.Shared.Wmi.Executor;
+﻿using Diagnostish.Infrastructure.Shared.Wmi.Executor;
 using System.Management;
 
 namespace Diagnostish.Infrastructure.Providers.Common;

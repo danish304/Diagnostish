@@ -1,7 +1,4 @@
-﻿using Diagnostish.Domain.Interfaces;
-using Diagnostish.Domain.Models.Reports;
-
-namespace Diagnostish.Desktop.Views;
+﻿namespace Diagnostish.Desktop.Views;
 
 public class PrintersAggregator
 {

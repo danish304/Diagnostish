@@ -1,6 +1,5 @@
 ﻿using Diagnostish.Application.Services;
 using Diagnostish.Desktop.Views;
-using Diagnostish.Domain.Interfaces;
 
 namespace Diagnostish.Desktop.Controllers;
 

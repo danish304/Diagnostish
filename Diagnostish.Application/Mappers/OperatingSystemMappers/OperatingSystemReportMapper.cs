@@ -1,8 +1,5 @@
 ﻿using Diagnostish.Application.Mappers.Common;
-using Diagnostish.Domain.Common;
-using Diagnostish.Domain.Interfaces;
 using Diagnostish.Domain.Models.Entities;
-using Diagnostish.Domain.Models.Reports;
 
 namespace Diagnostish.Application.Mappers.OperatingSystemMappers;
 

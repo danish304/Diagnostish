@@ -1,5 +1,4 @@
 ﻿using Diagnostish.Desktop.Views.Common;
-using Diagnostish.Domain.Interfaces;
 
 namespace Diagnostish.Desktop.Views.UserInterfaces;
 

@@ -7,11 +7,13 @@ namespace Diagnostish.Infrastructure.Providers.HardwareInfoProviders;
 public class GpuInfoProvider(GpuInfoWmiProvider wmiProvider, 
                              GpuInfoRegistryProvider registryProvider) : IProvideDiagnosticInfo<RawGpuInfo>
 {
+    private const double UINT32OVERFLOW = 4290000000;
+
     public async Task<ProvideResult<IReadOnlyList<RawGpuInfo>>> ProvideInfoAsync(CancellationToken cancellationToken = default)
     {
         var wmiResult = await wmiProvider.ProvideInfoAsync(cancellationToken);
 
-        bool needsFallback = wmiResult.Data is null || wmiResult.Data.Any(gpu => gpu.AdapterRam is null or <= 0);
+        bool needsFallback = wmiResult.Data is null || wmiResult.Data.Any(gpu => gpu.AdapterRam is null or <= 0 or >= UINT32OVERFLOW);
 
         if (!needsFallback) return wmiResult;
 
@@ -33,7 +35,7 @@ public class GpuInfoProvider(GpuInfoWmiProvider wmiProvider,
             var match = registryGpus.FirstOrDefault(r =>
                 r.Name is not null && wmiGpu.Name is not null && r.Name.Contains(wmiGpu.Name, StringComparison.OrdinalIgnoreCase));
 
-            bool wmiMemoryInvalid = wmiGpu.AdapterRam is null or <= 0;
+            bool wmiMemoryInvalid = wmiGpu.AdapterRam is null or <= 0 or >= UINT32OVERFLOW;
 
             return wmiMemoryInvalid && match?.AdapterRam is > 0
                 ? wmiGpu with { AdapterRam = match.AdapterRam }

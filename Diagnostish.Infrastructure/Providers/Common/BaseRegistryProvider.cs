@@ -3,7 +3,7 @@ using Microsoft.Win32;
 
 namespace Diagnostish.Infrastructure.Providers.Common;
 
-public abstract class BaseRegistryProvider<TRawInfo>(IExecutorRegistry executor) : IProvideDiagnosticInfo<TRawInfo>
+public abstract class BaseRegistryProvider<TRawInfo>(IExecutorRegistry executor) : IRegistrySource<TRawInfo>
 {
     public async Task<ProvideResult<IReadOnlyList<TRawInfo>>> ProvideInfoAsync(CancellationToken cancellationToken = default)
     {

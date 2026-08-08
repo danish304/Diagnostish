@@ -3,7 +3,7 @@ using System.Management;
 
 namespace Diagnostish.Infrastructure.Providers.Common;
 
-public abstract class BaseWmiProvider<TRawInfo>(IExecutorWmi executor) : IProvideDiagnosticInfo<TRawInfo>
+public abstract class BaseWmiProvider<TRawInfo>(IExecutorWmi executor) : IWmiSource<TRawInfo>
 {
     public async Task<ProvideResult<IReadOnlyList<TRawInfo>>> ProvideInfoAsync(CancellationToken cancellationToken = default)
     {

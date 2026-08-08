@@ -11,6 +11,7 @@ using Diagnostish.Domain.Models.Entities;
 using Diagnostish.Domain.Models.Entities.Hardware;
 using Diagnostish.Infrastructure.Analyzers.HardwareInfoAnalyzers;
 using Diagnostish.Infrastructure.Analyzers.OperatingSystemInfoAnalyzers;
+using Diagnostish.Infrastructure.Providers.Common;
 using Diagnostish.Infrastructure.Providers.HardwareInfoProviders;
 using Diagnostish.Infrastructure.Providers.HardwareInfoProviders.RawHardwareInfo;
 using Diagnostish.Infrastructure.Providers.HardwareInfoProviders.Registry;
@@ -36,8 +37,8 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddHardwareComponents(this IServiceCollection services)
     {
-        services.AddSingleton<GpuInfoWmiProvider>();
-        services.AddSingleton<GpuInfoRegistryProvider>();
+        services.AddSingleton<IWmiSource<RawGpuInfo>, GpuInfoWmiProvider>();
+        services.AddSingleton<IRegistrySource<RawGpuInfo>, GpuInfoRegistryProvider>();
 
         return services
             .AddComponent<HardwareReport, RawCpuInfo, CpuInfo, 
@@ -45,7 +46,7 @@ public static class ServiceCollectionExtensions
             .AddComponent<HardwareReport, RawRamInfo, RamInfo, 
                           RamInfoWmiProvider, RamInfoAnalyzer, RamReportMapper>()
             .AddComponent<HardwareReport, RawGpuInfo, IReadOnlyList<GpuInfo>, 
-                          GpuInfoProvider, GpuInfoAnalyzer, GpuReportMapper>()
+                          GpuInfoFallBackProvider, GpuInfoAnalyzer, GpuReportMapper>()
             .AddComponent<HardwareReport, RawStorageDriveInfo, IReadOnlyList<StorageDriveInfo>, 
                           StorageDriveInfoWmiProvider, StorageDriveInfoAnalyzer, StorageDriveReportMapper>()
             .AddComponent<HardwareReport, RawBiosInfo, BiosInfo, 

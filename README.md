@@ -1,6 +1,6 @@
 <div align="center">
  
-# Diagnostish 3.0.2b #
+# Diagnostish 3.1 #
 
 <img src="https://raw.githubusercontent.com/danish304/Diagnostish/refs/heads/master/Diagnostish.Desktop/AppIcon.ico" width="100" height="100" alt="Логотип">
 
@@ -28,8 +28,8 @@
 
 ## ✨ Основной функционал ##
 
-* ***Сбор аппаратных данных.*** Низкоуровневый асинхронный опрос компонентов (процессор, оперативная память, видеокарты, накопители, материнская плата, BIOS) и данных операционной системы через *`Windows Management Instrumentation (WMI).`*
-* ***Многоуровневая отказоустойчивость.***  Безопасный парсинг данных ([`Parser`](Diagnostish.Infrastructure/Shared/Utils/Parser.cs)) и безопасное выполнение WMI-запросов ([`ExecutorWmi`](Diagnostish.Infrastructure/Shared/Wmi/Executor/ExecutorWmi.cs)) с раздельной обработкой ошибок доступа, таймаутов и повреждённых записей. Отсутствие или некорректность отдельных WMI-полей не прерывает сбор — утилита продолжает работу, фиксируя предупреждения (*`Warnings`*) и критические ошибки (*`CriticalErrors`*) в итоговом отчёте.
+* ***Сбор аппаратных данных.*** Низкоуровневый асинхронный опрос компонентов (процессор, оперативная память, видеокарты, накопители, материнская плата, BIOS) и данных операционной системы через *`Windows Management Instrumentation (WMI)`* и реестр.
+* ***Многоуровневая отказоустойчивость.*** Безопасный парсинг данных ([`Parser`](Diagnostish.Infrastructure/Shared/Utils/Parser.cs)) и безопасное чтение реестра([`ExecutorRegistry`](Diagnostish.Infrastructure/Shared/Registry/Executor/ExecutorRegistry.cs))/выполнение WMI-запросов ([`ExecutorWmi`](Diagnostish.Infrastructure/Shared/Wmi/Executor/ExecutorWmi.cs)) с раздельной обработкой ошибок доступа, таймаутов и повреждённых записей. Отсутствие или некорректность отдельных полей не прерывает сбор — утилита продолжает работу, фиксируя предупреждения (*`Warnings`*) и критические ошибки (*`CriticalErrors`*) в итоговом отчёте.
 * ***Автоматизация прав доступа.*** Встроенный манифест приложения (*`UAC`*) запрашивает права администратора автоматически, что необходимо для корректного чтения системных WMI-датчиков.
 * ***Автономность.*** Утилита собирается в один исполняемый файл со всеми зависимостями. Работает на любом ПК с *`Windows`* без предварительной установки *`.NET`*.
 * ***Информативность.*** Результаты сканирования структурированы и выводятся в кастомном цветовом интерфейсе консоли.
@@ -39,7 +39,7 @@
 ## 🛠️ Архитектура и технологии ##
 
 * Проект спроектирован по принципам *`Clean Architecture (Domain → Application/Infrastructure → Desktop)`* с соблюдением *`SOLID`*, что обеспечивает независимость бизнес-логики от конкретных технологий сбора и вывода данных, а также лёгкость расширения и тестирования.
-* ***Технологический стек:*** *`C# (.NET 10)`*, *`Serilog`*, *`System.Management (WMI)`*, *`Microsoft.Extensions.DependencyInjection`*, *`xUnit + FluentAssertions`*.
+* ***Технологический стек:*** *`C# (.NET 10)`*, *`Serilog`*, *`System.Management (WMI) + Microsoft.Win32 (Реестр)`*, *`Microsoft.Extensions.DependencyInjection`*, *`xUnit + FluentAssertions + NSubstitute`*.
 
 <div>
 <br>
@@ -57,14 +57,14 @@
 </div>
 
 ## 📂 Структура ##
-###  Diagnostish.Domain ###
+### Diagnostish.Domain ###
 
 **Ядро приложения — не зависит ни от одного другого проекта решения.**
   
 * [`Entities`](Diagnostish.Domain/Models/Entities/) — доменные сущности с провалидированными данными (*`CpuInfo`*, *`RamInfo`*, *`GpuInfo`*, *`StorageDriveInfo`*, *`BiosInfo`*, *`BaseBoardInfo`*, *`OperatingSystemInfo`*).
 * [`Reports`](Diagnostish.Domain/Models/Reports/) — плоские модели для представления результатов (*`HardwareReport`*, *`OperatingSystemReport`*, объединяющий их *`FinalReport`*), а также базовый *`IssuesReport`* со списками *`Warnings/CriticalErrors`*.
 * [`ProvideResult`](Diagnostish.Domain/Common/ProvideResult.cs) — единый «конверт» результата на каждом этапе конвейера: данные (или *`null`* при полном сбое) плюс списки предупреждений и критических ошибок.
-* [`Interfaces`](Diagnostish.Domain/Interfaces/) — контракты, не привязанные ни к *`WMI`*, ни к консоли:
+* [`Interfaces`](Diagnostish.Domain/Interfaces/) — контракты, не привязанные ни к *`WMI/Реестру`*, ни к консоли:
   * [`IProvideDiagnosticInfo`](Diagnostish.Domain/Interfaces/IProvideDiagnosticInfo.cs) — сбор сырых данных;
   * [`IAnalyzeDiagnosticInfo`](Diagnostish.Domain/Interfaces/IAnalyzeDiagnosticInfo.cs) — анализ и валидация;
   * [`IReportMapper`](Diagnostish.Domain/Interfaces/IReportMapper.cs) — перенос провалидированных данных в отчёт;
@@ -73,12 +73,13 @@
 
 ### Diagnostish.Infrastructure ###
 
-**Реализация сбора данных через *`WMI`*. Зависит только от [`Domain`](Diagnostish.Domain/Diagnostish.Domain.csproj).**
+**Реализация сбора данных через *`WMI`* или через реестр при ошибках (FallBack). Зависит только от [`Domain`](Diagnostish.Domain/Diagnostish.Domain.csproj).**
 
-* [`BaseWmiProvider`](Diagnostish.Infrastructure/Providers/Common/BaseWmiProvider.cs) — абстрактный базовый класс (*`Template Method`*), инкапсулирующий общую механику WMI-запроса; конкретный провайдер описывает только *`BuildQuery()`*, *`ContextName`* и *`Map(...)`*.
-* [`HardwareInfoProviders`](Diagnostish.Infrastructure/Providers/HardwareInfoProviders/), [`OperatingSystemProviders`](Diagnostish.Infrastructure/Providers/OperatingSystemInfoProviders/) — конкретные WMI-провайдеры (*`CpuInfoWmiProvider`*, *`RamInfoWmiProvider`* и т.д.) и их «сырые» *`DTO`* (*`RawCpuInfo`*, *`RawRamInfo`* и т.д.) в подпапке [`RawHardwareInfo`](Diagnostish.Infrastructure/Providers/HardwareInfoProviders/RawHardwareInfo/).
+* [`BaseWmiProvider`](Diagnostish.Infrastructure/Providers/Common/BaseWmiProvider.cs) и [`BaseRegistryProvider`](Diagnostish.Infrastructure/Providers/Common/BaseRegistryProvider.cs) — абстрактные базовые классы (*`Template Methods`*), инкапсулирующие общую механику WMI-запроса/чтения реестра. Реализуют узкие интерфейсы [`IWmiSource`](Diagnostish.Infrastructure/Providers/Common/IWmiSource.cs) и [`IRegistrySource`](Diagnostish.Infrastructure/Providers/Common/IRegistrySource.cs).
+* [`HardwareInfoProviders`](Diagnostish.Infrastructure/Providers/HardwareInfoProviders/), [`OperatingSystemProviders`](Diagnostish.Infrastructure/Providers/OperatingSystemInfoProviders/) — конкретные провайдеры (*`CpuInfoWmiProvider`*, *`GpuInfoRegistryProvider`* и т.д.) и их «сырые» *`DTO`* (*`RawCpuInfo`*, *`RawRamInfo`* и т.д.) в подпапке [`RawHardwareInfo`](Diagnostish.Infrastructure/Providers/HardwareInfoProviders/RawHardwareInfo/).
 * [`Analyzers`](Diagnostish.Infrastructure/Analyzers/) — бизнес-логика валидации: превращение сырых данных в доменные сущности с одновременной генерацией предупреждений. Общие проверки вынесены в [`AnalyzerValidationExtensions`](Diagnostish.Infrastructure/Analyzers/Common/AnalyzerValidationExtensions.cs) (*`GetValueOrWarning`* для строк, чисел через *`INumber<T>`* и дат). Тексты предупреждений сгруппированы по компоненту в [`Messages`](Diagnostish.Infrastructure/Analyzers/HardwareInfoAnalyzers/Messages/).
-* [`Wmi`](Diagnostish.Infrastructure/Shared/Wmi/) — [`ExecutorWmi`](Diagnostish.Infrastructure/Shared/Wmi/Executor/ExecutorWmi.cs)/[`IExecutorWmi`](Diagnostish.Infrastructure/Shared/Wmi/Executor/IExecutorWmi.cs) (безопасное выполнение запросов с раздельной обработкой *`UnauthorizedAccessException`*, *`ManagementException`* по кодам *`AccessDenied/Timedout`*), [`ExecutorMessages`](Diagnostish.Infrastructure/Shared/Wmi/Executor/ExecutorMessages.cs), [`WmiSettings`](Diagnostish.Infrastructure/Shared/Wmi/WmiSettings.cs).
+* [`Wmi`](Diagnostish.Infrastructure/Shared/Wmi/) — [`ExecutorWmi`](Diagnostish.Infrastructure/Shared/Wmi/Executor/ExecutorWmi.cs)/[`IExecutorWmi`](Diagnostish.Infrastructure/Shared/Wmi/Executor/IExecutorWmi.cs) (безопасное выполнение запросов с раздельной обработкой *`OperationCanceledException`*, *`ManagementException.Timedout`*), [`ExecutorMessages`](Diagnostish.Infrastructure/Shared/Wmi/Executor/ExecutorMessages.cs), [`WmiSettings`](Diagnostish.Infrastructure/Shared/Wmi/WmiSettings.cs).
+* [`Registry`](Diagnostish.Infrastructure/Shared/Registry/) — [`ExecutorRegistry`](Diagnostish.Infrastructure/Shared/Registry/Executor/ExecutorRegistry.cs)/[`IExecutorRegistry`](Diagnostish.Infrastructure/Shared/Registry/Executor/IExecutorRegistry.cs) (безопасное чтение реестра с обработкой *`OperationCanceledException`*), [`ExecutorMessages`](Diagnostish.Infrastructure/Shared/Registry/Executor/ExecutorMessages.cs).
 * [`Utils`](Diagnostish.Infrastructure/Shared/Utils/) — [`Parser`](Diagnostish.Infrastructure/Shared/Utils/Parser.cs) (безопасное приведение WMI-значений к nullable-типам **C#**) и [`ByteConverter`](Diagnostish.Infrastructure/Shared/Utils/ByteConverter.cs) (перевод байт в гигабайты).
 
 ### Diagnostish.Application ###
@@ -93,17 +94,17 @@
 
 ***`Composition Root`* и точка входа. Единственный проект, которому разрешено знать одновременно про [`Infrastructure`](Diagnostish.Infrastructure/Diagnostish.Infrastructure.csproj) и конкретные реализации представления.**
 
-* [`ServiceCollectionExtensions`](Diagnostish.Desktop/Composition/ServiceCollectionExtensions.cs) — универсальные generic-методы регистрации: *`AddComponent<TReport, TRaw, TInfo, TProvider, TAnalyzer, TMapper>()`* регистрирует провайдер, анализатор, маппер и собирает из них [`ComponentPipeline`](Diagnostish.Application/Pipelines/ComponentPipeline.cs) одной строкой; *`AddPrinter<TReport, TPrinter>()`* регистрирует принтер отчёта.
+* [`ServiceCollectionExtensions`](Diagnostish.Desktop/Composition/ServiceCollectionExtensions.cs) — универсальные приватные generic-методы регистрации: *`AddComponent<TReport, TRaw, TInfo, TProvider, TAnalyzer, TMapper>()`* регистрирует провайдер, анализатор, маппер и собирает из них [`ComponentPipeline`](Diagnostish.Application/Pipelines/ComponentPipeline.cs) одной строкой; *`AddPrinter<TReport, TPrinter>()`* регистрирует принтер отчёта: нужны для методов расширения, которые добавляют добавляют коллекции зависимостей.
 * [`LoggerConfigurator`](Diagnostish.Desktop/Composition/LoggerConfigurator.cs) — настройка *`Serilog`* (запись в *`/logs`* с ротацией по дням).
 * [`ReportPrinter`](Diagnostish.Desktop/Views/Common/ReportPrinter.cs) — базовый класс принтера (*`Template Method: PrintReport`* + общий вывод *`Warnings/CriticalErrors`*).
 * [`HardwareInfoPrinters`](Diagnostish.Desktop/Views/HardwareInfoPrinters/), [`OperatingSystemInfoPrinters`](Diagnostish.Desktop/Views/OperatingSystemInfoPrinters/) — консольные принтеры отчётов.
 * [`PrintersAggregator`](Diagnostish.Desktop/Views/PrintersAggregator.cs) — рассылает готовый [`FinalReport`](Diagnostish.Domain/Models/Reports/FinalReport.cs) по всем зарегистрированным принтерам (позволяет добавлять новые способы вывода — например, в файл — не меняя контроллер).
 * [`DiagnosticController`](Diagnostish.Desktop/Controllers/DiagnosticController.cs) — тонкий оркестратор: приветствие → сбор отчёта → вывод во все принтеры → ожидание выхода.
-* [`Program.cs`](Diagnostish.Desktop/Program.cs) — точка сборки: настройка DI-контейнера, регистрация всех компонентов и принтеров, запуск контроллера.
+* [`Program.cs`](Diagnostish.Desktop/Program.cs) — точка сборки: настройка DI-контейнера, регистрация всех компонентов и принтеров, асинхронный запуск контроллера.
 
 ### Diagnostish.Tests ###
 
-**Юнит-тесты (*`xUnit + FluentAssertions1`*) для [`Infrastructure`](Diagnostish.Infrastructure/Diagnostish.Infrastructure.csproj) — на данный момент покрывают [`Parser`](Diagnostish.Infrastructure/Shared/Utils/Parser.cs) (безопасное приведение типов из *`WMI`*, включая некорректные CIM-даты).**
+**Юнит-тесты (*`xUnit + FluentAssertions1`*) для [`Infrastructure`](Diagnostish.Infrastructure/Diagnostish.Infrastructure.csproj) — на данный момент покрывают [`Parser`](Diagnostish.Infrastructure/Shared/Utils/Parser.cs) (безопасное приведение типов, включая некорректные CIM-даты) и [`GpuInfoFallBackProvider`](Diagnostish.Infrastructure/Providers/HardwareProviders/GpuInfoFallBackProvider.cs) (проверка выполнения FallBack, пограничные случаи, проверка передачи токена).**
 
 <div>
 <br>
@@ -111,5 +112,5 @@
 
 > [!NOTE]
 > ## 🔭 Планы развития ##
-> * Резервный сбор данных о видеопамяти через реестр — для видеокарт, отдающих через *`WMI`* некорректный объём из-за ограничения *`uint32`*.
-> * Расширение набора провайдеров данных (реестр как альтернативный/резервный источник наравне с *`WMI`*) и принтеров (вывод в файл).
+> * Расширение набора принтеров (вывод в файл).
+> * Сбор и вывод информации о сети.

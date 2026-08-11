@@ -1,0 +1,29 @@
+﻿using Diagnostish.Infrastructure.Providers.Common.RawModels.Hardware;
+using Diagnostish.Infrastructure.Providers.Wmi.Common;
+using Diagnostish.Infrastructure.Shared.Common.Utils;
+using Diagnostish.Infrastructure.Shared.Wmi.Executor;
+using System.Management;
+
+namespace Diagnostish.Infrastructure.Providers.Wmi.Hardware;
+
+public class BiosWmiProvider(IWmiExecutor executor) 
+    : BaseWmiProvider<RawBiosModel>(executor)
+{
+    private const string VERSION = "Version";
+    private const string RELEASE = "ReleaseDate";
+    private const string MANUFACTURER = "Manufacturer";
+
+    protected override string BuildQuery() => 
+        $"SELECT {VERSION}, {RELEASE}, {MANUFACTURER} FROM Win32_BIOS";
+
+    protected override string ContextName => "о биосе";
+
+    protected override RawBiosModel Map(ManagementBaseObject item)
+    {
+        return new RawBiosModel(
+            Parser.ToSafeString(item[VERSION]),
+            Parser.ToSafeDateTime(item[RELEASE]),
+            Parser.ToSafeString(item[MANUFACTURER])
+        );
+    }
+}

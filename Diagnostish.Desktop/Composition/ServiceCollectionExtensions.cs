@@ -7,6 +7,7 @@ using Diagnostish.Desktop.Views;
 using Diagnostish.Desktop.Views.ConsoleViews;
 using Diagnostish.Desktop.Views.UserInterfaces;
 using Diagnostish.Domain.Models.Entities.Hardware;
+using Diagnostish.Domain.Models.Entities.OperatingSystem;
 using Diagnostish.Infrastructure.Analyzers.Hardware;
 using Diagnostish.Infrastructure.Analyzers.OperatingSystem;
 using Diagnostish.Infrastructure.Providers;
@@ -19,8 +20,6 @@ using Diagnostish.Infrastructure.Providers.Wmi.Hardware;
 using Diagnostish.Infrastructure.Providers.Wmi.OperatingSystem;
 using Diagnostish.Infrastructure.Shared.Registry.Executor;
 using Diagnostish.Infrastructure.Shared.Wmi.Executor;
-
-using OsEntity = Diagnostish.Domain.Models.Entities.OperatingSystem.OperatingSystem;
 
 namespace Diagnostish.Desktop.Composition;
 
@@ -59,7 +58,7 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddOperatingSystemComponents(this IServiceCollection services)
     {
-        return services.AddComponent<OperatingSystemReport, RawOperatingSystemModel, OsEntity,
+        return services.AddComponent<OperatingSystemReport, RawOperatingSystemModel, OperSystem,
             OperatingSystemWmiProvider, OperatingSystemAnalyzer, OperatingSystemReportMapper>();
     }
 

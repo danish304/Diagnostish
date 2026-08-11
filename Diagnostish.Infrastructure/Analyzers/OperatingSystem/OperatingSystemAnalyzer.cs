@@ -1,23 +1,23 @@
-﻿using Diagnostish.Infrastructure.Analyzers.Common;
+﻿using Diagnostish.Domain.Models.Entities.OperatingSystem;
+using Diagnostish.Infrastructure.Analyzers.Common;
 using Diagnostish.Infrastructure.Providers.Common.RawModels.OperatingSystem;
 using Serilog;
 
-using OsEntity = Diagnostish.Domain.Models.Entities.OperatingSystem.OperatingSystem;
 using static Diagnostish.Infrastructure.Analyzers.OperatingSystem.Messages.OperatingSystemAnalyzerMessages;
 
 namespace Diagnostish.Infrastructure.Analyzers.OperatingSystem;
 
 public class OperatingSystemAnalyzer(ILogger logger) 
-    : IAnalyzer<RawOperatingSystemModel, OsEntity>
+    : IAnalyzer<RawOperatingSystemModel, OperSystem>
 {
-    public ProvideResult<OsEntity> Analyze(
+    public ProvideResult<OperSystem> Analyze(
         ProvideResult<IReadOnlyList<RawOperatingSystemModel>> result)
     {
         var warnings = new List<string>(result.Warnings);
 
         if (result.Data is not [var rawData, ..])
         {
-            return ProvideResult<OsEntity>.Fail(
+            return ProvideResult<OperSystem>.Fail(
                 warnings, 
                 result.CriticalErrors);
         }
@@ -48,8 +48,8 @@ public class OperatingSystemAnalyzer(ILogger logger)
                 UNKNOWN_LASTBOOTDATE,
                 condition: date => date != DateTime.MinValue && date < DateTime.Now);
 
-        return ProvideResult<OsEntity>.Ok(
-            new OsEntity(caption, manufacturer, version, installDate, user, lastBoot),
+        return ProvideResult<OperSystem>.Ok(
+            new OperSystem(caption, manufacturer, version, installDate, user, lastBoot),
             warnings);
     }
 }

@@ -1,16 +1,15 @@
 ﻿using Diagnostish.Application.Mappers.Common;
+using Diagnostish.Domain.Models.Entities.OperatingSystem;
 using Diagnostish.Domain.Models.Reports.Components;
-
-using OsEntity = Diagnostish.Domain.Models.Entities.OperatingSystem.OperatingSystem;
 
 namespace Diagnostish.Application.Mappers.OperatingSystem;
 
 public class OperatingSystemReportMapper 
-    : IReportMapper<OperatingSystemReport, OsEntity>
+    : IReportMapper<OperatingSystemReport, OperSystem>
 {
     public void MapInto(
         OperatingSystemReport report, 
-        ProvideResult<OsEntity> result)
+        ProvideResult<OperSystem> result)
     {
         if (report.TryExtractData(result, out var data))
         {

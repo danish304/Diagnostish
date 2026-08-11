@@ -1,18 +1,19 @@
-﻿using Diagnostish.Infrastructure.Shared.Utils;
+﻿using static Diagnostish.Infrastructure.Shared.Common.Utils.Parser;
 
-namespace Diagnostish.Tests.InfrastructureTests.SharedTests.UtilsTests;
+namespace Diagnostish.Tests.Infrastructure.Shared.Common.Utils;
 
-[SuppressMessage("Assertion", "xUnit1045:The type argument object? might not be serializable")]
 public class ParserTests
 {
     public static TheoryData<object?, int?> ToSafeInt_TestData() => new()
     {
+        // Невалидные данные
         { DBNull.Value, null },
         { null, null },
         { "", null },
         { "   ", null },
         { "6.0", null},
 
+        // Валидные данные
         { 6, 6 },
         { "6", 6},
         {"   6   ", 6},
@@ -21,11 +22,13 @@ public class ParserTests
 
     public static TheoryData<object?, double?> ToSafeDouble_TestData() => new()
     {
+        // Невалидные данные
         { DBNull.Value, null },
         { null, null},
         { "", null},
         { "   ", null},
 
+        // Валидные данные
         { 6, 6.0},
         { "6", 6.0},
         { "   6   ", 6.0},
@@ -35,9 +38,11 @@ public class ParserTests
 
     public static TheoryData<object?, string?> ToSafeString_TestData() => new()
     {
+        // Невалидные данные
         { DBNull.Value, null },
         { null, null },
 
+        // Валидные данные
         { "", null },
         { "   ", null },
         { "AMD Ryzen 5 5500U", "AMD Ryzen 5 5500U" }
@@ -45,6 +50,7 @@ public class ParserTests
 
     public static TheoryData<object?, DateTime?> ToSafeDateTime_TestData() => new()
     {
+        // Невалидные данные
         { DBNull.Value, null },
         { null, null },
         { "", null },
@@ -55,6 +61,7 @@ public class ParserTests
         { "2026-05-20", null },
         { "2026-07-10 13:43:00", null },
 
+        // Валидные данные
         { "20261212133620.000000+000", new DateTime(2026, 12, 12, 13, 36, 20).ToLocalTime() }
     };
 
@@ -63,7 +70,7 @@ public class ParserTests
     public void ToSafeIntTests(object? input, int? expected)
     {
         // Act
-        int? result = Parser.ToSafeInt(input);
+        int? result = ToSafeInt(input);
 
         // Assert
         result.Should().Be(expected);
@@ -74,7 +81,7 @@ public class ParserTests
     public void ToSafeDoubleTests(object? input, double? expected)
     {
         // Act
-        double? result = Parser.ToSafeDouble(input);
+        double? result = ToSafeDouble(input);
 
         // Assert
         result.Should().Be(expected);
@@ -85,7 +92,7 @@ public class ParserTests
     public void ToSafeStringTests(object? input, string? expected)
     {
         // Act
-        string? result = Parser.ToSafeString(input);
+        string? result = ToSafeString(input);
 
         // Assert
         result.Should().Be(expected);
@@ -96,7 +103,7 @@ public class ParserTests
     public void ToSafeDateTimeTests(object? input, DateTime? expected)
     {
         // Act
-        DateTime? result = Parser.ToSafeDateTime(input);
+        DateTime? result = ToSafeDateTime(input);
 
         // Assert
         result.Should().Be(expected);

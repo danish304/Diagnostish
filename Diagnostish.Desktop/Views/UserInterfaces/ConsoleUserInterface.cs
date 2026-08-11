@@ -1,4 +1,4 @@
-﻿using Diagnostish.Desktop.Views.Common;
+﻿using Diagnostish.Desktop.Views.ConsoleViews.Common;
 
 namespace Diagnostish.Desktop.Views.UserInterfaces;
 
@@ -11,19 +11,29 @@ public class ConsoleUserInterface : IUserInterface
             Console.Title = "Diagnostish";
             Console.Clear();
         }
-        catch (IOException) { }
+        catch (IOException) 
+        {
+            // Игнорируем, если терминал не поддерживает изменение заголовка или очистку
+        }
 
-        ColorPrinter.WriteLineColored("ЗАПУСК ДИАГНОСТИКИ . . .", ConsoleColor.Magenta);
+        ColorPrinter.WriteLineColored(
+            "ЗАПУСК ДИАГНОСТИКИ . . .", 
+            ConsoleColor.Magenta);
     }
 
     public void WaitForExit()
     {
-        ColorPrinter.WriteLineColored("\nСКАНИРОВАНИЕ ЗАВЕРШЕНО!", ConsoleColor.Green);
+        ColorPrinter.WriteLineColored(
+            "\nСКАНИРОВАНИЕ ЗАВЕРШЕНО!", 
+            ConsoleColor.Green);
 
         if (!Console.IsInputRedirected)
         {
-            ColorPrinter.WriteLineColored("Для завершения нажмите любую клавишу . . .", ConsoleColor.DarkGray);
-            Console.ReadKey();
+            ColorPrinter.WriteLineColored(
+                "Для завершения нажмите любую клавишу . . .", 
+                ConsoleColor.DarkGray);
+
+            Console.ReadKey(intercept: true);
         }
     }
 }

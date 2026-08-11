@@ -5,17 +5,17 @@ namespace Diagnostish.Desktop.Controllers;
 
 public class DiagnosticController
 {
-    private readonly ServicesAggregator _servicesAggregator;
-    private readonly PrintersAggregator _printersAggregator;
+    private readonly FinalReportComposer _composer;
+    private readonly FinalReportPrintDispatcher _printDispatcher;
     private readonly IUserInterface _userInterface;
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0290:Use primary constructor", Justification = "<Pending>")]
-    public DiagnosticController(ServicesAggregator servicesAggregator,
-                                PrintersAggregator printersAggregator,
-                                IUserInterface userInterface)
+    public DiagnosticController(
+        FinalReportComposer composer,
+        FinalReportPrintDispatcher printDispatcher,
+        IUserInterface userInterface)
     {
-        _servicesAggregator = servicesAggregator;
-        _printersAggregator = printersAggregator;
+        _composer = composer;
+        _printDispatcher = printDispatcher;
         _userInterface = userInterface;
     }
 
@@ -23,8 +23,9 @@ public class DiagnosticController
     {
         _userInterface.ShowWelcome();
 
-        var finalReport = await _servicesAggregator.GetFinalReportAsync(cancellationToken);
-        _printersAggregator.PrintAllReports(finalReport);
+        var finalReport = await _composer.GetFinalReportAsync(cancellationToken);
+
+        _printDispatcher.PrintAllReports(finalReport);
 
         _userInterface.WaitForExit();
     }

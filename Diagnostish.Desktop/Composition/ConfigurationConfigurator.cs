@@ -6,6 +6,7 @@ namespace Diagnostish.Desktop.Composition;
 public static class ConfigurationConfigurator
 {
     private const string ConfigFileName = "appsettings.json";
+
     private const string DefaultConfigContent = """
         {
           "Wmi": {
@@ -35,7 +36,10 @@ public static class ConfigurationConfigurator
 
     private static void EnsureConfigExists(string configPath)
     {
-        if (File.Exists(configPath)) return;
+        if (File.Exists(configPath))
+        {
+            return;
+        }
 
         try
         {

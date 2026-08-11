@@ -1,6 +1,6 @@
 ﻿using Diagnostish.Desktop.Composition;
 using Diagnostish.Desktop.Controllers;
-using Diagnostish.Desktop.Views.Common;
+using Diagnostish.Desktop.Views.ConsoleViews.Common;
 using Diagnostish.Infrastructure.Shared.Wmi;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -25,26 +25,33 @@ static class Program
         try
         {
             Log.Information("Приложение Diagnostish запущено.");
-            Log.Information("Таймаут WMI-запросов выставлен на {Timeout} сек.", 
-                             configuration.GetValue("Wmi:WmiQueryTimeoutSeconds", 
-                                                     new WmiSettings().WmiQueryTimeoutSeconds));
 
-            var serviceProvider = new ServiceCollection()
+            var wmiSettings = configuration.GetSection("Wmi").Get<WmiSettings>() ?? new WmiSettings();
+            Log.Information(
+                "Таймаут WMI-запросов выставлен на {Timeout} сек.", 
+                wmiSettings.WmiQueryTimeoutSeconds);
+
+            var services = new ServiceCollection()
                 .AddSingleton(Log.Logger)
-                .AddSingleton(configuration).Configure<WmiSettings>(configuration.GetSection("Wmi"))
+                .Configure<WmiSettings>(configuration.GetSection("Wmi"))
                 .AddCoreServices()
                 .AddHardwareComponents()
                 .AddOperatingSystemComponents()
-                .AddPrinters()
-                .BuildServiceProvider();
+                .AddPrinters();
 
-            await serviceProvider.GetRequiredService<DiagnosticController>().StartDiagnosticAsync(cts.Token);
+            using var serviceProvider = services.BuildServiceProvider();
+
+            var controller = serviceProvider.GetRequiredService<DiagnosticController>();
+            await controller.StartDiagnosticAsync(cts.Token);
 
             Log.Information("Приложение Diagnostish завершило свою работу.");
         }
         catch (Exception ex)
         {
-            ColorPrinter.WriteLineColored("\nПРОИЗОШЛА КРИТИЧЕСКАЯ ОШИБКА!", ConsoleColor.Red);
+            ColorPrinter.WriteLineColored(
+                "\nПРОИЗОШЛА КРИТИЧЕСКАЯ ОШИБКА!", 
+                ConsoleColor.Red);
+
             Log.Fatal(ex, "Необработанное исключение. Приложение аварийно завершило свою работу.");
         }
         finally

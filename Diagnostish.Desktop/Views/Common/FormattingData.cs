@@ -2,5 +2,10 @@
 
 public static class FormattingData
 {
-    public static string FormatDate(DateTime date) => date == DateTime.MinValue ? "Неизвестно" : date.ToString("dd.MM.yyyy");
+    public static string FormatDate(this DateTime date)
+    {
+        return date == DateTime.MinValue 
+            ? "Неизвестно" 
+            : date.ToString("dd.MM.yyyy");
+    }
 }

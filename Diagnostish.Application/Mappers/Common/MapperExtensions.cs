@@ -11,8 +11,8 @@ public static class MapperExtensions
         [NotNullWhen(true)] out TData? data) 
         where TData : class
     {
-        report.Warnings.AddRange(result.Warnings);
-        report.CriticalErrors.AddRange(result.CriticalErrors);
+        report.AddWarnings(result.Warnings);
+        report.AddCriticalErrors(result.CriticalErrors);
 
         data = result.Data;
         return data is not null;

@@ -1,17 +1,20 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Diagnostish.Domain.Models.Reports.Common;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Diagnostish.Application.Mappers.Common;
 
 public static class MapperExtensions
 {
-    public static bool TryExtractData<TData>(this IssuesReport report,
-                                             ProvideResult<TData> analysisData,
-                                             [NotNullWhen(true)] out TData? data) where TData : class
+    public static bool TryExtractData<TData>(
+        this BaseIssuesReport report,
+        ProvideResult<TData> result,
+        [NotNullWhen(true)] out TData? data) 
+        where TData : class
     {
-        report.Warnings.AddRange(analysisData.Warnings);
-        report.CriticalErrors.AddRange(analysisData.CriticalErrors);
+        report.Warnings.AddRange(result.Warnings);
+        report.CriticalErrors.AddRange(result.CriticalErrors);
 
-        data = analysisData.Data;
-        return data != null;
+        data = result.Data;
+        return data is not null;
     }
 }

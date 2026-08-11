@@ -1,6 +1,8 @@
-﻿namespace Diagnostish.Domain.Models.Reports;
+﻿using Diagnostish.Domain.Models.Reports.Components;
 
-public class FinalReport
+namespace Diagnostish.Domain.Models.Reports;
+
+public sealed class FinalReport
 {
     public HardwareReport HardwareReport { get; init; } = new();
     public OperatingSystemReport OperatingSystemReport { get; init; } = new();

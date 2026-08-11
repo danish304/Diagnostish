@@ -2,7 +2,9 @@
 
 namespace Diagnostish.Domain.Interfaces;
 
-public interface IReportMapper<TReport, TInfo> 
+public interface IReportMapper<TReport, TData> 
 {
-    void MapInto(TReport report, ProvideResult<TInfo> data);
+    void MapInto(
+        TReport report, 
+        ProvideResult<TData> result);
 }

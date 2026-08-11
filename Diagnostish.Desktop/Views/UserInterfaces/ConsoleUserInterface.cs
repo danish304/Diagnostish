@@ -11,26 +11,26 @@ public class ConsoleUserInterface : IUserInterface
             Console.Title = "Diagnostish";
             Console.Clear();
         }
-        catch (IOException) 
+        catch (IOException)
         {
             // Игнорируем, если терминал не поддерживает изменение заголовка или очистку
         }
 
         ColorPrinter.WriteLineColored(
-            "ЗАПУСК ДИАГНОСТИКИ . . .", 
+            "ЗАПУСК ДИАГНОСТИКИ . . .",
             ConsoleColor.Magenta);
     }
 
     public void WaitForExit()
     {
         ColorPrinter.WriteLineColored(
-            "\nСКАНИРОВАНИЕ ЗАВЕРШЕНО!", 
+            "\nСКАНИРОВАНИЕ ЗАВЕРШЕНО!",
             ConsoleColor.Green);
 
         if (!Console.IsInputRedirected)
         {
             ColorPrinter.WriteLineColored(
-                "Для завершения нажмите любую клавишу . . .", 
+                "Для завершения нажмите любую клавишу . . .",
                 ConsoleColor.DarkGray);
 
             Console.ReadKey(intercept: true);

@@ -5,8 +5,8 @@ using Diagnostish.Infrastructure.Providers.Wmi.Common;
 namespace Diagnostish.Infrastructure.Providers;
 
 public class GpuFallBackProvider(
-    IWmiSource<RawGpuModel> wmiProvider, 
-    IRegistrySource<RawGpuModel> registryProvider) 
+    IWmiSource<RawGpuModel> wmiProvider,
+    IRegistrySource<RawGpuModel> registryProvider)
     : IProvider<RawGpuModel>
 {
     private const double UINT32_OVERFLOW = 4_290_000_000;
@@ -16,7 +16,7 @@ public class GpuFallBackProvider(
     {
         var wmiResult = await wmiProvider.ProvideAsync(cancellationToken);
 
-        bool needsFallback = wmiResult.Data is null || wmiResult.Data.Any(gpu => 
+        bool needsFallback = wmiResult.Data is null || wmiResult.Data.Any(gpu =>
             gpu.AdapterRam is null or <= 0 or >= UINT32_OVERFLOW);
 
         if (!needsFallback)
@@ -57,7 +57,7 @@ public class GpuFallBackProvider(
     }
 
     private static ProvideResult<IReadOnlyList<RawGpuModel>> MergeMemoryFromRegistry(
-        ProvideResult<IReadOnlyList<RawGpuModel>> wmiResult, 
+        ProvideResult<IReadOnlyList<RawGpuModel>> wmiResult,
         ProvideResult<IReadOnlyList<RawGpuModel>> registryResult)
     {
         var wmiGpus = wmiResult.Data ?? [];
@@ -69,8 +69,8 @@ public class GpuFallBackProvider(
         var merged = wmiGpus.Select(wmiGpu =>
         {
             var match = registryGpus.FirstOrDefault(r =>
-                r.Name is not null 
-                && wmiGpu.Name is not null 
+                r.Name is not null
+                && wmiGpu.Name is not null
                 && r.Name.Contains(wmiGpu.Name, StringComparison.OrdinalIgnoreCase));
 
             bool wmiMemoryInvalid = wmiGpu.AdapterRam is null or <= 0 or >= UINT32_OVERFLOW;
@@ -79,9 +79,9 @@ public class GpuFallBackProvider(
             {
                 anyReplaced = true;
 
-                return wmiGpu with 
-                { 
-                    AdapterRam = match.AdapterRam 
+                return wmiGpu with
+                {
+                    AdapterRam = match.AdapterRam
                 };
             }
 

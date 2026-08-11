@@ -6,13 +6,13 @@ using System.Management;
 
 namespace Diagnostish.Infrastructure.Providers.Wmi.Hardware;
 
-public class StorageDriveWmiProvider(IWmiExecutor executor) 
+public class StorageDriveWmiProvider(IWmiExecutor executor)
     : BaseWmiProvider<RawStorageDriveModel>(executor)
 {
     private const string MODEL = "Model";
     private const string SIZE = "Size";
 
-    protected override string BuildQuery() 
+    protected override string BuildQuery()
         => $"SELECT {MODEL}, {SIZE} FROM Win32_DiskDrive";
 
     protected override string ContextName => "о накопителях";

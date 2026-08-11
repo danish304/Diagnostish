@@ -42,17 +42,17 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IRegistrySource<RawGpuModel>, GpuRegistryProvider>();
 
         return services
-            .AddComponent<HardwareReport, RawCpuModel, Cpu, 
+            .AddComponent<HardwareReport, RawCpuModel, Cpu,
                 CpuWmiProvider, CpuAnalyzer, CpuReportMapper>()
-            .AddComponent<HardwareReport, RawRamModel, Ram, 
+            .AddComponent<HardwareReport, RawRamModel, Ram,
                 RamWmiProvider, RamAnalyzer, RamReportMapper>()
-            .AddComponent<HardwareReport, RawGpuModel, IReadOnlyList<Gpu>, 
+            .AddComponent<HardwareReport, RawGpuModel, IReadOnlyList<Gpu>,
                 GpuFallBackProvider, GpuAnalyzer, GpuReportMapper>()
-            .AddComponent<HardwareReport, RawStorageDriveModel, IReadOnlyList<StorageDrive>, 
+            .AddComponent<HardwareReport, RawStorageDriveModel, IReadOnlyList<StorageDrive>,
                 StorageDriveWmiProvider, StorageDriveAnalyzer, StorageDriveReportMapper>()
-            .AddComponent<HardwareReport, RawBiosModel, Bios, 
+            .AddComponent<HardwareReport, RawBiosModel, Bios,
                 BiosWmiProvider, BiosAnalyzer, BiosReportMapper>()
-            .AddComponent<HardwareReport, RawBaseBoardModel, BaseBoard, 
+            .AddComponent<HardwareReport, RawBaseBoardModel, BaseBoard,
                 BaseBoardWmiProvider, BaseBoardAnalyzer, BaseBoardReportMapper>();
     }
 
@@ -94,7 +94,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    private static IServiceCollection AddPrinter<TReport, TPrinter>(this IServiceCollection services) 
+    private static IServiceCollection AddPrinter<TReport, TPrinter>(this IServiceCollection services)
         where TPrinter : class, IReportPrinter<TReport>
     {
         services.AddSingleton<IReportPrinter<TReport>, TPrinter>();

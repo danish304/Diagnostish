@@ -14,7 +14,7 @@ public static class Parser
 
         return int.TryParse(
             value.ToString(),
-            NumberStyles.Integer, 
+            NumberStyles.Integer,
             CultureInfo.InvariantCulture,
             out int result) ? result : null;
     }
@@ -27,9 +27,9 @@ public static class Parser
         }
 
         return double.TryParse(
-            value.ToString(), 
-            NumberStyles.Any, 
-            CultureInfo.InvariantCulture, 
+            value.ToString(),
+            NumberStyles.Any,
+            CultureInfo.InvariantCulture,
             out double result) ? result : null;
     }
 
@@ -39,7 +39,7 @@ public static class Parser
         {
             return null;
         }
-        
+
         string result = value.ToString() ?? string.Empty;
         return string.IsNullOrWhiteSpace(result) ? null : result.Trim();
     }

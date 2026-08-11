@@ -3,12 +3,12 @@ using Diagnostish.Infrastructure.Providers.Common.RawModels.Hardware;
 using Diagnostish.Infrastructure.Shared.Common.Utils;
 using Serilog;
 
-using static Diagnostish.Infrastructure.Analyzers.Hardware.Messages.GpuAnalyzerMessages;
 using static Diagnostish.Infrastructure.Analyzers.Hardware.Messages.CommonMessages;
+using static Diagnostish.Infrastructure.Analyzers.Hardware.Messages.GpuAnalyzerMessages;
 
 namespace Diagnostish.Infrastructure.Analyzers.Hardware;
 
-public class GpuAnalyzer(ILogger logger) 
+public class GpuAnalyzer(ILogger logger)
     : IAnalyzer<RawGpuModel, IReadOnlyList<Gpu>>
 {
     public ProvideResult<IReadOnlyList<Gpu>> Analyze(
@@ -19,7 +19,7 @@ public class GpuAnalyzer(ILogger logger)
         if (result.Data is not { Count: > 0 } rawData)
         {
             return ProvideResult<IReadOnlyList<Gpu>>.Fail(
-                warnings, 
+                warnings,
                 result.CriticalErrors);
         }
 
@@ -54,7 +54,7 @@ public class GpuAnalyzer(ILogger logger)
             warnings.Add($"{UNKNOWN_NAME} {CountOfTotal(unknownNameCount, rawData.Count)}");
 
             logger.Warning(
-                UNKNOWN_NAME + " Затронуто {Count} из {Total} видеокарт.", 
+                UNKNOWN_NAME + " Затронуто {Count} из {Total} видеокарт.",
                 unknownNameCount, rawData.Count);
         }
         if (unknownAdapterRamCount > 0)
@@ -62,7 +62,7 @@ public class GpuAnalyzer(ILogger logger)
             warnings.Add($"{UNKNOWN_ADAPTERRAM} {CountOfTotal(unknownAdapterRamCount, rawData.Count)}");
 
             logger.Warning(
-                UNKNOWN_ADAPTERRAM + " Затронуто {Count} из {Total} видеокарт.", 
+                UNKNOWN_ADAPTERRAM + " Затронуто {Count} из {Total} видеокарт.",
                 unknownAdapterRamCount, rawData.Count);
         }
 

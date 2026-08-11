@@ -3,7 +3,7 @@
 public static class ColorPrinter
 {
     public static void WriteLineColored(
-        string text, 
+        string text,
         ConsoleColor color)
     {
         Console.ForegroundColor = color;

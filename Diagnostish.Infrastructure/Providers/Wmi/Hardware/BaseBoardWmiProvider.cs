@@ -6,7 +6,7 @@ using System.Management;
 
 namespace Diagnostish.Infrastructure.Providers.Wmi.Hardware;
 
-public class BaseBoardWmiProvider(IWmiExecutor executor) 
+public class BaseBoardWmiProvider(IWmiExecutor executor)
     : BaseWmiProvider<RawBaseBoardModel>(executor)
 {
     private const string MODEL = "Product";
@@ -14,7 +14,7 @@ public class BaseBoardWmiProvider(IWmiExecutor executor)
     private const string VERSION = "Version";
     private const string STATUS = "Status";
 
-    protected override string BuildQuery() => 
+    protected override string BuildQuery() =>
         $"SELECT {MODEL}, {MANUFACTURER}, {VERSION}, {STATUS} FROM Win32_BaseBoard";
 
     protected override string ContextName => "о материнской плате";

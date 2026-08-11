@@ -7,7 +7,7 @@ using static Diagnostish.Infrastructure.Analyzers.Hardware.Messages.BaseBoardAna
 
 namespace Diagnostish.Infrastructure.Analyzers.Hardware;
 
-public class BaseBoardAnalyzer(ILogger logger) 
+public class BaseBoardAnalyzer(ILogger logger)
     : IAnalyzer<RawBaseBoardModel, BaseBoard>
 {
     public ProvideResult<BaseBoard> Analyze(
@@ -18,7 +18,7 @@ public class BaseBoardAnalyzer(ILogger logger)
         if (result.Data is not [var rawData, ..])
         {
             return ProvideResult<BaseBoard>.Fail(
-                warnings, 
+                warnings,
                 result.CriticalErrors);
         }
 
@@ -41,7 +41,7 @@ public class BaseBoardAnalyzer(ILogger logger)
         }
 
         return ProvideResult<BaseBoard>.Ok(
-            new BaseBoard(model, manufacturer, version, status), 
+            new BaseBoard(model, manufacturer, version, status),
             warnings);
     }
 }

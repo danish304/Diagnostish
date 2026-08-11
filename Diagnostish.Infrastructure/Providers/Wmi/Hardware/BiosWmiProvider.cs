@@ -6,14 +6,14 @@ using System.Management;
 
 namespace Diagnostish.Infrastructure.Providers.Wmi.Hardware;
 
-public class BiosWmiProvider(IWmiExecutor executor) 
+public class BiosWmiProvider(IWmiExecutor executor)
     : BaseWmiProvider<RawBiosModel>(executor)
 {
     private const string VERSION = "Version";
     private const string RELEASE = "ReleaseDate";
     private const string MANUFACTURER = "Manufacturer";
 
-    protected override string BuildQuery() => 
+    protected override string BuildQuery() =>
         $"SELECT {VERSION}, {RELEASE}, {MANUFACTURER} FROM Win32_BIOS";
 
     protected override string ContextName => "о биосе";

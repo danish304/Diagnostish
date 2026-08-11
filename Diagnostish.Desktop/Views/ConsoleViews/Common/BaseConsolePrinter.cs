@@ -7,19 +7,19 @@ public abstract class BaseConsolePrinter<TReport> : IReportPrinter<TReport>
     protected abstract void PrintReport(TReport report);
 
     protected void PrintIssues(
-        IReadOnlyList<string> warnings, 
+        IReadOnlyList<string> warnings,
         IReadOnlyList<string> criticalErrors)
     {
         if (warnings.Count > 0)
         {
             ColorPrinter.WriteLineColored(
-                "\n* ПРЕДУПРЕЖДЕНИЯ *", 
+                "\n* ПРЕДУПРЕЖДЕНИЯ *",
                 ConsoleColor.DarkYellow);
 
             foreach (var warning in warnings)
             {
                 ColorPrinter.WriteLineColored(
-                    $"    - {warning}", 
+                    $"    - {warning}",
                     ConsoleColor.Yellow);
             }
         }
@@ -27,7 +27,7 @@ public abstract class BaseConsolePrinter<TReport> : IReportPrinter<TReport>
         if (criticalErrors.Count > 0)
         {
             ColorPrinter.WriteLineColored(
-                "\n* КРИТИЧЕСКИЕ ОШИБКИ *", 
+                "\n* КРИТИЧЕСКИЕ ОШИБКИ *",
                 ConsoleColor.DarkRed);
 
             foreach (var error in criticalErrors)

@@ -7,7 +7,7 @@ using static Diagnostish.Infrastructure.Analyzers.OperatingSystem.Messages.Opera
 
 namespace Diagnostish.Infrastructure.Analyzers.OperatingSystem;
 
-public class OperatingSystemAnalyzer(ILogger logger) 
+public class OperatingSystemAnalyzer(ILogger logger)
     : IAnalyzer<RawOperatingSystemModel, OperSystem>
 {
     public ProvideResult<OperSystem> Analyze(
@@ -18,7 +18,7 @@ public class OperatingSystemAnalyzer(ILogger logger)
         if (result.Data is not [var rawData, ..])
         {
             return ProvideResult<OperSystem>.Fail(
-                warnings, 
+                warnings,
                 result.CriticalErrors);
         }
 
@@ -36,14 +36,14 @@ public class OperatingSystemAnalyzer(ILogger logger)
 
         DateTime installDate = rawData.InstallDate
             .GetValueOrWarning(
-                warnings, 
-                logger, 
-                UNKNOWN_INSTALLDATE, 
+                warnings,
+                logger,
+                UNKNOWN_INSTALLDATE,
                 condition: date => date != DateTime.MinValue && date < DateTime.Now);
 
         DateTime lastBoot = rawData.LastBoot
             .GetValueOrWarning(
-                warnings, 
+                warnings,
                 logger,
                 UNKNOWN_LASTBOOTDATE,
                 condition: date => date != DateTime.MinValue && date < DateTime.Now);

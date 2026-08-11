@@ -2,7 +2,7 @@
 
 internal static class CpuAnalyzerMessages
 {
-    internal const string UNKNOWN_NAME       = "Не удалось определить название процессора.";
+    internal const string UNKNOWN_NAME = "Не удалось определить название процессора.";
     internal const string UNKNOWN_COUNTCORES = "Не удалось определить количество ядер процессора.";
-    internal const string UNKNOWN_SPEED      = "Не удалось определить частоту процессора.";
+    internal const string UNKNOWN_SPEED = "Не удалось определить частоту процессора.";
 }

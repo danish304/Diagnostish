@@ -8,9 +8,9 @@ public abstract class BaseIssuesReport
     public IReadOnlyList<string> Warnings => _warnings;
     public IReadOnlyList<string> CriticalErrors => _criticalErrors;
 
-    public void AddWarnings(IEnumerable<string> warnings) => 
+    public void AddWarnings(IEnumerable<string> warnings) =>
         _warnings.AddRange(warnings);
 
-    public void AddCriticalErrors(IEnumerable<string> criticalErrors) => 
+    public void AddCriticalErrors(IEnumerable<string> criticalErrors) =>
         _criticalErrors.AddRange(criticalErrors);
 }

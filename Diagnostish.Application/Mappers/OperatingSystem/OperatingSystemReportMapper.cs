@@ -4,11 +4,11 @@ using Diagnostish.Domain.Models.Reports.Components;
 
 namespace Diagnostish.Application.Mappers.OperatingSystem;
 
-public class OperatingSystemReportMapper 
+public class OperatingSystemReportMapper
     : IReportMapper<OperatingSystemReport, OperSystem>
 {
     public void MapInto(
-        OperatingSystemReport report, 
+        OperatingSystemReport report,
         ProvideResult<OperSystem> result)
     {
         if (report.TryExtractData(result, out var data))

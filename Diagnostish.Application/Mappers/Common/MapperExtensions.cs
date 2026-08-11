@@ -8,7 +8,7 @@ public static class MapperExtensions
     public static bool TryExtractData<TData>(
         this BaseIssuesReport report,
         ProvideResult<TData> result,
-        [NotNullWhen(true)] out TData? data) 
+        [NotNullWhen(true)] out TData? data)
         where TData : class
     {
         report.AddWarnings(result.Warnings);

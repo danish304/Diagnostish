@@ -9,8 +9,8 @@ public static class LoggerConfigurator
         return new LoggerConfiguration()
             .MinimumLevel.Debug()
             .WriteTo.File(
-                "logs/diagnostish-.txt", 
-                rollingInterval: RollingInterval.Day, 
+                "logs/diagnostish-.txt",
+                rollingInterval: RollingInterval.Day,
                 outputTemplate: "{Timestamp:HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}{NewLine}")
         .CreateLogger();
     }

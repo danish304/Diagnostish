@@ -14,10 +14,10 @@ public abstract class BaseRegistryProvider<TRawData>(
         var criticalErrors = new List<string>();
 
         await executor.ExecuteSafeReadAsync(
-            RootPath, 
-            ContextName, 
-            warnings, 
-            criticalErrors, 
+            RootPath,
+            ContextName,
+            warnings,
+            criticalErrors,
             rootKey =>
         {
             foreach (var subKeyName in rootKey.GetSubKeyNames())
@@ -39,7 +39,7 @@ public abstract class BaseRegistryProvider<TRawData>(
                     rawData.Add(mappedItem);
                 }
             }
-        }, 
+        },
         cancellationToken);
 
         return rawData.Count > 0

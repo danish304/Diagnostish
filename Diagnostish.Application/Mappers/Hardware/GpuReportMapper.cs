@@ -4,16 +4,16 @@ using Diagnostish.Domain.Models.Reports.Components;
 
 namespace Diagnostish.Application.Mappers.Hardware;
 
-public class GpuReportMapper 
+public class GpuReportMapper
     : IReportMapper<HardwareReport, IReadOnlyList<Gpu>>
 {
     public void MapInto(
-        HardwareReport report, 
+        HardwareReport report,
         ProvideResult<IReadOnlyList<Gpu>> result)
     {
         if (report.TryExtractData(result, out var data))
         {
-            report.VideoCards = [..data];
+            report.VideoCards = [.. data];
         }
     }
 }

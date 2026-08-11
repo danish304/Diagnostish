@@ -7,16 +7,16 @@ using static Diagnostish.Infrastructure.Shared.Wmi.Executor.WmiExecutorMessages;
 namespace Diagnostish.Infrastructure.Shared.Wmi.Executor;
 
 public class WmiExecutor(
-    ILogger logger, 
-    IOptions<WmiSettings> settings) 
+    ILogger logger,
+    IOptions<WmiSettings> settings)
     : IWmiExecutor
 {
     public async Task ExecuteSafeQueryAsync(
-        string query, 
-        string context, 
-        List<string> warnings, 
-        List<string> criticalErrors, 
-        Action<ManagementObjectCollection> wmiAction, 
+        string query,
+        string context,
+        List<string> warnings,
+        List<string> criticalErrors,
+        Action<ManagementObjectCollection> wmiAction,
         CancellationToken cancellationToken = default)
     {
         try
@@ -29,12 +29,12 @@ public class WmiExecutor(
                 Timeout = settings.Value.WmiQueryTimeout
             };
 
-            using var searcher = new ManagementObjectSearcher(query) 
-            { 
-                Options = options 
+            using var searcher = new ManagementObjectSearcher(query)
+            {
+                Options = options
             };
 
-            using var collection = await Task.Run(() => 
+            using var collection = await Task.Run(() =>
                 searcher.Get(), cancellationToken);
 
             if (collection.Count == 0)

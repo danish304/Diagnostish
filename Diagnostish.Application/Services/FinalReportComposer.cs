@@ -9,7 +9,7 @@ public class FinalReportComposer
     private readonly IEnumerable<ComponentPipeline<OperatingSystemReport>> _operatingSystemPipelines;
 
     public FinalReportComposer(
-        IEnumerable<ComponentPipeline<HardwareReport>> hardwarePipelines, 
+        IEnumerable<ComponentPipeline<HardwareReport>> hardwarePipelines,
         IEnumerable<ComponentPipeline<OperatingSystemReport>> operatingSystemPipelines)
     {
         _hardwarePipelines = hardwarePipelines;
@@ -20,13 +20,13 @@ public class FinalReportComposer
         CancellationToken cancellationToken = default)
     {
         var hardwareTask = CollectReportAsync(
-            _hardwarePipelines, 
-            new HardwareReport(), 
+            _hardwarePipelines,
+            new HardwareReport(),
             cancellationToken);
 
         var operatingSystemTask = CollectReportAsync(
-            _operatingSystemPipelines, 
-            new OperatingSystemReport(), 
+            _operatingSystemPipelines,
+            new OperatingSystemReport(),
             cancellationToken);
 
         await Task.WhenAll(hardwareTask, operatingSystemTask);
@@ -42,8 +42,8 @@ public class FinalReportComposer
     }
 
     private static async Task<TReport> CollectReportAsync<TReport>(
-        IEnumerable<ComponentPipeline<TReport>> pipelines, 
-        TReport report, 
+        IEnumerable<ComponentPipeline<TReport>> pipelines,
+        TReport report,
         CancellationToken cancellationToken)
     {
         var mapActions = await Task.WhenAll(

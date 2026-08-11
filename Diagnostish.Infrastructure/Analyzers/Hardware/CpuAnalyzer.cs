@@ -7,7 +7,7 @@ using static Diagnostish.Infrastructure.Analyzers.Hardware.Messages.CpuAnalyzerM
 
 namespace Diagnostish.Infrastructure.Analyzers.Hardware;
 
-public class CpuAnalyzer(ILogger logger) 
+public class CpuAnalyzer(ILogger logger)
     : IAnalyzer<RawCpuModel, Cpu>
 {
     public ProvideResult<Cpu> Analyze(
@@ -18,7 +18,7 @@ public class CpuAnalyzer(ILogger logger)
         if (result.Data is not [var rawData, ..])
         {
             return ProvideResult<Cpu>.Fail(
-                warnings, 
+                warnings,
                 result.CriticalErrors);
         }
 
@@ -32,7 +32,7 @@ public class CpuAnalyzer(ILogger logger)
             .GetValueOrWarning(warnings, logger, UNKNOWN_SPEED);
 
         return ProvideResult<Cpu>.Ok(
-            new Cpu(name, countCores, speed), 
+            new Cpu(name, countCores, speed),
             warnings);
     }
 }

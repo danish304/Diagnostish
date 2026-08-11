@@ -6,22 +6,22 @@ using System.Management;
 
 namespace Diagnostish.Infrastructure.Providers.Wmi.Hardware;
 
-public class GpuWmiProvider(IWmiExecutor executor) 
+public class GpuWmiProvider(IWmiExecutor executor)
     : BaseWmiProvider<RawGpuModel>(executor)
 {
-    private const string GPUNAME = "Name";
-    private const string GPURAM = "AdapterRAM";
+    private const string GPU_NAME = "Name";
+    private const string GPU_ADAPTERRAM = "AdapterRAM";
 
-    protected override string BuildQuery() => 
-        $"SELECT {GPUNAME}, {GPURAM} FROM Win32_VideoController";
+    protected override string BuildQuery() =>
+        $"SELECT {GPU_NAME}, {GPU_ADAPTERRAM} FROM Win32_VideoController";
 
     protected override string ContextName => "о видеокартах";
 
     protected override RawGpuModel Map(ManagementBaseObject item)
     {
         return new RawGpuModel(
-            Parser.ToSafeString(item[GPUNAME]),
-            Parser.ToSafeDouble(item[GPURAM])
+            Parser.ToSafeString(item[GPU_NAME]),
+            Parser.ToSafeDouble(item[GPU_ADAPTERRAM])
         );
     }
 }

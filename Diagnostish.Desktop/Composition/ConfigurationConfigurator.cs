@@ -5,9 +5,9 @@ namespace Diagnostish.Desktop.Composition;
 
 public static class ConfigurationConfigurator
 {
-    private const string ConfigFileName = "appsettings.json";
+    private const string CONFIG_FILE_NAME = "appsettings.json";
 
-    private const string DefaultConfigContent = """
+    private const string DEFAULT_CONFIG_CONTEXT = """
         {
           "Wmi": {
             "WmiQueryTimeoutSeconds": 5
@@ -17,17 +17,17 @@ public static class ConfigurationConfigurator
 
     public static IConfiguration Create()
     {
-        string configPath = Path.Combine(AppContext.BaseDirectory, ConfigFileName);
+        string configPath = Path.Combine(AppContext.BaseDirectory, CONFIG_FILE_NAME);
         EnsureConfigExists(configPath);
 
         try
         {
             return new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile(ConfigFileName, optional: true, reloadOnChange: false)
+                .AddJsonFile(CONFIG_FILE_NAME, optional: true, reloadOnChange: false)
                 .Build();
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
             Log.Warning(ex, "Файл конфигурации повреждён, используются значения по умолчанию.");
             return new ConfigurationBuilder().Build();
@@ -43,7 +43,7 @@ public static class ConfigurationConfigurator
 
         try
         {
-            File.WriteAllText(configPath, DefaultConfigContent);
+            File.WriteAllText(configPath, DEFAULT_CONFIG_CONTEXT);
             Log.Information("Файл конфигурации не найден, создан со значениями по умолчанию: {Path}", configPath);
         }
         catch (Exception ex)

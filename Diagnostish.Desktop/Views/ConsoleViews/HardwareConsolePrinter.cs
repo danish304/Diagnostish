@@ -8,11 +8,11 @@ public class HardwareConsolePrinter : BaseConsolePrinter<HardwareReport>
     protected override void PrintReport(HardwareReport report)
     {
         ColorPrinter.WriteLineColored(
-            "\nКОНФИГУРАЦИЯ ПК:", 
+            "\nКОНФИГУРАЦИЯ ПК:",
             ConsoleColor.Cyan);
 
         Console.WriteLine(
-            $"\n1) Процессор: {report.CpuName} ({report.CpuCores} ядер), " + 
+            $"\n1) Процессор: {report.CpuName} ({report.CpuCores} ядер), " +
             $"частота - {report.CpuClockSpeed} MHz");
 
         Console.WriteLine(
@@ -46,7 +46,7 @@ public class HardwareConsolePrinter : BaseConsolePrinter<HardwareReport>
         }
 
         Console.WriteLine(
-            $"5) Материнская плата: {report.BaseBoardModel} ({report.BaseBoardManufacturer}), " + 
+            $"5) Материнская плата: {report.BaseBoardModel} ({report.BaseBoardManufacturer}), " +
             $"версия {report.BaseBoardVersion}");
 
         Console.WriteLine($"   Статус платы: {report.BaseBoardStatus}");

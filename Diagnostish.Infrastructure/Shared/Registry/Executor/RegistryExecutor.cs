@@ -8,9 +8,9 @@ namespace Diagnostish.Infrastructure.Shared.Registry.Executor;
 public class RegistryExecutor(ILogger logger) : IRegistryExecutor
 {
     public async Task ExecuteSafeReadAsync(
-        string rootPath, 
+        string rootPath,
         string context,
-        List<string> warnings, 
+        List<string> warnings,
         List<string> criticalErrors,
         Action<RegistryKey> registryAction,
         CancellationToken cancellationToken = default)

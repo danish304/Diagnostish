@@ -28,7 +28,7 @@ static class Program
 
             var wmiSettings = configuration.GetSection("Wmi").Get<WmiSettings>() ?? new WmiSettings();
             Log.Information(
-                "Таймаут WMI-запросов выставлен на {Timeout} сек.", 
+                "Таймаут WMI-запросов выставлен на {Timeout} сек.",
                 wmiSettings.WmiQueryTimeoutSeconds);
 
             var services = new ServiceCollection()
@@ -49,7 +49,7 @@ static class Program
         catch (Exception ex)
         {
             ColorPrinter.WriteLineColored(
-                "\nПРОИЗОШЛА КРИТИЧЕСКАЯ ОШИБКА!", 
+                "\nПРОИЗОШЛА КРИТИЧЕСКАЯ ОШИБКА!",
                 ConsoleColor.Red);
 
             Log.Fatal(ex, "Необработанное исключение. Приложение аварийно завершило свою работу.");

@@ -6,23 +6,23 @@ using System.Management;
 
 namespace Diagnostish.Infrastructure.Providers.Wmi.Hardware;
 
-public class CpuWmiProvider(IWmiExecutor executor) 
+public class CpuWmiProvider(IWmiExecutor executor)
     : BaseWmiProvider<RawCpuModel>(executor)
 {
-    private const string CPUNAME = "Name";
-    private const string COUNTCORES = "NumberOfCores";
+    private const string CPU_NAME = "Name";
+    private const string COUNT_CORES = "NumberOfCores";
     private const string SPEED = "CurrentClockSpeed";
 
-    protected override string BuildQuery() => 
-        $"SELECT {CPUNAME}, {COUNTCORES}, {SPEED} FROM Win32_Processor";
+    protected override string BuildQuery() =>
+        $"SELECT {CPU_NAME}, {COUNT_CORES}, {SPEED} FROM Win32_Processor";
 
     protected override string ContextName => "о процессоре";
 
     protected override RawCpuModel Map(ManagementBaseObject item)
     {
         return new RawCpuModel(
-            Parser.ToSafeString(item[CPUNAME]),
-            Parser.ToSafeInt(item[COUNTCORES]),
+            Parser.ToSafeString(item[CPU_NAME]),
+            Parser.ToSafeInt(item[COUNT_CORES]),
             Parser.ToSafeInt(item[SPEED])
         );
     }

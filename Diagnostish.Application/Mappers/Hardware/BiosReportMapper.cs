@@ -4,11 +4,11 @@ using Diagnostish.Domain.Models.Reports.Components;
 
 namespace Diagnostish.Application.Mappers.Hardware;
 
-public class BiosReportMapper 
+public class BiosReportMapper
     : IReportMapper<HardwareReport, Bios>
 {
     public void MapInto(
-        HardwareReport report, 
+        HardwareReport report,
         ProvideResult<Bios> result)
     {
         if (report.TryExtractData(result, out var data))

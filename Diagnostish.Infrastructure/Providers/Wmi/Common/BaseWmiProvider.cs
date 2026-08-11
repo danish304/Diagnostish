@@ -14,10 +14,10 @@ public abstract class BaseWmiProvider<TRawData>(
         var criticalErrors = new List<string>();
 
         await executor.ExecuteSafeQueryAsync(
-            BuildQuery(), 
-            ContextName, 
+            BuildQuery(),
+            ContextName,
             warnings,
-            criticalErrors, 
+            criticalErrors,
             collection =>
         {
             foreach (var item in collection)
@@ -28,7 +28,7 @@ public abstract class BaseWmiProvider<TRawData>(
                     rawData.Add(mappedItem);
                 }
             }
-        }, 
+        },
         cancellationToken);
 
         return rawData.Count > 0

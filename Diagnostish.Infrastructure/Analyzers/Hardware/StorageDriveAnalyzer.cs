@@ -3,12 +3,12 @@ using Diagnostish.Infrastructure.Providers.Common.RawModels.Hardware;
 using Diagnostish.Infrastructure.Shared.Common.Utils;
 using Serilog;
 
-using static Diagnostish.Infrastructure.Analyzers.Hardware.Messages.StorageDriveAnalyzerMessages;
 using static Diagnostish.Infrastructure.Analyzers.Hardware.Messages.CommonMessages;
+using static Diagnostish.Infrastructure.Analyzers.Hardware.Messages.StorageDriveAnalyzerMessages;
 
 namespace Diagnostish.Infrastructure.Analyzers.Hardware;
 
-public class StorageDriveAnalyzer(ILogger logger) 
+public class StorageDriveAnalyzer(ILogger logger)
     : IAnalyzer<RawStorageDriveModel, IReadOnlyList<StorageDrive>>
 {
     public ProvideResult<IReadOnlyList<StorageDrive>> Analyze(
@@ -19,7 +19,7 @@ public class StorageDriveAnalyzer(ILogger logger)
         if (result.Data is not { Count: > 0 } rawData)
         {
             return ProvideResult<IReadOnlyList<StorageDrive>>.Fail(
-                warnings, 
+                warnings,
                 result.CriticalErrors);
         }
 
@@ -41,9 +41,9 @@ public class StorageDriveAnalyzer(ILogger logger)
             {
                 storageDriveSize = ByteConverter.ToGigabytes(size);
             }
-            else 
-            { 
-                unknownSizeCount++; 
+            else
+            {
+                unknownSizeCount++;
             }
 
             storageDrives.Add(new StorageDrive(storageDriveModel, storageDriveSize));
@@ -54,7 +54,7 @@ public class StorageDriveAnalyzer(ILogger logger)
             warnings.Add($"{UNKNOWN_MODEL} {CountOfTotal(unknownModelCount, rawData.Count)}");
 
             logger.Warning(
-                UNKNOWN_MODEL + " Затронуто {Count} из {Total} накопителей.", 
+                UNKNOWN_MODEL + " Затронуто {Count} из {Total} накопителей.",
                 unknownModelCount, rawData.Count);
         }
         if (unknownSizeCount > 0)
@@ -62,7 +62,7 @@ public class StorageDriveAnalyzer(ILogger logger)
             warnings.Add($"{UNKNOWN_SIZE} {CountOfTotal(unknownSizeCount, rawData.Count)}");
 
             logger.Warning(
-                UNKNOWN_SIZE + " Затронуто {Count} из {Total} накопителей.", 
+                UNKNOWN_SIZE + " Затронуто {Count} из {Total} накопителей.",
                 unknownSizeCount, rawData.Count);
         }
 

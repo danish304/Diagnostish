@@ -6,14 +6,14 @@ using System.Management;
 
 namespace Diagnostish.Infrastructure.Providers.Wmi.Hardware;
 
-public class RamWmiProvider(IWmiExecutor executor) 
+public class RamWmiProvider(IWmiExecutor executor)
     : BaseWmiProvider<RawRamModel>(executor)
 {
     private const string TYPE = "SMBIOSMemoryType";
     private const string CAPACITY = "Capacity";
     private const string SPEED = "Speed";
 
-    protected override string BuildQuery() => 
+    protected override string BuildQuery() =>
         $"SELECT {TYPE}, {CAPACITY}, {SPEED} FROM Win32_PhysicalMemory";
 
     protected override string ContextName => "об ОЗУ";

@@ -7,7 +7,7 @@ public static class AnalyzerValidationExtensions
 {
     public static string GetValueOrWarning(
         this string? value,
-        List<string> warnings, 
+        List<string> warnings,
         ILogger logger,
         string warningMessage,
         string defaultValue = "Неизвестно")
@@ -24,10 +24,10 @@ public static class AnalyzerValidationExtensions
 
     public static T GetValueOrWarning<T>(
         this T? value,
-        List<string> warnings, 
+        List<string> warnings,
         ILogger logger,
         string warningMessage,
-        T defaultValue = default) 
+        T defaultValue = default)
         where T : struct, INumber<T>
     {
         if (value is null || value.Value <= T.Zero)
@@ -42,7 +42,7 @@ public static class AnalyzerValidationExtensions
 
     public static DateTime GetValueOrWarning(
         this DateTime? value,
-        List<string> warnings, 
+        List<string> warnings,
         ILogger logger,
         string warningMessage,
         DateTime defaultValue = default,
@@ -59,8 +59,8 @@ public static class AnalyzerValidationExtensions
     }
 
     private static void LogWarning(
-        List<string> warnings, 
-        ILogger logger, 
+        List<string> warnings,
+        ILogger logger,
         string warningMessage)
     {
         warnings.Add(warningMessage);

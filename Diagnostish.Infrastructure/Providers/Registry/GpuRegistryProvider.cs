@@ -6,18 +6,18 @@ using Microsoft.Win32;
 
 namespace Diagnostish.Infrastructure.Providers.Registry;
 
-public class GpuRegistryProvider(IRegistryExecutor executor) 
+public class GpuRegistryProvider(IRegistryExecutor executor)
     : BaseRegistryProvider<RawGpuModel>(executor)
 {
     private const string GPU_NAME = "DriverDesc";
     private const string GPU_ADAPTERRAM = "HardwareInformation.qwMemorySize";
 
-    protected override string RootPath => 
+    protected override string RootPath =>
         @"SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}";
 
     protected override string ContextName => "о видеокарте";
 
-    protected override bool IsRelevantSubKey(string subKeyName) => 
+    protected override bool IsRelevantSubKey(string subKeyName) =>
         subKeyName.All(char.IsDigit);
 
     protected override RawGpuModel? Map(RegistryKey subKey)

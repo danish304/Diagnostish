@@ -4,11 +4,11 @@ using Diagnostish.Domain.Models.Reports.Components;
 
 namespace Diagnostish.Application.Mappers.Hardware;
 
-public class CpuReportMapper 
+public class CpuReportMapper
     : IReportMapper<HardwareReport, Cpu>
 {
     public void MapInto(
-        HardwareReport report, 
+        HardwareReport report,
         ProvideResult<Cpu> result)
     {
         if (report.TryExtractData(result, out var data))

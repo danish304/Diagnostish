@@ -10,10 +10,10 @@ public class GpuFallBackProviderTests
 {
     private const double UINT32_OVERFLOW = 4_290_000_000;
 
-    private readonly IWmiSource<RawGpuModel> _wmiProvider = 
+    private readonly IWmiSource<RawGpuModel> _wmiProvider =
         Substitute.For<IWmiSource<RawGpuModel>>();
 
-    private readonly IRegistrySource<RawGpuModel> _registryProvider = 
+    private readonly IRegistrySource<RawGpuModel> _registryProvider =
         Substitute.For<IRegistrySource<RawGpuModel>>();
 
     private readonly GpuFallBackProvider _sut;
@@ -38,18 +38,18 @@ public class GpuFallBackProviderTests
     {
         // Arrange
         var wmiGpu = new RawGpuModel(
-            "NVIDIA GeForce RTX 4060 Ti", 
+            "NVIDIA GeForce RTX 4060 Ti",
             invalidAdapterRam
         );
 
         _wmiProvider.ProvideAsync(Arg.Any<CancellationToken>())
             .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Ok(
-                [wmiGpu], 
+                [wmiGpu],
                 warnings: ["WMI: некорректные данные"])
             );
 
         var registryGpu = new RawGpuModel(
-            "NVIDIA GeForce RTX 4060 Ti", 
+            "NVIDIA GeForce RTX 4060 Ti",
             8_585_740_288
         );
 
@@ -62,7 +62,7 @@ public class GpuFallBackProviderTests
         // Assert
         result.Data!.Should().Contain(registryGpu);
         result.Warnings.Should().Contain(
-            "WMI: некорректные данные", 
+            "WMI: некорректные данные",
             "Объём видеопамяти для части адаптеров получен из реестра — WMI вернул некорректное значение."
         );
 
@@ -75,16 +75,16 @@ public class GpuFallBackProviderTests
     {
         // Arrange
         var wmiGpu = new RawGpuModel(
-            "NVIDIA GeForce RTX 4060 Ti", 
+            "NVIDIA GeForce RTX 4060 Ti",
             invalidAdapterRam
-        ); 
+        );
 
         _wmiProvider.ProvideAsync(Arg.Any<CancellationToken>())
             .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Ok([wmiGpu]));
 
         _registryProvider.ProvideAsync(Arg.Any<CancellationToken>())
             .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Fail(
-                warnings: [], 
+                warnings: [],
                 criticalErrors: ["Реестр: нет доступа"])
             );
 
@@ -102,7 +102,7 @@ public class GpuFallBackProviderTests
     {
         // Arrange
         var wmiGpu = new RawGpuModel(
-            "NVIDIA GeForce RTX 4060 Ti", 
+            "NVIDIA GeForce RTX 4060 Ti",
             1_073_741_824
         );
 
@@ -127,7 +127,7 @@ public class GpuFallBackProviderTests
         // Arrange
         _wmiProvider.ProvideAsync(Arg.Any<CancellationToken>())
             .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Fail(
-                warnings: [], 
+                warnings: [],
                 criticalErrors: ["WMI: нет доступа"])
             );
 
@@ -144,7 +144,7 @@ public class GpuFallBackProviderTests
         result.Data.Should().BeNull();
         result.Warnings.Should().BeEmpty();
         result.CriticalErrors.Should().Contain(
-            "WMI: нет доступа", 
+            "WMI: нет доступа",
             "Реестр: нет доступа"
         );
     }
@@ -159,7 +159,7 @@ public class GpuFallBackProviderTests
             .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Ok([wmiGpu]));
 
         var registryGpu = new RawGpuModel(
-            "NVIDIA GeForce RTX 4060 Ti", 
+            "NVIDIA GeForce RTX 4060 Ti",
             8_585_740_288
         );
 
@@ -182,7 +182,7 @@ public class GpuFallBackProviderTests
     {
         // Arrange
         var validGpu = new RawGpuModel(
-            "Intel UHD Graphics", 
+            "Intel UHD Graphics",
             1_073_741_824
         );
 
@@ -192,7 +192,7 @@ public class GpuFallBackProviderTests
         );
         _wmiProvider.ProvideAsync(Arg.Any<CancellationToken>())
             .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Ok(
-                [validGpu, invalidGpu], 
+                [validGpu, invalidGpu],
                 warnings: ["WMI: некорректные данные"])
             );
 
@@ -224,7 +224,7 @@ public class GpuFallBackProviderTests
     {
         // Arrange
         var invalidGpu1 = new RawGpuModel(
-            "NVIDIA GeForce RTX 4060 Ti", 
+            "NVIDIA GeForce RTX 4060 Ti",
             4_293_918_720
         );
 
@@ -233,7 +233,7 @@ public class GpuFallBackProviderTests
 
         _wmiProvider.ProvideAsync(Arg.Any<CancellationToken>())
             .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Ok(
-                [invalidGpu1, invalidGpu2, invalidGpu3], 
+                [invalidGpu1, invalidGpu2, invalidGpu3],
                 warnings: ["WMI: некорректные данные"])
             );
 
@@ -243,7 +243,7 @@ public class GpuFallBackProviderTests
         );
 
         var registryGpu2 = new RawGpuModel(
-            "Intel Arc A770", 
+            "Intel Arc A770",
             17_179_869_184
         );
 
@@ -280,13 +280,13 @@ public class GpuFallBackProviderTests
         var wmiGpu = new RawGpuModel(
             "NVIDIA GeForce RTX 4060 Ti",
             4_293_918_720
-        );   
+        );
 
         _wmiProvider.ProvideAsync(Arg.Any<CancellationToken>())
             .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Ok([wmiGpu]));
 
         var registryGpu = new RawGpuModel(
-            "NVIDIA GeForce RTX 4060 Ti", 
+            "NVIDIA GeForce RTX 4060 Ti",
             8_585_740_288
         );
 

@@ -6,7 +6,7 @@ using System.Management;
 
 namespace Diagnostish.Infrastructure.Providers.Wmi.OperatingSystem;
 
-public class OperatingSystemWmiProvider(IWmiExecutor executor) 
+public class OperatingSystemWmiProvider(IWmiExecutor executor)
     : BaseWmiProvider<RawOperatingSystemModel>(executor)
 {
     private const string CAPTION = "Caption";
@@ -14,10 +14,10 @@ public class OperatingSystemWmiProvider(IWmiExecutor executor)
     private const string MANUFACTURER = "Manufacturer";
     private const string USER = "RegisteredUser";
     private const string INSTALL = "InstallDate";
-    private const string LASTBOOT = "LastBootUpTime";
+    private const string LAST_BOOT = "LastBootUpTime";
 
-    protected override string BuildQuery() => 
-        $"SELECT {CAPTION}, {VERSION}, {MANUFACTURER}, {USER}, {INSTALL}, {LASTBOOT} " +
+    protected override string BuildQuery() =>
+        $"SELECT {CAPTION}, {VERSION}, {MANUFACTURER}, {USER}, {INSTALL}, {LAST_BOOT} " +
         $"FROM Win32_OperatingSystem";
 
     protected override string ContextName => "об операционной системе";
@@ -30,7 +30,7 @@ public class OperatingSystemWmiProvider(IWmiExecutor executor)
             Parser.ToSafeString(item[VERSION]),
             Parser.ToSafeDateTime(item[INSTALL]),
             Parser.ToSafeString(item[USER]),
-            Parser.ToSafeDateTime(item[LASTBOOT])
+            Parser.ToSafeDateTime(item[LAST_BOOT])
         );
     }
 }

@@ -9,7 +9,7 @@ using static Diagnostish.Infrastructure.Analyzers.Hardware.Messages.RamAnalyzerM
 namespace Diagnostish.Infrastructure.Analyzers.Hardware;
 
 public class RamAnalyzer(ILogger logger)
-    : IAnalyzer<RawRamModel, Ram>
+    : IAnalyzer<RamRawModel, Ram>
 {
     private static readonly Dictionary<string, string> RamTypes = new()
     {
@@ -21,7 +21,7 @@ public class RamAnalyzer(ILogger logger)
     };
 
     public ProvideResult<Ram> Analyze(
-        ProvideResult<IReadOnlyList<RawRamModel>> result)
+        ProvideResult<IReadOnlyList<RamRawModel>> result)
     {
         var warnings = new List<string>(result.Warnings);
 

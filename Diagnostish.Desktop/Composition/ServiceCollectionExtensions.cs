@@ -38,28 +38,34 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddHardwareComponents(this IServiceCollection services)
     {
-        services.AddSingleton<IWmiSource<RawGpuModel>, GpuWmiProvider>();
-        services.AddSingleton<IRegistrySource<RawGpuModel>, GpuRegistryProvider>();
+        services.AddSingleton<IWmiSource<GpuRawModel>, GpuWmiProvider>();
+        services.AddSingleton<IRegistrySource<GpuRawModel>, GpuRegistryProvider>();
 
         return services
-            .AddComponent<HardwareReport, RawCpuModel, Cpu,
+            .AddComponent<HardwareReport, CpuRawModel, Cpu,
                 CpuWmiProvider, CpuAnalyzer, CpuReportMapper>()
-            .AddComponent<HardwareReport, RawRamModel, Ram,
+
+            .AddComponent<HardwareReport, RamRawModel, Ram,
                 RamWmiProvider, RamAnalyzer, RamReportMapper>()
-            .AddComponent<HardwareReport, RawGpuModel, IReadOnlyList<Gpu>,
+
+            .AddComponent<HardwareReport, GpuRawModel, IReadOnlyList<Gpu>,
                 GpuFallBackProvider, GpuAnalyzer, GpuReportMapper>()
-            .AddComponent<HardwareReport, RawStorageDriveModel, IReadOnlyList<StorageDrive>,
+
+            .AddComponent<HardwareReport, StorageDriveRawModel, IReadOnlyList<StorageDrive>,
                 StorageDriveWmiProvider, StorageDriveAnalyzer, StorageDriveReportMapper>()
-            .AddComponent<HardwareReport, RawBiosModel, Bios,
+
+            .AddComponent<HardwareReport, BiosRawModel, Bios,
                 BiosWmiProvider, BiosAnalyzer, BiosReportMapper>()
-            .AddComponent<HardwareReport, RawBaseBoardModel, BaseBoard,
+
+            .AddComponent<HardwareReport, BaseBoardRawModel, BaseBoard,
                 BaseBoardWmiProvider, BaseBoardAnalyzer, BaseBoardReportMapper>();
     }
 
     public static IServiceCollection AddOperatingSystemComponents(this IServiceCollection services)
     {
-        return services.AddComponent<OperatingSystemReport, RawOperatingSystemModel, OperSystem,
-            OperatingSystemWmiProvider, OperatingSystemAnalyzer, OperatingSystemReportMapper>();
+        return services
+            .AddComponent<OperatingSystemReport, OperatingSystemRawModel, OperSystem,
+                OperatingSystemWmiProvider, OperatingSystemAnalyzer, OperatingSystemReportMapper>();
     }
 
     public static IServiceCollection AddPrinters(this IServiceCollection services)
@@ -69,20 +75,20 @@ public static class ServiceCollectionExtensions
             .AddPrinter<OperatingSystemReport, OperatingSystemConsolePrinter>();
     }
 
-    private static IServiceCollection AddComponent<TReport, TRawData, TData, TProvider, TAnalyzer, TMapper>(
+    private static IServiceCollection AddComponent<TReport, TRawModel, TData, TProvider, TAnalyzer, TMapper>(
         this IServiceCollection services)
-        where TProvider : class, IProvider<TRawData>
-        where TAnalyzer : class, IAnalyzer<TRawData, TData>
+        where TProvider : class, IProvider<TRawModel>
+        where TAnalyzer : class, IAnalyzer<TRawModel, TData>
         where TMapper : class, IReportMapper<TReport, TData>
     {
-        services.AddSingleton<IProvider<TRawData>, TProvider>();
-        services.AddSingleton<IAnalyzer<TRawData, TData>, TAnalyzer>();
+        services.AddSingleton<IProvider<TRawModel>, TProvider>();
+        services.AddSingleton<IAnalyzer<TRawModel, TData>, TAnalyzer>();
         services.AddSingleton<IReportMapper<TReport, TData>, TMapper>();
 
         services.AddSingleton(sp => new ComponentPipeline<TReport>(async cancellationToken =>
         {
-            var provider = sp.GetRequiredService<IProvider<TRawData>>();
-            var analyzer = sp.GetRequiredService<IAnalyzer<TRawData, TData>>();
+            var provider = sp.GetRequiredService<IProvider<TRawModel>>();
+            var analyzer = sp.GetRequiredService<IAnalyzer<TRawModel, TData>>();
             var mapper = sp.GetRequiredService<IReportMapper<TReport, TData>>();
 
             var rawData = await provider.ProvideAsync(cancellationToken);

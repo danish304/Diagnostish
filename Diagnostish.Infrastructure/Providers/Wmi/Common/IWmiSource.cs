@@ -1,3 +1,3 @@
 ﻿namespace Diagnostish.Infrastructure.Providers.Wmi.Common;
 
-public interface IWmiSource<TRawData> : IProvider<TRawData>;
+public interface IWmiSource<TRawModel> : IProvider<TRawModel>;

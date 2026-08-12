@@ -1,3 +1,3 @@
 ﻿namespace Diagnostish.Infrastructure.Providers.Registry.Common;
 
-public interface IRegistrySource<TRawData> : IProvider<TRawData>;
+public interface IRegistrySource<TRawModel> : IProvider<TRawModel>;

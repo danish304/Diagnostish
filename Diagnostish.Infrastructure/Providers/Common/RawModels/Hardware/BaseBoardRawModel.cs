@@ -1,6 +1,6 @@
 ﻿namespace Diagnostish.Infrastructure.Providers.Common.RawModels.Hardware;
 
-public sealed record RawBaseBoardModel(
+public sealed record BaseBoardRawModel(
     string? Model,
     string? Manufacturer,
     string? Version,

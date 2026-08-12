@@ -7,7 +7,7 @@ using System.Management;
 namespace Diagnostish.Infrastructure.Providers.Wmi.Hardware;
 
 public class StorageDriveWmiProvider(IWmiExecutor executor)
-    : BaseWmiProvider<RawStorageDriveModel>(executor)
+    : BaseWmiProvider<StorageDriveRawModel>(executor)
 {
     private const string MODEL = "Model";
     private const string SIZE = "Size";
@@ -17,9 +17,9 @@ public class StorageDriveWmiProvider(IWmiExecutor executor)
 
     protected override string ContextName => "о накопителях";
 
-    protected override RawStorageDriveModel Map(ManagementBaseObject item)
+    protected override StorageDriveRawModel Map(ManagementBaseObject item)
     {
-        return new RawStorageDriveModel(
+        return new StorageDriveRawModel(
             Parser.ToSafeString(item[MODEL]),
             Parser.ToSafeDouble(item[SIZE])
         );

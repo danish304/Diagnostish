@@ -10,11 +10,11 @@ public class GpuFallBackProviderTests
 {
     private const double UINT32_OVERFLOW = 4_290_000_000;
 
-    private readonly IWmiSource<RawGpuModel> _wmiProvider =
-        Substitute.For<IWmiSource<RawGpuModel>>();
+    private readonly IWmiSource<GpuRawModel> _wmiProvider =
+        Substitute.For<IWmiSource<GpuRawModel>>();
 
-    private readonly IRegistrySource<RawGpuModel> _registryProvider =
-        Substitute.For<IRegistrySource<RawGpuModel>>();
+    private readonly IRegistrySource<GpuRawModel> _registryProvider =
+        Substitute.For<IRegistrySource<GpuRawModel>>();
 
     private readonly GpuFallBackProvider _sut;
 
@@ -37,24 +37,24 @@ public class GpuFallBackProviderTests
     public async Task ProvideInfoAsync_WmiReturnsInvalidValues(long? invalidAdapterRam)
     {
         // Arrange
-        var wmiGpu = new RawGpuModel(
+        var wmiGpu = new GpuRawModel(
             "NVIDIA GeForce RTX 4060 Ti",
             invalidAdapterRam
         );
 
         _wmiProvider.ProvideAsync(Arg.Any<CancellationToken>())
-            .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Ok(
+            .Returns(ProvideResult<IReadOnlyList<GpuRawModel>>.Ok(
                 [wmiGpu],
                 warnings: ["WMI: некорректные данные"])
             );
 
-        var registryGpu = new RawGpuModel(
+        var registryGpu = new GpuRawModel(
             "NVIDIA GeForce RTX 4060 Ti",
             8_585_740_288
         );
 
         _registryProvider.ProvideAsync(Arg.Any<CancellationToken>())
-            .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Ok([registryGpu]));
+            .Returns(ProvideResult<IReadOnlyList<GpuRawModel>>.Ok([registryGpu]));
 
         // Act
         var result = await _sut.ProvideAsync();
@@ -74,16 +74,16 @@ public class GpuFallBackProviderTests
     public async Task ProvideInfoAsync_WmiReturnsInvalidValuesButRegistryFails(long? invalidAdapterRam)
     {
         // Arrange
-        var wmiGpu = new RawGpuModel(
+        var wmiGpu = new GpuRawModel(
             "NVIDIA GeForce RTX 4060 Ti",
             invalidAdapterRam
         );
 
         _wmiProvider.ProvideAsync(Arg.Any<CancellationToken>())
-            .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Ok([wmiGpu]));
+            .Returns(ProvideResult<IReadOnlyList<GpuRawModel>>.Ok([wmiGpu]));
 
         _registryProvider.ProvideAsync(Arg.Any<CancellationToken>())
-            .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Fail(
+            .Returns(ProvideResult<IReadOnlyList<GpuRawModel>>.Fail(
                 warnings: [],
                 criticalErrors: ["Реестр: нет доступа"])
             );
@@ -101,13 +101,13 @@ public class GpuFallBackProviderTests
     public async Task ProvideInfoAsync_WmiReturnsValidValues()
     {
         // Arrange
-        var wmiGpu = new RawGpuModel(
+        var wmiGpu = new GpuRawModel(
             "NVIDIA GeForce RTX 4060 Ti",
             1_073_741_824
         );
 
         _wmiProvider.ProvideAsync(Arg.Any<CancellationToken>())
-            .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Ok([wmiGpu]));
+            .Returns(ProvideResult<IReadOnlyList<GpuRawModel>>.Ok([wmiGpu]));
 
         // Act
         var result = await _sut.ProvideAsync();
@@ -126,13 +126,13 @@ public class GpuFallBackProviderTests
     {
         // Arrange
         _wmiProvider.ProvideAsync(Arg.Any<CancellationToken>())
-            .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Fail(
+            .Returns(ProvideResult<IReadOnlyList<GpuRawModel>>.Fail(
                 warnings: [],
                 criticalErrors: ["WMI: нет доступа"])
             );
 
         _registryProvider.ProvideAsync(Arg.Any<CancellationToken>())
-            .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Fail(
+            .Returns(ProvideResult<IReadOnlyList<GpuRawModel>>.Fail(
                 warnings: [],
                 criticalErrors: ["Реестр: нет доступа"])
             );
@@ -153,18 +153,18 @@ public class GpuFallBackProviderTests
     public async Task ProvideInfoAsync_KeepsWmiValuesIfRegistryHasNoMatchingNames()
     {
         // Arrange
-        var wmiGpu = new RawGpuModel(null, 4_293_918_720);
+        var wmiGpu = new GpuRawModel(null, 4_293_918_720);
 
         _wmiProvider.ProvideAsync(Arg.Any<CancellationToken>())
-            .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Ok([wmiGpu]));
+            .Returns(ProvideResult<IReadOnlyList<GpuRawModel>>.Ok([wmiGpu]));
 
-        var registryGpu = new RawGpuModel(
+        var registryGpu = new GpuRawModel(
             "NVIDIA GeForce RTX 4060 Ti",
             8_585_740_288
         );
 
         _registryProvider.ProvideAsync(Arg.Any<CancellationToken>())
-            .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Ok([registryGpu]));
+            .Returns(ProvideResult<IReadOnlyList<GpuRawModel>>.Ok([registryGpu]));
 
         // Act
         var result = await _sut.ProvideAsync();
@@ -181,28 +181,28 @@ public class GpuFallBackProviderTests
     public async Task ProvideInfoAsync_ReplacesOnlyInvalidGpusWhenMultipleAdaptersReturned()
     {
         // Arrange
-        var validGpu = new RawGpuModel(
+        var validGpu = new GpuRawModel(
             "Intel UHD Graphics",
             1_073_741_824
         );
 
-        var invalidGpu = new RawGpuModel(
+        var invalidGpu = new GpuRawModel(
             "NVIDIA GeForce RTX 4060 Ti",
             4_293_918_720
         );
         _wmiProvider.ProvideAsync(Arg.Any<CancellationToken>())
-            .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Ok(
+            .Returns(ProvideResult<IReadOnlyList<GpuRawModel>>.Ok(
                 [validGpu, invalidGpu],
                 warnings: ["WMI: некорректные данные"])
             );
 
-        var registryGpu = new RawGpuModel(
+        var registryGpu = new GpuRawModel(
             "NVIDIA GeForce RTX 4060 Ti",
             8_585_740_288
         );
 
         _registryProvider.ProvideAsync(Arg.Any<CancellationToken>())
-            .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Ok([registryGpu]));
+            .Returns(ProvideResult<IReadOnlyList<GpuRawModel>>.Ok([registryGpu]));
 
         // Act
         var result = await _sut.ProvideAsync();
@@ -223,37 +223,37 @@ public class GpuFallBackProviderTests
     public async Task ProvideInfoAsync_ReplacesAllGpusWhenAllAreInvalid()
     {
         // Arrange
-        var invalidGpu1 = new RawGpuModel(
+        var invalidGpu1 = new GpuRawModel(
             "NVIDIA GeForce RTX 4060 Ti",
             4_293_918_720
         );
 
-        var invalidGpu2 = new RawGpuModel("Intel Arc A770", -100L);
-        var invalidGpu3 = new RawGpuModel("AMD Radeon RX 7600", null);
+        var invalidGpu2 = new GpuRawModel("Intel Arc A770", -100L);
+        var invalidGpu3 = new GpuRawModel("AMD Radeon RX 7600", null);
 
         _wmiProvider.ProvideAsync(Arg.Any<CancellationToken>())
-            .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Ok(
+            .Returns(ProvideResult<IReadOnlyList<GpuRawModel>>.Ok(
                 [invalidGpu1, invalidGpu2, invalidGpu3],
                 warnings: ["WMI: некорректные данные"])
             );
 
-        var registryGpu1 = new RawGpuModel(
+        var registryGpu1 = new GpuRawModel(
             "NVIDIA GeForce RTX 4060 Ti",
             8_585_740_288
         );
 
-        var registryGpu2 = new RawGpuModel(
+        var registryGpu2 = new GpuRawModel(
             "Intel Arc A770",
             17_179_869_184
         );
 
-        var registryGpu3 = new RawGpuModel(
+        var registryGpu3 = new GpuRawModel(
             "AMD Radeon RX 7600",
             2_147_483_648
         );
 
         _registryProvider.ProvideAsync(Arg.Any<CancellationToken>())
-            .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Ok([registryGpu1, registryGpu2, registryGpu3]));
+            .Returns(ProvideResult<IReadOnlyList<GpuRawModel>>.Ok([registryGpu1, registryGpu2, registryGpu3]));
 
         // Act
         var result = await _sut.ProvideAsync();
@@ -277,21 +277,21 @@ public class GpuFallBackProviderTests
         // Arrange
         using var cts = new CancellationTokenSource();
 
-        var wmiGpu = new RawGpuModel(
+        var wmiGpu = new GpuRawModel(
             "NVIDIA GeForce RTX 4060 Ti",
             4_293_918_720
         );
 
         _wmiProvider.ProvideAsync(Arg.Any<CancellationToken>())
-            .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Ok([wmiGpu]));
+            .Returns(ProvideResult<IReadOnlyList<GpuRawModel>>.Ok([wmiGpu]));
 
-        var registryGpu = new RawGpuModel(
+        var registryGpu = new GpuRawModel(
             "NVIDIA GeForce RTX 4060 Ti",
             8_585_740_288
         );
 
         _registryProvider.ProvideAsync(Arg.Any<CancellationToken>())
-            .Returns(ProvideResult<IReadOnlyList<RawGpuModel>>.Ok([registryGpu]));
+            .Returns(ProvideResult<IReadOnlyList<GpuRawModel>>.Ok([registryGpu]));
 
         // Act
         await _sut.ProvideAsync(cts.Token);

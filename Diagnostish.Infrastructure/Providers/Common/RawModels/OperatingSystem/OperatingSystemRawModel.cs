@@ -1,6 +1,6 @@
 ﻿namespace Diagnostish.Infrastructure.Providers.Common.RawModels.OperatingSystem;
 
-public sealed record RawOperatingSystemModel(
+public sealed record OperatingSystemRawModel(
     string? Caption,
     string? Manufacturer,
     string? Version,

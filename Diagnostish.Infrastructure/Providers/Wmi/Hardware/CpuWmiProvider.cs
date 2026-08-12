@@ -7,7 +7,7 @@ using System.Management;
 namespace Diagnostish.Infrastructure.Providers.Wmi.Hardware;
 
 public class CpuWmiProvider(IWmiExecutor executor)
-    : BaseWmiProvider<RawCpuModel>(executor)
+    : BaseWmiProvider<CpuRawModel>(executor)
 {
     private const string CPU_NAME = "Name";
     private const string COUNT_CORES = "NumberOfCores";
@@ -18,9 +18,9 @@ public class CpuWmiProvider(IWmiExecutor executor)
 
     protected override string ContextName => "о процессоре";
 
-    protected override RawCpuModel Map(ManagementBaseObject item)
+    protected override CpuRawModel Map(ManagementBaseObject item)
     {
-        return new RawCpuModel(
+        return new CpuRawModel(
             Parser.ToSafeString(item[CPU_NAME]),
             Parser.ToSafeInt(item[COUNT_CORES]),
             Parser.ToSafeInt(item[SPEED])

@@ -9,10 +9,10 @@ using static Diagnostish.Infrastructure.Analyzers.Hardware.Messages.GpuAnalyzerM
 namespace Diagnostish.Infrastructure.Analyzers.Hardware;
 
 public class GpuAnalyzer(ILogger logger)
-    : IAnalyzer<RawGpuModel, IReadOnlyList<Gpu>>
+    : IAnalyzer<GpuRawModel, IReadOnlyList<Gpu>>
 {
     public ProvideResult<IReadOnlyList<Gpu>> Analyze(
-        ProvideResult<IReadOnlyList<RawGpuModel>> result)
+        ProvideResult<IReadOnlyList<GpuRawModel>> result)
     {
         var warnings = new List<string>(result.Warnings);
 

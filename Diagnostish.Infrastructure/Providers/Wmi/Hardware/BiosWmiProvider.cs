@@ -7,7 +7,7 @@ using System.Management;
 namespace Diagnostish.Infrastructure.Providers.Wmi.Hardware;
 
 public class BiosWmiProvider(IWmiExecutor executor)
-    : BaseWmiProvider<RawBiosModel>(executor)
+    : BaseWmiProvider<BiosRawModel>(executor)
 {
     private const string VERSION = "Version";
     private const string RELEASE = "ReleaseDate";
@@ -18,9 +18,9 @@ public class BiosWmiProvider(IWmiExecutor executor)
 
     protected override string ContextName => "о биосе";
 
-    protected override RawBiosModel Map(ManagementBaseObject item)
+    protected override BiosRawModel Map(ManagementBaseObject item)
     {
-        return new RawBiosModel(
+        return new BiosRawModel(
             Parser.ToSafeString(item[VERSION]),
             Parser.ToSafeDateTime(item[RELEASE]),
             Parser.ToSafeString(item[MANUFACTURER])

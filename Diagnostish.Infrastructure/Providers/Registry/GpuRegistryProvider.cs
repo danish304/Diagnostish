@@ -7,7 +7,7 @@ using Microsoft.Win32;
 namespace Diagnostish.Infrastructure.Providers.Registry;
 
 public class GpuRegistryProvider(IRegistryExecutor executor)
-    : BaseRegistryProvider<RawGpuModel>(executor)
+    : BaseRegistryProvider<GpuRawModel>(executor)
 {
     private const string GPU_NAME = "DriverDesc";
     private const string GPU_ADAPTERRAM = "HardwareInformation.qwMemorySize";
@@ -20,7 +20,7 @@ public class GpuRegistryProvider(IRegistryExecutor executor)
     protected override bool IsRelevantSubKey(string subKeyName) =>
         subKeyName.All(char.IsDigit);
 
-    protected override RawGpuModel? Map(RegistryKey subKey)
+    protected override GpuRawModel? Map(RegistryKey subKey)
     {
         object? nameValue = subKey.GetValue(GPU_NAME);
         object? memoryValue = subKey.GetValue(GPU_ADAPTERRAM);
@@ -30,7 +30,7 @@ public class GpuRegistryProvider(IRegistryExecutor executor)
             return null;
         }
 
-        return new RawGpuModel(
+        return new GpuRawModel(
             Parser.ToSafeString(nameValue),
             Parser.ToSafeDouble(memoryValue)
         );

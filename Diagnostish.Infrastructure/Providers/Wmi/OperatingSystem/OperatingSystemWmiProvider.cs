@@ -7,7 +7,7 @@ using System.Management;
 namespace Diagnostish.Infrastructure.Providers.Wmi.OperatingSystem;
 
 public class OperatingSystemWmiProvider(IWmiExecutor executor)
-    : BaseWmiProvider<RawOperatingSystemModel>(executor)
+    : BaseWmiProvider<OperatingSystemRawModel>(executor)
 {
     private const string CAPTION = "Caption";
     private const string VERSION = "Version";
@@ -22,9 +22,9 @@ public class OperatingSystemWmiProvider(IWmiExecutor executor)
 
     protected override string ContextName => "об операционной системе";
 
-    protected override RawOperatingSystemModel Map(ManagementBaseObject item)
+    protected override OperatingSystemRawModel Map(ManagementBaseObject item)
     {
-        return new RawOperatingSystemModel(
+        return new OperatingSystemRawModel(
             Parser.ToSafeString(item[CAPTION]),
             Parser.ToSafeString(item[MANUFACTURER]),
             Parser.ToSafeString(item[VERSION]),

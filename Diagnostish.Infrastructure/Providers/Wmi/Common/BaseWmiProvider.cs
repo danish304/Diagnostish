@@ -3,13 +3,13 @@ using System.Management;
 
 namespace Diagnostish.Infrastructure.Providers.Wmi.Common;
 
-public abstract class BaseWmiProvider<TRawData>(
-    IWmiExecutor executor) : IWmiSource<TRawData>
+public abstract class BaseWmiProvider<TRawModel>(
+    IWmiExecutor executor) : IWmiSource<TRawModel>
 {
-    public async Task<ProvideResult<IReadOnlyList<TRawData>>> ProvideAsync(
+    public async Task<ProvideResult<IReadOnlyList<TRawModel>>> ProvideAsync(
         CancellationToken cancellationToken = default)
     {
-        var rawData = new List<TRawData>();
+        var rawData = new List<TRawModel>();
         var warnings = new List<string>();
         var criticalErrors = new List<string>();
 
@@ -32,13 +32,13 @@ public abstract class BaseWmiProvider<TRawData>(
         cancellationToken);
 
         return rawData.Count > 0
-            ? ProvideResult<IReadOnlyList<TRawData>>.Ok(rawData, warnings)
-            : ProvideResult<IReadOnlyList<TRawData>>.Fail(warnings, criticalErrors);
+            ? ProvideResult<IReadOnlyList<TRawModel>>.Ok(rawData, warnings)
+            : ProvideResult<IReadOnlyList<TRawModel>>.Fail(warnings, criticalErrors);
     }
 
     protected abstract string BuildQuery();
 
     protected abstract string ContextName { get; }
 
-    protected abstract TRawData Map(ManagementBaseObject item);
+    protected abstract TRawModel Map(ManagementBaseObject item);
 }

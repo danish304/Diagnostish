@@ -5,13 +5,13 @@ using Diagnostish.Infrastructure.Providers.Wmi.Common;
 namespace Diagnostish.Infrastructure.Providers;
 
 public class GpuFallBackProvider(
-    IWmiSource<RawGpuModel> wmiProvider,
-    IRegistrySource<RawGpuModel> registryProvider)
-    : IProvider<RawGpuModel>
+    IWmiSource<GpuRawModel> wmiProvider,
+    IRegistrySource<GpuRawModel> registryProvider)
+    : IProvider<GpuRawModel>
 {
     private const double UINT32_OVERFLOW = 4_290_000_000;
 
-    public async Task<ProvideResult<IReadOnlyList<RawGpuModel>>> ProvideAsync(
+    public async Task<ProvideResult<IReadOnlyList<GpuRawModel>>> ProvideAsync(
         CancellationToken cancellationToken = default)
     {
         var wmiResult = await wmiProvider.ProvideAsync(cancellationToken);
@@ -34,9 +34,9 @@ public class GpuFallBackProvider(
         return MergeMemoryFromRegistry(wmiResult, registryResult);
     }
 
-    private static ProvideResult<IReadOnlyList<RawGpuModel>> HandleRegistryFallbackFail(
-        ProvideResult<IReadOnlyList<RawGpuModel>> wmiResult,
-        ProvideResult<IReadOnlyList<RawGpuModel>> registryResult)
+    private static ProvideResult<IReadOnlyList<GpuRawModel>> HandleRegistryFallbackFail(
+        ProvideResult<IReadOnlyList<GpuRawModel>> wmiResult,
+        ProvideResult<IReadOnlyList<GpuRawModel>> registryResult)
     {
         if (wmiResult.Data is not null)
         {
@@ -44,7 +44,7 @@ public class GpuFallBackProvider(
             warnings.AddRange(registryResult.Warnings);
             warnings.AddRange(registryResult.CriticalErrors);
 
-            return ProvideResult<IReadOnlyList<RawGpuModel>>.Ok(wmiResult.Data, warnings);
+            return ProvideResult<IReadOnlyList<GpuRawModel>>.Ok(wmiResult.Data, warnings);
         }
 
         var combinedWarnings = new List<string>(wmiResult.Warnings);
@@ -53,12 +53,12 @@ public class GpuFallBackProvider(
         var combinedCriticalErrors = new List<string>(wmiResult.CriticalErrors);
         combinedCriticalErrors.AddRange(registryResult.CriticalErrors);
 
-        return ProvideResult<IReadOnlyList<RawGpuModel>>.Fail(combinedWarnings, combinedCriticalErrors);
+        return ProvideResult<IReadOnlyList<GpuRawModel>>.Fail(combinedWarnings, combinedCriticalErrors);
     }
 
-    private static ProvideResult<IReadOnlyList<RawGpuModel>> MergeMemoryFromRegistry(
-        ProvideResult<IReadOnlyList<RawGpuModel>> wmiResult,
-        ProvideResult<IReadOnlyList<RawGpuModel>> registryResult)
+    private static ProvideResult<IReadOnlyList<GpuRawModel>> MergeMemoryFromRegistry(
+        ProvideResult<IReadOnlyList<GpuRawModel>> wmiResult,
+        ProvideResult<IReadOnlyList<GpuRawModel>> registryResult)
     {
         var wmiGpus = wmiResult.Data ?? [];
         var registryGpus = registryResult.Data!;
@@ -107,6 +107,6 @@ public class GpuFallBackProvider(
             warnings.Add("Не удалось определить точный объём видеопамяти для одного из адаптеров ни через WMI, ни через реестр.");
         }
 
-        return ProvideResult<IReadOnlyList<RawGpuModel>>.Ok(merged, warnings);
+        return ProvideResult<IReadOnlyList<GpuRawModel>>.Ok(merged, warnings);
     }
 }

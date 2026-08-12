@@ -8,10 +8,10 @@ using static Diagnostish.Infrastructure.Analyzers.OperatingSystem.Messages.Opera
 namespace Diagnostish.Infrastructure.Analyzers.OperatingSystem;
 
 public class OperatingSystemAnalyzer(ILogger logger)
-    : IAnalyzer<RawOperatingSystemModel, OperSystem>
+    : IAnalyzer<OperatingSystemRawModel, OperSystem>
 {
     public ProvideResult<OperSystem> Analyze(
-        ProvideResult<IReadOnlyList<RawOperatingSystemModel>> result)
+        ProvideResult<IReadOnlyList<OperatingSystemRawModel>> result)
     {
         var warnings = new List<string>(result.Warnings);
 

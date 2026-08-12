@@ -8,10 +8,10 @@ using static Diagnostish.Infrastructure.Analyzers.Hardware.Messages.CpuAnalyzerM
 namespace Diagnostish.Infrastructure.Analyzers.Hardware;
 
 public class CpuAnalyzer(ILogger logger)
-    : IAnalyzer<RawCpuModel, Cpu>
+    : IAnalyzer<CpuRawModel, Cpu>
 {
     public ProvideResult<Cpu> Analyze(
-        ProvideResult<IReadOnlyList<RawCpuModel>> result)
+        ProvideResult<IReadOnlyList<CpuRawModel>> result)
     {
         var warnings = new List<string>(result.Warnings);
 

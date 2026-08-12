@@ -3,13 +3,13 @@ using Microsoft.Win32;
 
 namespace Diagnostish.Infrastructure.Providers.Registry.Common;
 
-public abstract class BaseRegistryProvider<TRawData>(
-    IRegistryExecutor executor) : IRegistrySource<TRawData>
+public abstract class BaseRegistryProvider<TRawModel>(
+    IRegistryExecutor executor) : IRegistrySource<TRawModel>
 {
-    public async Task<ProvideResult<IReadOnlyList<TRawData>>> ProvideAsync(
+    public async Task<ProvideResult<IReadOnlyList<TRawModel>>> ProvideAsync(
         CancellationToken cancellationToken = default)
     {
-        var rawData = new List<TRawData>();
+        var rawData = new List<TRawModel>();
         var warnings = new List<string>();
         var criticalErrors = new List<string>();
 
@@ -43,8 +43,8 @@ public abstract class BaseRegistryProvider<TRawData>(
         cancellationToken);
 
         return rawData.Count > 0
-            ? ProvideResult<IReadOnlyList<TRawData>>.Ok(rawData, warnings)
-            : ProvideResult<IReadOnlyList<TRawData>>.Fail(warnings, criticalErrors);
+            ? ProvideResult<IReadOnlyList<TRawModel>>.Ok(rawData, warnings)
+            : ProvideResult<IReadOnlyList<TRawModel>>.Fail(warnings, criticalErrors);
     }
 
     protected abstract string RootPath { get; }
@@ -53,5 +53,5 @@ public abstract class BaseRegistryProvider<TRawData>(
 
     protected virtual bool IsRelevantSubKey(string subKeyName) => true;
 
-    protected abstract TRawData? Map(RegistryKey subKey);
+    protected abstract TRawModel? Map(RegistryKey subKey);
 }

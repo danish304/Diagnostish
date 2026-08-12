@@ -9,10 +9,10 @@ using static Diagnostish.Infrastructure.Analyzers.Hardware.Messages.StorageDrive
 namespace Diagnostish.Infrastructure.Analyzers.Hardware;
 
 public class StorageDriveAnalyzer(ILogger logger)
-    : IAnalyzer<RawStorageDriveModel, IReadOnlyList<StorageDrive>>
+    : IAnalyzer<StorageDriveRawModel, IReadOnlyList<StorageDrive>>
 {
     public ProvideResult<IReadOnlyList<StorageDrive>> Analyze(
-        ProvideResult<IReadOnlyList<RawStorageDriveModel>> result)
+        ProvideResult<IReadOnlyList<StorageDriveRawModel>> result)
     {
         var warnings = new List<string>(result.Warnings);
 

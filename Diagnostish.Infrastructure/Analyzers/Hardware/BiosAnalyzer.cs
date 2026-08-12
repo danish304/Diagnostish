@@ -8,10 +8,10 @@ using static Diagnostish.Infrastructure.Analyzers.Hardware.Messages.BiosAnalyzer
 namespace Diagnostish.Infrastructure.Analyzers.Hardware;
 
 public class BiosAnalyzer(ILogger logger)
-    : IAnalyzer<RawBiosModel, Bios>
+    : IAnalyzer<BiosRawModel, Bios>
 {
     public ProvideResult<Bios> Analyze(
-        ProvideResult<IReadOnlyList<RawBiosModel>> result)
+        ProvideResult<IReadOnlyList<BiosRawModel>> result)
     {
         var warnings = new List<string>(result.Warnings);
 

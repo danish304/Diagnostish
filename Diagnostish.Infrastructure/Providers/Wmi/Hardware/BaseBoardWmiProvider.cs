@@ -7,7 +7,7 @@ using System.Management;
 namespace Diagnostish.Infrastructure.Providers.Wmi.Hardware;
 
 public class BaseBoardWmiProvider(IWmiExecutor executor)
-    : BaseWmiProvider<RawBaseBoardModel>(executor)
+    : BaseWmiProvider<BaseBoardRawModel>(executor)
 {
     private const string MODEL = "Product";
     private const string MANUFACTURER = "Manufacturer";
@@ -19,9 +19,9 @@ public class BaseBoardWmiProvider(IWmiExecutor executor)
 
     protected override string ContextName => "о материнской плате";
 
-    protected override RawBaseBoardModel Map(ManagementBaseObject item)
+    protected override BaseBoardRawModel Map(ManagementBaseObject item)
     {
-        return new RawBaseBoardModel(
+        return new BaseBoardRawModel(
             Parser.ToSafeString(item[MODEL]),
             Parser.ToSafeString(item[MANUFACTURER]),
             Parser.ToSafeString(item[VERSION]),

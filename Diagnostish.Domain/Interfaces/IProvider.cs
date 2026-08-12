@@ -2,8 +2,8 @@
 
 namespace Diagnostish.Domain.Interfaces;
 
-public interface IProvider<TRawData>
+public interface IProvider<TRawModel>
 {
-    Task<ProvideResult<IReadOnlyList<TRawData>>> ProvideAsync(
+    Task<ProvideResult<IReadOnlyList<TRawModel>>> ProvideAsync(
         CancellationToken cancellationToken = default);
 }

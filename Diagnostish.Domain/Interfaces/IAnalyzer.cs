@@ -2,8 +2,8 @@
 
 namespace Diagnostish.Domain.Interfaces;
 
-public interface IAnalyzer<TRawData, TData>
+public interface IAnalyzer<TRawModel, TData>
 {
     ProvideResult<TData> Analyze(
-        ProvideResult<IReadOnlyList<TRawData>> result);
+        ProvideResult<IReadOnlyList<TRawModel>> result);
 }

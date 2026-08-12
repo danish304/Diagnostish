@@ -7,7 +7,7 @@ using System.Management;
 namespace Diagnostish.Infrastructure.Providers.Wmi.Hardware;
 
 public class GpuWmiProvider(IWmiExecutor executor)
-    : BaseWmiProvider<RawGpuModel>(executor)
+    : BaseWmiProvider<GpuRawModel>(executor)
 {
     private const string GPU_NAME = "Name";
     private const string GPU_ADAPTERRAM = "AdapterRAM";
@@ -17,9 +17,9 @@ public class GpuWmiProvider(IWmiExecutor executor)
 
     protected override string ContextName => "о видеокартах";
 
-    protected override RawGpuModel Map(ManagementBaseObject item)
+    protected override GpuRawModel Map(ManagementBaseObject item)
     {
-        return new RawGpuModel(
+        return new GpuRawModel(
             Parser.ToSafeString(item[GPU_NAME]),
             Parser.ToSafeDouble(item[GPU_ADAPTERRAM])
         );

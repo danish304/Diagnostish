@@ -7,7 +7,7 @@ using System.Management;
 namespace Diagnostish.Infrastructure.Providers.Wmi.Hardware;
 
 public class RamWmiProvider(IWmiExecutor executor)
-    : BaseWmiProvider<RawRamModel>(executor)
+    : BaseWmiProvider<RamRawModel>(executor)
 {
     private const string TYPE = "SMBIOSMemoryType";
     private const string CAPACITY = "Capacity";
@@ -18,9 +18,9 @@ public class RamWmiProvider(IWmiExecutor executor)
 
     protected override string ContextName => "об ОЗУ";
 
-    protected override RawRamModel Map(ManagementBaseObject item)
+    protected override RamRawModel Map(ManagementBaseObject item)
     {
-        return new RawRamModel(
+        return new RamRawModel(
             Parser.ToSafeString(item[TYPE]),
             Parser.ToSafeDouble(item[CAPACITY]),
             Parser.ToSafeInt(item[SPEED])

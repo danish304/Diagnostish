@@ -8,10 +8,10 @@ using static Diagnostish.Infrastructure.Analyzers.Hardware.Messages.BaseBoardAna
 namespace Diagnostish.Infrastructure.Analyzers.Hardware;
 
 public class BaseBoardAnalyzer(ILogger logger)
-    : IAnalyzer<RawBaseBoardModel, BaseBoard>
+    : IAnalyzer<BaseBoardRawModel, BaseBoard>
 {
     public ProvideResult<BaseBoard> Analyze(
-        ProvideResult<IReadOnlyList<RawBaseBoardModel>> result)
+        ProvideResult<IReadOnlyList<BaseBoardRawModel>> result)
     {
         var warnings = new List<string>(result.Warnings);
 

@@ -7,13 +7,16 @@ public class FinalReportComposer
 {
     private readonly IEnumerable<ComponentPipeline<HardwareReport>> _hardwarePipelines;
     private readonly IEnumerable<ComponentPipeline<OperatingSystemReport>> _operatingSystemPipelines;
+    private readonly IEnumerable<ComponentPipeline<NetworkReport>> _networkPipelines;
 
     public FinalReportComposer(
         IEnumerable<ComponentPipeline<HardwareReport>> hardwarePipelines,
-        IEnumerable<ComponentPipeline<OperatingSystemReport>> operatingSystemPipelines)
+        IEnumerable<ComponentPipeline<OperatingSystemReport>> operatingSystemPipelines,
+        IEnumerable<ComponentPipeline<NetworkReport>> networkPipelines)
     {
         _hardwarePipelines = hardwarePipelines;
         _operatingSystemPipelines = operatingSystemPipelines;
+        _networkPipelines = networkPipelines;
     }
 
     public async Task<FinalReport> GetFinalReportAsync(
@@ -29,15 +32,22 @@ public class FinalReportComposer
             new OperatingSystemReport(),
             cancellationToken);
 
-        await Task.WhenAll(hardwareTask, operatingSystemTask);
+        var networkTask = CollectReportAsync(
+            _networkPipelines,
+            new NetworkReport(),
+            cancellationToken);
+
+        await Task.WhenAll(hardwareTask, operatingSystemTask, networkTask);
 
         var hardwareReport = await hardwareTask;
         var operatingSystemReport = await operatingSystemTask;
+        var networkReport = await networkTask;
 
         return new FinalReport
         {
             HardwareReport = hardwareReport,
-            OperatingSystemReport = operatingSystemReport
+            OperatingSystemReport = operatingSystemReport,
+            NetworkReport = networkReport
         };
     }
 

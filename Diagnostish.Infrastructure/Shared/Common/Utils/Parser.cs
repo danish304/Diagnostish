@@ -44,6 +44,22 @@ public static class Parser
         return string.IsNullOrWhiteSpace(result) ? null : result.Trim();
     }
 
+    public static string? ToSafeArrayString(object? value)
+    {
+        if (value is null or DBNull)
+        {
+            return null;
+        }
+
+        if (value is string[] array)
+        {
+            return array.Length > 0 ? string.Join(", ", array) : null;
+        }
+
+        string result = value.ToString() ?? string.Empty;
+        return string.IsNullOrWhiteSpace(result) ? null : result.Trim();
+    }
+
     public static DateTime? ToSafeDateTime(object? value)
     {
         if (value is null or DBNull)

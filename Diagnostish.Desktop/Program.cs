@@ -37,6 +37,7 @@ static class Program
                 .AddCoreServices()
                 .AddHardwareComponents()
                 .AddOperatingSystemComponents()
+                .AddNetworkComponents()
                 .AddPrinters();
 
             using var serviceProvider = services.BuildServiceProvider();

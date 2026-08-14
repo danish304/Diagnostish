@@ -3,7 +3,7 @@ using Diagnostish.Infrastructure.Providers.Common.RawModels.Hardware;
 using Diagnostish.Infrastructure.Shared.Common.Utils;
 using Serilog;
 
-using static Diagnostish.Infrastructure.Analyzers.Hardware.Messages.CommonMessages;
+using static Diagnostish.Infrastructure.Analyzers.Common.CommonMessages;
 using static Diagnostish.Infrastructure.Analyzers.Hardware.Messages.StorageDriveAnalyzerMessages;
 
 namespace Diagnostish.Infrastructure.Analyzers.Hardware;
@@ -26,11 +26,14 @@ public class StorageDriveAnalyzer(ILogger logger)
         var storageDrives = new List<StorageDrive>();
         int unknownModelCount = 0;
         int unknownSizeCount = 0;
+        int unknownStatusCount = 0;
+        int badStatusCount = 0;
 
         foreach (var model in rawData)
         {
             string storageDriveModel = model.Model ?? "Неизвестно";
             double storageDriveSize = 0;
+            string storageDriveStatus = model.Status ?? "Неизвестно";
 
             if (model.Model is null)
             {
@@ -46,7 +49,19 @@ public class StorageDriveAnalyzer(ILogger logger)
                 unknownSizeCount++;
             }
 
-            storageDrives.Add(new StorageDrive(storageDriveModel, storageDriveSize));
+            if (model.Status is null)
+            {
+                unknownStatusCount++;
+            }
+            else if (model.Status is not null && storageDriveStatus != "OK")
+            {
+                badStatusCount++;
+            }
+
+            storageDrives.Add(new StorageDrive(
+                storageDriveModel,
+                storageDriveSize,
+                storageDriveStatus));
         }
 
         if (unknownModelCount > 0)
@@ -64,6 +79,22 @@ public class StorageDriveAnalyzer(ILogger logger)
             logger.Warning(
                 UNKNOWN_SIZE + " Затронуто {Count} из {Total} накопителей.",
                 unknownSizeCount, rawData.Count);
+        }
+        if (unknownStatusCount > 0)
+        {
+            warnings.Add($"{UNKNOWN_STATUS} {CountOfTotal(unknownStatusCount, rawData.Count)}");
+
+            logger.Warning(
+                UNKNOWN_STATUS + " Затронуто {Count} из {Total} накопителей.",
+                unknownStatusCount, rawData.Count);
+        }
+        if (badStatusCount > 0)
+        {
+            warnings.Add($"{BAD_STATUS} {CountOfTotal(badStatusCount, rawData.Count)}");
+
+            logger.Warning(
+                BAD_STATUS + " Затронуто {Count} из {Total} накопителей.",
+                badStatusCount, rawData.Count);
         }
 
         return ProvideResult<IReadOnlyList<StorageDrive>>.Ok(storageDrives, warnings);

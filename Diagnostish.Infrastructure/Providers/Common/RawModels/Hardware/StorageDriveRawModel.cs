@@ -2,5 +2,6 @@
 
 public sealed record StorageDriveRawModel(
     string? Model,
-    double? Size
+    double? Size,
+    string? Status
 );

@@ -11,9 +11,10 @@ public class StorageDriveWmiProvider(IWmiExecutor executor)
 {
     private const string MODEL = "Model";
     private const string SIZE = "Size";
+    private const string STATUS = "Status";
 
     protected override string BuildQuery()
-        => $"SELECT {MODEL}, {SIZE} FROM Win32_DiskDrive";
+        => $"SELECT {MODEL}, {SIZE}, {STATUS} FROM Win32_DiskDrive";
 
     protected override string ContextName => "о накопителях";
 
@@ -21,7 +22,8 @@ public class StorageDriveWmiProvider(IWmiExecutor executor)
     {
         return new StorageDriveRawModel(
             Parser.ToSafeString(item[MODEL]),
-            Parser.ToSafeDouble(item[SIZE])
+            Parser.ToSafeDouble(item[SIZE]),
+            Parser.ToSafeString(item[STATUS])
         );
     }
 }

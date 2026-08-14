@@ -37,7 +37,9 @@ public class HardwareConsolePrinter : BaseConsolePrinter<HardwareReport>
         {
             foreach (var storageDrive in report.StorageDrives)
             {
-                Console.WriteLine($"    - {storageDrive.Model} ({storageDrive.Size} GB)");
+                Console.WriteLine(
+                    $"    - {storageDrive.Model} ({storageDrive.Size} GB), " +
+                    $"cтатус: {storageDrive.Status}");
             }
         }
         else

@@ -1,4 +1,5 @@
 ﻿using Diagnostish.Application.Mappers.Hardware;
+using Diagnostish.Application.Mappers.Network;
 using Diagnostish.Application.Mappers.OperatingSystem;
 using Diagnostish.Application.Pipelines;
 using Diagnostish.Application.Services;
@@ -7,16 +8,20 @@ using Diagnostish.Desktop.Views;
 using Diagnostish.Desktop.Views.ConsoleViews;
 using Diagnostish.Desktop.Views.UserInterfaces;
 using Diagnostish.Domain.Models.Entities.Hardware;
+using Diagnostish.Domain.Models.Entities.Network;
 using Diagnostish.Domain.Models.Entities.OperatingSystem;
 using Diagnostish.Infrastructure.Analyzers.Hardware;
+using Diagnostish.Infrastructure.Analyzers.Network;
 using Diagnostish.Infrastructure.Analyzers.OperatingSystem;
 using Diagnostish.Infrastructure.Providers;
 using Diagnostish.Infrastructure.Providers.Common.RawModels.Hardware;
+using Diagnostish.Infrastructure.Providers.Common.RawModels.Network;
 using Diagnostish.Infrastructure.Providers.Common.RawModels.OperatingSystem;
 using Diagnostish.Infrastructure.Providers.Registry;
 using Diagnostish.Infrastructure.Providers.Registry.Common;
 using Diagnostish.Infrastructure.Providers.Wmi.Common;
 using Diagnostish.Infrastructure.Providers.Wmi.Hardware;
+using Diagnostish.Infrastructure.Providers.Wmi.Network;
 using Diagnostish.Infrastructure.Providers.Wmi.OperatingSystem;
 using Diagnostish.Infrastructure.Shared.Registry.Executor;
 using Diagnostish.Infrastructure.Shared.Wmi.Executor;
@@ -68,11 +73,29 @@ public static class ServiceCollectionExtensions
                 OperatingSystemWmiProvider, OperatingSystemAnalyzer, OperatingSystemReportMapper>();
     }
 
+    public static IServiceCollection AddNetworkComponents(this IServiceCollection services)
+    {
+        return services
+            .AddComponent<NetworkReport, NetworkAdapterRawModel, IReadOnlyList<NetworkAdapter>,
+                NetworkAdatperWmiProvider, NetworkAdapterAnalyzer, NetworkAdapterReportMapper>()
+
+            .AddComponent<NetworkReport, IpAddressRawModel, IReadOnlyList<IpAddress>,
+                IpAddressWmiProvider, IpAddressAnalyzer, IpAddressReportMapper>()
+
+            .AddComponent<NetworkReport, GatewayRawModel, IReadOnlyList<Gateway>,
+                GatewayWmiProvider, GatewayAnalyzer, GatewayReportMapper>()
+
+            .AddComponent<NetworkReport, DnsRawModel, IReadOnlyList<Dns>,
+                DnsWmiProvider, DnsAnalyzer, DnsReportMapper>();
+
+    }
+
     public static IServiceCollection AddPrinters(this IServiceCollection services)
     {
         return services
             .AddPrinter<HardwareReport, HardwareConsolePrinter>()
-            .AddPrinter<OperatingSystemReport, OperatingSystemConsolePrinter>();
+            .AddPrinter<OperatingSystemReport, OperatingSystemConsolePrinter>()
+            .AddPrinter<NetworkReport, NetworkConsolePrinter>();
     }
 
     private static IServiceCollection AddComponent<TReport, TRawModel, TData, TProvider, TAnalyzer, TMapper>(

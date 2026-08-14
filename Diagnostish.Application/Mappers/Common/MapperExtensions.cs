@@ -14,7 +14,7 @@ public static class MapperExtensions
         report.AddWarnings(result.Warnings);
         report.AddCriticalErrors(result.CriticalErrors);
 
-        data = result.Data;
+        data = result.RawData;
         return data is not null;
     }
 }

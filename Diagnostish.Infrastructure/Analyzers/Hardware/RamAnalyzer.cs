@@ -3,7 +3,7 @@ using Diagnostish.Infrastructure.Providers.Common.RawModels.Hardware;
 using Diagnostish.Infrastructure.Shared.Common.Utils;
 using Serilog;
 
-using static Diagnostish.Infrastructure.Analyzers.Hardware.Messages.CommonMessages;
+using static Diagnostish.Infrastructure.Analyzers.Common.CommonMessages;
 using static Diagnostish.Infrastructure.Analyzers.Hardware.Messages.RamAnalyzerMessages;
 
 namespace Diagnostish.Infrastructure.Analyzers.Hardware;
@@ -25,7 +25,7 @@ public class RamAnalyzer(ILogger logger)
     {
         var warnings = new List<string>(result.Warnings);
 
-        if (result.Data is not { Count: > 0 } rawData)
+        if (result.RawData is not { Count: > 0 } rawData)
         {
             return ProvideResult<Ram>.Fail(
                 warnings,

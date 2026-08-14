@@ -16,7 +16,7 @@ public class StorageDriveAnalyzer(ILogger logger)
     {
         var warnings = new List<string>(result.Warnings);
 
-        if (result.Data is not { Count: > 0 } rawData)
+        if (result.RawData is not { Count: > 0 } rawData)
         {
             return ProvideResult<IReadOnlyList<StorageDrive>>.Fail(
                 warnings,

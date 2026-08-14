@@ -15,7 +15,7 @@ public class BiosAnalyzer(ILogger logger)
     {
         var warnings = new List<string>(result.Warnings);
 
-        if (result.Data is not [var rawData, ..])
+        if (result.RawData is not [var rawData, ..])
         {
             return ProvideResult<Bios>.Fail(
                 warnings,
@@ -29,7 +29,7 @@ public class BiosAnalyzer(ILogger logger)
             .GetValueOrWarning(
                 warnings,
                 logger,
-                UNKNOWN_RELEASEDATE,
+                UNKNOWN_RELEASE_DATE,
                 condition: date => date != DateTime.MinValue && date < DateTime.Now);
 
         string manufacturer = rawData.Manufacturer

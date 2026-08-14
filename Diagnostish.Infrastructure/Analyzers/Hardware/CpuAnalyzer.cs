@@ -15,7 +15,7 @@ public class CpuAnalyzer(ILogger logger)
     {
         var warnings = new List<string>(result.Warnings);
 
-        if (result.Data is not [var rawData, ..])
+        if (result.RawData is not [var rawData, ..])
         {
             return ProvideResult<Cpu>.Fail(
                 warnings,
@@ -26,7 +26,7 @@ public class CpuAnalyzer(ILogger logger)
             .GetValueOrWarning(warnings, logger, UNKNOWN_NAME);
 
         int countCores = rawData.Cores
-            .GetValueOrWarning(warnings, logger, UNKNOWN_COUNTCORES);
+            .GetValueOrWarning(warnings, logger, UNKNOWN_COUNT_CORES);
 
         int speed = rawData.ClockSpeed
             .GetValueOrWarning(warnings, logger, UNKNOWN_SPEED);

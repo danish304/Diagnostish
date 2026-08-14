@@ -15,7 +15,7 @@ public class BaseBoardAnalyzer(ILogger logger)
     {
         var warnings = new List<string>(result.Warnings);
 
-        if (result.Data is not [var rawData, ..])
+        if (result.RawData is not [var rawData, ..])
         {
             return ProvideResult<BaseBoard>.Fail(
                 warnings,

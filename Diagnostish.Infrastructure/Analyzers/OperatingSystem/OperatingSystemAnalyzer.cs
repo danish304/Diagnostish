@@ -15,7 +15,7 @@ public class OperatingSystemAnalyzer(ILogger logger)
     {
         var warnings = new List<string>(result.Warnings);
 
-        if (result.Data is not [var rawData, ..])
+        if (result.RawData is not [var rawData, ..])
         {
             return ProvideResult<OperSystem>.Fail(
                 warnings,
@@ -38,14 +38,14 @@ public class OperatingSystemAnalyzer(ILogger logger)
             .GetValueOrWarning(
                 warnings,
                 logger,
-                UNKNOWN_INSTALLDATE,
+                UNKNOWN_INSTALL_DATE,
                 condition: date => date != DateTime.MinValue && date < DateTime.Now);
 
         DateTime lastBoot = rawData.LastBoot
             .GetValueOrWarning(
                 warnings,
                 logger,
-                UNKNOWN_LASTBOOTDATE,
+                UNKNOWN_LAST_BOOT_DATE,
                 condition: date => date != DateTime.MinValue && date < DateTime.Now);
 
         return ProvideResult<OperSystem>.Ok(

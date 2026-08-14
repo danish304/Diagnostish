@@ -10,7 +10,7 @@ public class GpuRegistryProvider(IRegistryExecutor executor)
     : BaseRegistryProvider<GpuRawModel>(executor)
 {
     private const string GPU_NAME = "DriverDesc";
-    private const string GPU_ADAPTERRAM = "HardwareInformation.qwMemorySize";
+    private const string GPU_ADAPTER_RAM = "HardwareInformation.qwMemorySize";
 
     protected override string RootPath =>
         @"SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}";
@@ -23,7 +23,7 @@ public class GpuRegistryProvider(IRegistryExecutor executor)
     protected override GpuRawModel? Map(RegistryKey subKey)
     {
         object? nameValue = subKey.GetValue(GPU_NAME);
-        object? memoryValue = subKey.GetValue(GPU_ADAPTERRAM);
+        object? memoryValue = subKey.GetValue(GPU_ADAPTER_RAM);
 
         if (nameValue is null && memoryValue is null)
         {

@@ -1,0 +1,29 @@
+﻿using Infrastructure.Providers.Common.RawModels.Hardware;
+using Infrastructure.Providers.Wmi.Common;
+using Infrastructure.Shared.Common.Utils;
+using Infrastructure.Shared.Wmi.Executor;
+using System.Management;
+
+namespace Infrastructure.Providers.Wmi.Hardware;
+
+public class RamWmiProvider(IWmiExecutor executor)
+    : BaseWmiProvider<RamRawModel>(executor)
+{
+    private const string TYPE = "SMBIOSMemoryType";
+    private const string CAPACITY = "Capacity";
+    private const string SPEED = "Speed";
+
+    protected override string BuildQuery() =>
+        $"SELECT {TYPE}, {CAPACITY}, {SPEED} FROM Win32_PhysicalMemory";
+
+    protected override string ContextName => "об ОЗУ";
+
+    protected override RamRawModel Map(ManagementBaseObject item)
+    {
+        return new RamRawModel(
+            Parser.ToSafeString(item[TYPE]),
+            Parser.ToSafeDouble(item[CAPACITY]),
+            Parser.ToSafeInt(item[SPEED])
+        );
+    }
+}

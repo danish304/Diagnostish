@@ -12,29 +12,21 @@ public abstract class BaseConsolePrinter<TReport> : IReportPrinter<TReport>
     {
         if (warnings.Count > 0)
         {
-            ColorPrinter.WriteLineColored(
-                "\n* ПРЕДУПРЕЖДЕНИЯ *",
-                ConsoleColor.DarkYellow);
+            ColorPrinter.WriteLineColored("\n* ПРЕДУПРЕЖДЕНИЯ *", ConsoleColor.DarkYellow);
 
             foreach (var warning in warnings)
             {
-                ColorPrinter.WriteLineColored(
-                    $"    - {warning}",
-                    ConsoleColor.Yellow);
+                ColorPrinter.WriteLineColored($"    - {warning}", ConsoleColor.Yellow);
             }
         }
 
         if (criticalErrors.Count > 0)
         {
-            ColorPrinter.WriteLineColored(
-                "\n* КРИТИЧЕСКИЕ ОШИБКИ *",
-                ConsoleColor.DarkRed);
+            ColorPrinter.WriteLineColored("\n* КРИТИЧЕСКИЕ ОШИБКИ *", ConsoleColor.DarkRed);
 
             foreach (var error in criticalErrors)
             {
-                ColorPrinter.WriteLineColored(
-                    $"    - {error}",
-                    ConsoleColor.Red);
+                ColorPrinter.WriteLineColored($"    - {error}", ConsoleColor.Red);
             }
         }
     }

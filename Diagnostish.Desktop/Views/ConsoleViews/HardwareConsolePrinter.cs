@@ -7,9 +7,7 @@ public class HardwareConsolePrinter : BaseConsolePrinter<HardwareReport>
 {
     protected override void PrintReport(HardwareReport report)
     {
-        ColorPrinter.WriteLineColored(
-            "\nКОНФИГУРАЦИЯ ПК:",
-            ConsoleColor.Cyan);
+        ColorPrinter.WriteLineColored("\nКОНФИГУРАЦИЯ ПК:", ConsoleColor.Cyan);
 
         Console.WriteLine(
             $"\n1) Процессор: {report.CpuName} ({report.CpuCores} ядер), " +
@@ -19,7 +17,7 @@ public class HardwareConsolePrinter : BaseConsolePrinter<HardwareReport>
             $"2) ОЗУ: {report.RamType} {report.RamCapacity} GB, " +
             $"{report.RamSpeed} MHz");
 
-        Console.WriteLine("3) Видеокарты:");
+        Console.WriteLine("3) Видеокарты: ");
         if (report.VideoCards.Count > 0)
         {
             foreach (var gpu in report.VideoCards)
@@ -29,10 +27,10 @@ public class HardwareConsolePrinter : BaseConsolePrinter<HardwareReport>
         }
         else
         {
-            Console.WriteLine("    - Данные не получены.");
+            Console.Write("Данные не получены.");
         }
 
-        Console.WriteLine("4) Накопители:");
+        Console.WriteLine("4) Накопители: ");
         if (report.StorageDrives.Count > 0)
         {
             foreach (var storageDrive in report.StorageDrives)
@@ -44,14 +42,13 @@ public class HardwareConsolePrinter : BaseConsolePrinter<HardwareReport>
         }
         else
         {
-            Console.WriteLine("    - Данные не получены.");
+            Console.Write("Данные не получены.");
         }
 
         Console.WriteLine(
             $"5) Материнская плата: {report.BaseBoardModel} ({report.BaseBoardManufacturer}), " +
-            $"версия {report.BaseBoardVersion}");
-
-        Console.WriteLine($"   Статус платы: {report.BaseBoardStatus}");
+            $"версия: {report.BaseBoardVersion}, " +
+            $"cтатус: {report.BaseBoardStatus}");
 
         Console.WriteLine(
             $"6) BIOS: {report.BiosVersion} ({report.BiosManufacturer}), " +

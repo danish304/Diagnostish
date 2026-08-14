@@ -7,9 +7,7 @@ public class OperatingSystemConsolePrinter : BaseConsolePrinter<OperatingSystemR
 {
     protected override void PrintReport(OperatingSystemReport report)
     {
-        ColorPrinter.WriteLineColored(
-            "\nКОНФИГУРАЦИЯ ОС:",
-            ConsoleColor.Cyan);
+        ColorPrinter.WriteLineColored("\nКОНФИГУРАЦИЯ ОС:", ConsoleColor.Cyan);
 
         Console.WriteLine(
             $"\n1) Система: {report.OperatingSystemName} ({report.OperatingSystemManufacturer})");

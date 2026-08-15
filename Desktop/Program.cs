@@ -38,8 +38,7 @@ static class Program
                 .AddHardwareComponents()
                 .AddOperatingSystemComponents()
                 .AddNetworkComponents()
-                .AddPrinters()
-                .AddUserInterfaces();
+                .AddPrinters();
 
             using var serviceProvider = services.BuildServiceProvider();
 
@@ -50,7 +49,9 @@ static class Program
         }
         catch (Exception ex)
         {
-            ColorPrinter.WriteLineColored("\nПРОИЗОШЛА КРИТИЧЕСКАЯ ОШИБКА!", ConsoleColor.Red);
+            ColorPrinter.WriteLineColored(
+                "\nПРОИЗОШЛА КРИТИЧЕСКАЯ ОШИБКА!",
+                ConsoleColor.Red);
 
             Log.Fatal(ex, "Необработанное исключение. Приложение аварийно завершило свою работу.");
         }

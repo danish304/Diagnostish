@@ -13,22 +13,29 @@ public class ConsoleUserInterface : IUserInterface
         }
         catch (IOException)
         {
-            // Игнорируем, если терминал не поддерживает изменение заголовка или очистку
+            // Игнорируем
         }
 
         ColorPrinter.WriteLineColored("ЗАПУСК ДИАГНОСТИКИ . . .", ConsoleColor.Magenta);
     }
 
-    public void WaitForExit()
+    public void ShowCompletion()
     {
         ColorPrinter.WriteLineColored("\nСКАНИРОВАНИЕ ЗАВЕРШЕНО!", ConsoleColor.Green);
 
-        if (!Console.IsInputRedirected)
-        {
-            ColorPrinter.WriteLineColored(
-                "Для завершения нажмите любую клавишу . . .", ConsoleColor.DarkGray);
+        WaitKeyForExit();
+    }
 
-            Console.ReadKey(intercept: true);
+    private void WaitKeyForExit()
+    {
+        if (Console.IsInputRedirected)
+        {
+            return;
         }
+
+        ColorPrinter.WriteLineColored(
+            "Для завершения нажмите любую клавишу . . .", ConsoleColor.DarkGray);
+
+        Console.ReadKey(intercept: true);
     }
 }

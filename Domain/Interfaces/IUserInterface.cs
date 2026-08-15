@@ -3,5 +3,5 @@
 public interface IUserInterface
 {
     void ShowWelcome();
-    void WaitForExit();
+    void ShowCompletion();
 }

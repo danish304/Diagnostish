@@ -6,6 +6,8 @@ using Application.Services;
 using Desktop.Controllers;
 using Desktop.Views;
 using Desktop.Views.ConsoleViews;
+using Desktop.Views.FileViews;
+using Desktop.Views.FileViews.Common;
 using Desktop.Views.UserInterfaces;
 using Domain.Models.Entities.Hardware;
 using Domain.Models.Entities.Network;
@@ -35,9 +37,11 @@ public static class ServiceCollectionExtensions
         return services
             .AddSingleton<IWmiExecutor, WmiExecutor>()
             .AddSingleton<IRegistryExecutor, RegistryExecutor>()
-            .AddSingleton<IUserInterface, ConsoleUserInterface>()
+
             .AddSingleton<FinalReportComposer>()
             .AddSingleton<FinalReportPrintDispatcher>()
+            .AddSingleton<UserInterfaceDispatcher>()
+
             .AddSingleton<DiagnosticController>();
     }
 
@@ -77,7 +81,7 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddComponent<NetworkReport, NetworkAdapterRawModel, IReadOnlyList<NetworkAdapter>,
-                NetworkAdatperWmiProvider, NetworkAdapterAnalyzer, NetworkAdapterReportMapper>()
+                NetworkAdapterWmiProvider, NetworkAdapterAnalyzer, NetworkAdapterReportMapper>()
 
             .AddComponent<NetworkReport, IpAddressRawModel, IReadOnlyList<IpAddress>,
                 IpAddressWmiProvider, IpAddressAnalyzer, IpAddressReportMapper>()
@@ -92,10 +96,23 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddPrinters(this IServiceCollection services)
     {
+        services.AddSingleton<CommonReportFile>();
+
         return services
             .AddPrinter<HardwareReport, HardwareConsolePrinter>()
             .AddPrinter<OperatingSystemReport, OperatingSystemConsolePrinter>()
-            .AddPrinter<NetworkReport, NetworkConsolePrinter>();
+            .AddPrinter<NetworkReport, NetworkConsolePrinter>()
+
+            .AddPrinter<HardwareReport, HardwareFilePrinter>()
+            .AddPrinter<OperatingSystemReport, OperatingSystemFilePrinter>()
+            .AddPrinter<NetworkReport, NetworkFilePrinter>();
+    }
+
+    public static IServiceCollection AddUserInterfaces(this IServiceCollection services)
+    {
+        return services
+            .AddSingleton<IUserInterface, ConsoleUserInterface>()
+            .AddSingleton<IUserInterface, FileUserInterface>();
     }
 
     private static IServiceCollection AddComponent<TReport, TRawModel, TData, TProvider, TAnalyzer, TMapper>(

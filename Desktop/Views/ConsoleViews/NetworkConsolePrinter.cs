@@ -8,9 +8,10 @@ public class NetworkConsolePrinter : BaseConsolePrinter<NetworkReport>
     {
         ColorPrinter.WriteLineColored("\nКОНФИГУРАЦИЯ СЕТИ:", ConsoleColor.Cyan);
 
-        Console.WriteLine("\n1) Сетевые адаптеры: ");
+        Console.Write("\n1) Сетевые адаптеры: ");
         if (report.NetworkAdapters.Count > 0)
         {
+            Console.WriteLine();
             foreach (var networkAdapter in report.NetworkAdapters)
             {
                 Console.WriteLine(
@@ -20,12 +21,13 @@ public class NetworkConsolePrinter : BaseConsolePrinter<NetworkReport>
         }
         else
         {
-            Console.Write("Данные не получены.");
+            Console.WriteLine("Данные не получены.");
         }
 
-        Console.WriteLine("2) IP-адреса: ");
+        Console.Write("2) IP-адреса: ");
         if (report.IpAddresses.Count > 0)
         {
+            Console.WriteLine();
             foreach (var ipAddress in report.IpAddresses)
             {
                 Console.WriteLine(
@@ -35,12 +37,13 @@ public class NetworkConsolePrinter : BaseConsolePrinter<NetworkReport>
         }
         else
         {
-            Console.Write("Данные не получены.");
+            Console.WriteLine("Данные не получены.");
         }
 
-        Console.WriteLine("3) Шлюзы: ");
+        Console.Write("3) Шлюзы: ");
         if (report.Gateways.Count > 0)
         {
+            Console.WriteLine();
             foreach (var gateway in report.Gateways)
             {
                 Console.WriteLine($"    - {gateway.Address} ({gateway.Interface})");
@@ -48,12 +51,13 @@ public class NetworkConsolePrinter : BaseConsolePrinter<NetworkReport>
         }
         else
         {
-            Console.Write("Данные не получены.");
+            Console.WriteLine("Данные не получены.");
         }
 
-        Console.WriteLine("4) DNS: ");
+        Console.Write("4) DNS: ");
         if (report.DnsAddresses.Count > 0)
         {
+            Console.WriteLine();
             foreach (var dns in report.DnsAddresses)
             {
                 Console.WriteLine($"    - {dns.Address} ({dns.Interface})");
@@ -61,7 +65,7 @@ public class NetworkConsolePrinter : BaseConsolePrinter<NetworkReport>
         }
         else
         {
-            Console.Write("Данные не получены.");
+            Console.WriteLine("Данные не получены.");
         }
 
         PrintIssues(report.Warnings, report.CriticalErrors);

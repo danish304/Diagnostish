@@ -17,9 +17,10 @@ public class HardwareConsolePrinter : BaseConsolePrinter<HardwareReport>
             $"2) ОЗУ: {report.RamType} {report.RamCapacity} GB, " +
             $"{report.RamSpeed} MHz");
 
-        Console.WriteLine("3) Видеокарты: ");
+        Console.Write("3) Видеокарты: ");
         if (report.VideoCards.Count > 0)
         {
+            Console.WriteLine();
             foreach (var gpu in report.VideoCards)
             {
                 Console.WriteLine($"    - {gpu.Name} ({gpu.AdapterRam} GB)");
@@ -27,12 +28,13 @@ public class HardwareConsolePrinter : BaseConsolePrinter<HardwareReport>
         }
         else
         {
-            Console.Write("Данные не получены.");
+            Console.WriteLine("Данные не получены.");
         }
 
-        Console.WriteLine("4) Накопители: ");
+        Console.Write("4) Накопители: ");
         if (report.StorageDrives.Count > 0)
         {
+            Console.WriteLine();
             foreach (var storageDrive in report.StorageDrives)
             {
                 Console.WriteLine(
@@ -42,7 +44,7 @@ public class HardwareConsolePrinter : BaseConsolePrinter<HardwareReport>
         }
         else
         {
-            Console.Write("Данные не получены.");
+            Console.WriteLine("Данные не получены.");
         }
 
         Console.WriteLine(

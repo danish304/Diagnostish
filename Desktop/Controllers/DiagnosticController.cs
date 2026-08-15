@@ -7,26 +7,26 @@ public class DiagnosticController
 {
     private readonly FinalReportComposer _composer;
     private readonly FinalReportPrintDispatcher _printDispatcher;
-    private readonly IUserInterface _userInterface;
+    private readonly UserInterfaceDispatcher _uiDispatcher;
 
     public DiagnosticController(
         FinalReportComposer composer,
         FinalReportPrintDispatcher printDispatcher,
-        IUserInterface userInterface)
+        UserInterfaceDispatcher uiDispatcher)
     {
         _composer = composer;
         _printDispatcher = printDispatcher;
-        _userInterface = userInterface;
+        _uiDispatcher = uiDispatcher;
     }
 
     public async Task StartDiagnosticAsync(CancellationToken cancellationToken = default)
     {
-        _userInterface.ShowWelcome();
+        _uiDispatcher.ShowWelcomes();
 
         var finalReport = await _composer.GetFinalReportAsync(cancellationToken);
 
         _printDispatcher.PrintAllReports(finalReport);
 
-        _userInterface.WaitForExit();
+        _uiDispatcher.ShowCompletions();
     }
 }

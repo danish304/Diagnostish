@@ -60,7 +60,7 @@ public class GpuFallBackProviderTests
         var result = await _sut.ProvideAsync();
 
         // Assert
-        result.RawData!.Should().Contain(registryGpu);
+        result.Data!.Should().Contain(registryGpu);
         result.Warnings.Should().Contain(
             "WMI: некорректные данные",
             "Объём видеопамяти для части адаптеров получен из реестра — WMI вернул некорректное значение."
@@ -92,7 +92,7 @@ public class GpuFallBackProviderTests
         var result = await _sut.ProvideAsync();
 
         // Assert
-        result.RawData!.Should().Contain(wmiGpu);
+        result.Data!.Should().Contain(wmiGpu);
         result.Warnings.Should().Contain("Реестр: нет доступа");
         result.CriticalErrors.Should().BeEmpty();
     }
@@ -113,7 +113,7 @@ public class GpuFallBackProviderTests
         var result = await _sut.ProvideAsync();
 
         // Assert
-        result.RawData!.Should().Contain(wmiGpu);
+        result.Data!.Should().Contain(wmiGpu);
         result.Warnings.Should().BeEmpty();
         result.CriticalErrors.Should().BeEmpty();
 
@@ -141,7 +141,7 @@ public class GpuFallBackProviderTests
         var result = await _sut.ProvideAsync();
 
         // Assert
-        result.RawData.Should().BeNull();
+        result.Data.Should().BeNull();
         result.Warnings.Should().BeEmpty();
         result.CriticalErrors.Should().Contain(
             "WMI: нет доступа",
@@ -170,7 +170,7 @@ public class GpuFallBackProviderTests
         var result = await _sut.ProvideAsync();
 
         // Assert
-        result.RawData!.Should().Contain(wmiGpu);
+        result.Data!.Should().Contain(wmiGpu);
         result.Warnings.Should()
             .Contain("Не удалось определить точный объём видеопамяти для одного из адаптеров ни через WMI, ни через реестр.");
 
@@ -208,9 +208,9 @@ public class GpuFallBackProviderTests
         var result = await _sut.ProvideAsync();
 
         // Assert
-        result.RawData.Should().HaveCount(2);
-        result.RawData.Should().Contain(validGpu);
-        result.RawData.Should().Contain(registryGpu);
+        result.Data.Should().HaveCount(2);
+        result.Data.Should().Contain(validGpu);
+        result.Data.Should().Contain(registryGpu);
         result.Warnings.Should().Contain(
             "WMI: некорректные данные",
             "Объём видеопамяти для части адаптеров получен из реестра — WMI вернул некорректное значение."
@@ -259,10 +259,10 @@ public class GpuFallBackProviderTests
         var result = await _sut.ProvideAsync();
 
         // Assert
-        result.RawData.Should().HaveCount(3);
-        result.RawData.Should().Contain(registryGpu1);
-        result.RawData.Should().Contain(registryGpu2);
-        result.RawData.Should().Contain(registryGpu3);
+        result.Data.Should().HaveCount(3);
+        result.Data.Should().Contain(registryGpu1);
+        result.Data.Should().Contain(registryGpu2);
+        result.Data.Should().Contain(registryGpu3);
         result.Warnings.Should().Contain(
             "WMI: некорректные данные",
             "Объём видеопамяти для части адаптеров получен из реестра — WMI вернул некорректное значение."

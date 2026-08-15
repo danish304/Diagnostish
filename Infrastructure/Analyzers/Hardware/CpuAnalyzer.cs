@@ -15,7 +15,7 @@ public class CpuAnalyzer(ILogger logger)
     {
         var warnings = new List<string>(result.Warnings);
 
-        if (result.RawData is not [var rawData, ..])
+        if (result.Data is not [var rawData, ..])
         {
             return ProvideResult<Cpu>.Fail(
                 warnings,

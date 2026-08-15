@@ -16,7 +16,7 @@ public class GpuFallBackProvider(
     {
         var wmiResult = await wmiProvider.ProvideAsync(cancellationToken);
 
-        bool needsFallback = wmiResult.RawData is null || wmiResult.RawData.Any(gpu =>
+        bool needsFallback = wmiResult.Data is null || wmiResult.Data.Any(gpu =>
             gpu.AdapterRam is null or <= 0 or >= UINT32_OVERFLOW);
 
         if (!needsFallback)
@@ -26,7 +26,7 @@ public class GpuFallBackProvider(
 
         var registryResult = await registryProvider.ProvideAsync(cancellationToken);
 
-        if (registryResult.RawData is not { Count: > 0 })
+        if (registryResult.Data is not { Count: > 0 })
         {
             return HandleRegistryFallbackFail(wmiResult, registryResult);
         }
@@ -38,13 +38,13 @@ public class GpuFallBackProvider(
         ProvideResult<IReadOnlyList<GpuRawModel>> wmiResult,
         ProvideResult<IReadOnlyList<GpuRawModel>> registryResult)
     {
-        if (wmiResult.RawData is not null)
+        if (wmiResult.Data is not null)
         {
             var warnings = new List<string>(wmiResult.Warnings);
             warnings.AddRange(registryResult.Warnings);
             warnings.AddRange(registryResult.CriticalErrors);
 
-            return ProvideResult<IReadOnlyList<GpuRawModel>>.Ok(wmiResult.RawData, warnings);
+            return ProvideResult<IReadOnlyList<GpuRawModel>>.Ok(wmiResult.Data, warnings);
         }
 
         var combinedWarnings = new List<string>(wmiResult.Warnings);
@@ -60,8 +60,8 @@ public class GpuFallBackProvider(
         ProvideResult<IReadOnlyList<GpuRawModel>> wmiResult,
         ProvideResult<IReadOnlyList<GpuRawModel>> registryResult)
     {
-        var wmiGpus = wmiResult.RawData ?? [];
-        var registryGpus = registryResult.RawData!;
+        var wmiGpus = wmiResult.Data ?? [];
+        var registryGpus = registryResult.Data!;
 
         bool anyReplaced = false;
         bool anyStillInvalid = false;

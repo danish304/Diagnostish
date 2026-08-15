@@ -15,7 +15,7 @@ public class GatewayAnalyzer(ILogger logger)
     {
         var warnings = new List<string>(result.Warnings);
 
-        if (result.RawData is not { Count: > 0 } rawData)
+        if (result.Data is not { Count: > 0 } rawData)
         {
             return ProvideResult<IReadOnlyList<Gateway>>.Fail(
                 warnings,

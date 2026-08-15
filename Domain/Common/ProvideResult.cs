@@ -1,18 +1,18 @@
 ﻿namespace Domain.Common;
 
-public sealed record ProvideResult<TDataOrRawData>(
-    TDataOrRawData? RawData,
+public sealed record ProvideResult<T>(
+    T? Data,
     IReadOnlyList<string> Warnings,
     IReadOnlyList<string> CriticalErrors)
 {
-    public static ProvideResult<TDataOrRawData> Ok(
-        TDataOrRawData data,
+    public static ProvideResult<T> Ok(
+        T data,
         IReadOnlyList<string>? warnings = null)
     {
         return new(data, warnings ?? [], []);
     }
 
-    public static ProvideResult<TDataOrRawData> Fail(
+    public static ProvideResult<T> Fail(
         IReadOnlyList<string> warnings,
         IReadOnlyList<string> criticalErrors)
     {

@@ -1,6 +1,6 @@
 ﻿using Desktop.Composition;
 using Desktop.Controllers;
-using Desktop.Views.ConsoleViews.Common;
+using Desktop.Views.ConsoleOutput;
 using Infrastructure.Shared.Wmi;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -38,7 +38,8 @@ static class Program
                 .AddHardwareComponents()
                 .AddOperatingSystemComponents()
                 .AddNetworkComponents()
-                .AddPrinters()
+                .AddConsolePrinters()
+                .AddFilePrinters()
                 .AddUserInterfaces();
 
             using var serviceProvider = services.BuildServiceProvider();

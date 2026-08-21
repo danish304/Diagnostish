@@ -1,5 +1,5 @@
 ﻿using Application.Services;
-using Desktop.Views;
+using Desktop.Views.Dispatchers;
 
 namespace Desktop.Controllers;
 

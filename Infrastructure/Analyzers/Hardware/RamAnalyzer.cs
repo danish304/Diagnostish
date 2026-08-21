@@ -32,14 +32,35 @@ public class RamAnalyzer(ILogger logger)
                 result.CriticalErrors);
         }
 
+        var (
+            types, capacities, speeds,
+            unknownTypeCount, unknownCapacityCount, unknownSpeedCount) = CollectFields(result.Data);
+
+        AppendCountWarnings(
+            warnings,
+            logger,
+            unknownTypeCount,
+            unknownCapacityCount,
+            unknownSpeedCount,
+            rawData.Count);
+
+        string type = ResolveType(types, warnings, logger);
+        double capacity = ByteConverter.ToGigabytes(capacities.Sum());
+        int speed = ResolveSpeed(speeds, warnings, logger);
+
+        return ProvideResult<Ram>.Ok(
+            new Ram(type, capacity, speed),
+            warnings);
+    }
+
+    private static (
+        List<string> Types, List<double> Capacities, List<int> Speeds,
+        int UnknownTypeCount, int UnknownCapacityCount, int UnknownSpeedCount)
+        CollectFields(IReadOnlyList<RamRawModel> rawData)
+    {
         var types = new List<string>();
-        string type = "Неизвестно";
-
-        double totalCapacityInBytes = 0;
-        double totalCapacityInGB = 0;
-
+        var capacities = new List<double>();
         var speeds = new List<int>();
-        int speed = 0;
 
         int unknownTypeCount = 0;
         int unknownCapacityCount = 0;
@@ -58,7 +79,7 @@ public class RamAnalyzer(ILogger logger)
 
             if (model.Capacity is { } capacity && capacity > 0)
             {
-                totalCapacityInBytes += capacity;
+                capacities.Add(capacity);
             }
             else
             {
@@ -75,30 +96,48 @@ public class RamAnalyzer(ILogger logger)
             }
         }
 
+        return (
+            types, capacities, speeds,
+            unknownTypeCount, unknownCapacityCount, unknownSpeedCount);
+    }
+
+    private static void AppendCountWarnings(
+        List<string> warnings,
+        ILogger logger,
+        int unknownTypeCount,
+        int unknownCapacityCount,
+        int unknownSpeedCount,
+        int total)
+    {
         if (unknownTypeCount > 0)
         {
-            warnings.Add($"{UNKNOWN_TYPE} {CountOfTotal(unknownTypeCount, rawData.Count)}");
+            warnings.Add($"{UNKNOWN_TYPE} {CountOfTotal(unknownTypeCount, total)}");
 
             logger.Warning(
                 UNKNOWN_TYPE + " Затронуто {Count} из {Total} модулей.",
-                unknownTypeCount, rawData.Count);
+                unknownTypeCount, total);
         }
         if (unknownCapacityCount > 0)
         {
-            warnings.Add($"{UNKNOWN_CAPACITY} {CountOfTotal(unknownCapacityCount, rawData.Count)}");
+            warnings.Add($"{UNKNOWN_CAPACITY} {CountOfTotal(unknownCapacityCount, total)}");
 
             logger.Warning(
                 UNKNOWN_CAPACITY + " Затронуто {Count} из {Total} модулей.",
-                unknownCapacityCount, rawData.Count);
+                unknownCapacityCount, total);
         }
         if (unknownSpeedCount > 0)
         {
-            warnings.Add($"{UNKNOWN_SPEED} {CountOfTotal(unknownSpeedCount, rawData.Count)}");
+            warnings.Add($"{UNKNOWN_SPEED} {CountOfTotal(unknownSpeedCount, total)}");
 
             logger.Warning(
                 UNKNOWN_SPEED + " Затронуто {Count} из {Total} модулей.",
-                unknownSpeedCount, rawData.Count);
+                unknownSpeedCount, total);
         }
+    }
+
+    private static string ResolveType(List<string> types, List<string> warnings, ILogger logger)
+    {
+        string type = "Неизвестно";
 
         if (types.Count > 0)
         {
@@ -115,10 +154,12 @@ public class RamAnalyzer(ILogger logger)
             }
         }
 
-        if (totalCapacityInBytes > 0)
-        {
-            totalCapacityInGB = ByteConverter.ToGigabytes(totalCapacityInBytes, 2);
-        }
+        return type;
+    }
+
+    private static int ResolveSpeed(List<int> speeds, List<string> warnings, ILogger logger)
+    {
+        int speed = 0;
 
         if (speeds.Count > 0)
         {
@@ -134,8 +175,6 @@ public class RamAnalyzer(ILogger logger)
             }
         }
 
-        return ProvideResult<Ram>.Ok(
-            new Ram(type, totalCapacityInGB, speed),
-            warnings);
+        return speed;
     }
 }

@@ -22,6 +22,26 @@ public class NetworkAdapterAnalyzer(ILogger logger)
                 result.CriticalErrors);
         }
 
+        var (
+            networkAdapters,
+            unknownDescriptionCount, unknownMacAddressCount, unknownDhcpEnabledCount) = BuildNetworkAdapterList(rawData);
+
+        AppendCountWarnings(
+            warnings,
+            logger,
+            unknownDescriptionCount,
+            unknownMacAddressCount,
+            unknownDhcpEnabledCount,
+            rawData.Count);
+
+        return ProvideResult<IReadOnlyList<NetworkAdapter>>.Ok(networkAdapters, warnings);
+    }
+
+    private static (
+        List<NetworkAdapter> Adapters,
+        int UnknownDescriprionCount, int UnknownMacAddressCount, int UnknownDhcpEnabledCount)
+        BuildNetworkAdapterList(IReadOnlyList<NetworkAdapterRawModel> rawData)
+    {
         var networkAdapters = new List<NetworkAdapter>();
         int unknownDescriptionCount = 0;
         int unknownMacAddressCount = 0;
@@ -54,31 +74,40 @@ public class NetworkAdapterAnalyzer(ILogger logger)
                 networkAdapterDhcpEnabled));
         }
 
+        return (networkAdapters, unknownDescriptionCount, unknownMacAddressCount, unknownDhcpEnabledCount);
+    }
+
+    private static void AppendCountWarnings(
+        List<string> warnings,
+        ILogger logger,
+        int unknownDescriptionCount,
+        int unknownMacAddressCount,
+        int unknownDhcpEnabledCount,
+        int total)
+    {
         if (unknownDescriptionCount > 0)
         {
-            warnings.Add($"{UNKNOWN_DESCRIPTION} {CountOfTotal(unknownDescriptionCount, rawData.Count)}");
+            warnings.Add($"{UNKNOWN_DESCRIPTION} {CountOfTotal(unknownDescriptionCount, total)}");
 
             logger.Warning(
                 UNKNOWN_DESCRIPTION + " Затронуто {Count} из {Total} сетевых адаптеров.",
-                unknownDescriptionCount, rawData.Count);
+                unknownDescriptionCount, total);
         }
         if (unknownMacAddressCount > 0)
         {
-            warnings.Add($"{UNKNOWN_MAC_ADDRESS} {CountOfTotal(unknownMacAddressCount, rawData.Count)}");
+            warnings.Add($"{UNKNOWN_MAC_ADDRESS} {CountOfTotal(unknownMacAddressCount, total)}");
 
             logger.Warning(
                 UNKNOWN_MAC_ADDRESS + " Затронуто {Count} из {Total} сетевых адаптеров.",
-                unknownMacAddressCount, rawData.Count);
+                unknownMacAddressCount, total);
         }
         if (unknownDhcpEnabledCount > 0)
         {
-            warnings.Add($"{UNKNOWN_DHCP_ENABLED} {CountOfTotal(unknownDhcpEnabledCount, rawData.Count)}");
+            warnings.Add($"{UNKNOWN_DHCP_ENABLED} {CountOfTotal(unknownDhcpEnabledCount, total)}");
 
             logger.Warning(
                 UNKNOWN_DHCP_ENABLED + " Затронуто {Count} из {Total} сетевых адаптеров.",
-                unknownDhcpEnabledCount, rawData.Count);
+                unknownDhcpEnabledCount, total);
         }
-
-        return ProvideResult<IReadOnlyList<NetworkAdapter>>.Ok(networkAdapters, warnings);
     }
 }

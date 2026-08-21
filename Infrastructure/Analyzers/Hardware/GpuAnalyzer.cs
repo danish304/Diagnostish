@@ -23,6 +23,21 @@ public class GpuAnalyzer(ILogger logger)
                 result.CriticalErrors);
         }
 
+        var (videoCards, unknownNameCount, unknownAdapterRamCount) = BuildGpuList(rawData);
+
+        AppendCountWarnings(
+            warnings,
+            logger,
+            unknownNameCount,
+            unknownAdapterRamCount,
+            rawData.Count);
+
+        return ProvideResult<IReadOnlyList<Gpu>>.Ok(videoCards, warnings);
+    }
+
+    private static (List<Gpu> Gpus, int UnknownNameCount, int UnknownAdapterRamCount) BuildGpuList(
+        IReadOnlyList<GpuRawModel> rawData)
+    {
         var videoCards = new List<Gpu>();
         int unknownNameCount = 0;
         int unknownAdapterRamCount = 0;
@@ -49,23 +64,31 @@ public class GpuAnalyzer(ILogger logger)
             videoCards.Add(new Gpu(gpuName, adapterRam));
         }
 
+        return (videoCards, unknownNameCount, unknownAdapterRamCount);
+    }
+
+    private static void AppendCountWarnings(
+        List<string> warnings,
+        ILogger logger,
+        int unknownNameCount,
+        int unknownAdapterRamCount,
+        int total)
+    {
         if (unknownNameCount > 0)
         {
-            warnings.Add($"{UNKNOWN_NAME} {CountOfTotal(unknownNameCount, rawData.Count)}");
+            warnings.Add($"{UNKNOWN_NAME} {CountOfTotal(unknownNameCount, total)}");
 
             logger.Warning(
                 UNKNOWN_NAME + " Затронуто {Count} из {Total} видеокарт.",
-                unknownNameCount, rawData.Count);
+                unknownNameCount, total);
         }
         if (unknownAdapterRamCount > 0)
         {
-            warnings.Add($"{UNKNOWN_ADAPTER_RAM} {CountOfTotal(unknownAdapterRamCount, rawData.Count)}");
+            warnings.Add($"{UNKNOWN_ADAPTER_RAM} {CountOfTotal(unknownAdapterRamCount, total)}");
 
             logger.Warning(
                 UNKNOWN_ADAPTER_RAM + " Затронуто {Count} из {Total} видеокарт.",
-                unknownAdapterRamCount, rawData.Count);
+                unknownAdapterRamCount, total);
         }
-
-        return ProvideResult<IReadOnlyList<Gpu>>.Ok(videoCards, warnings);
     }
 }

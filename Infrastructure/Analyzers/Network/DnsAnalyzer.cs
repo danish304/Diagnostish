@@ -22,6 +22,21 @@ public class DnsAnalyzer(ILogger logger)
                 result.CriticalErrors);
         }
 
+        var (dnsAddresses, unknownAddressCount, unknownInterfaceCount) = BuildDnsList(rawData);
+
+        AppendCountWarnings(
+            warnings,
+            logger,
+            unknownAddressCount,
+            unknownInterfaceCount,
+            rawData.Count);
+
+        return ProvideResult<IReadOnlyList<Dns>>.Ok(dnsAddresses, warnings);
+    }
+
+    private static (List<Dns> DnsAddresses, int UnknownAddressCount, int UnknownInterfaceCount) BuildDnsList(
+        IReadOnlyList<DnsRawModel> rawData)
+    {
         var dnsAddresses = new List<Dns>();
         int unknownAddressCount = 0;
         int unknownInterfaceCount = 0;
@@ -44,23 +59,31 @@ public class DnsAnalyzer(ILogger logger)
             dnsAddresses.Add(new Dns(dnsAddress, dnsInterface));
         }
 
+        return (dnsAddresses, unknownAddressCount, unknownInterfaceCount);
+    }
+
+    private static void AppendCountWarnings(
+        List<string> warnings,
+        ILogger logger,
+        int unknownAddressCount,
+        int unknownInterfaceCount,
+        int total)
+    {
         if (unknownAddressCount > 0)
         {
-            warnings.Add($"{UNKNOWN_ADDRESS} {CountOfTotal(unknownAddressCount, rawData.Count)}");
+            warnings.Add($"{UNKNOWN_ADDRESS} {CountOfTotal(unknownAddressCount, total)}");
 
             logger.Warning(
                 UNKNOWN_ADDRESS + " Затронуто {Count} из {Total} DNS-адресов.",
-                unknownAddressCount, rawData.Count);
+                unknownAddressCount, total);
         }
         if (unknownInterfaceCount > 0)
         {
-            warnings.Add($"{UNKNOWN_INTERFACE} {CountOfTotal(unknownInterfaceCount, rawData.Count)}");
+            warnings.Add($"{UNKNOWN_INTERFACE} {CountOfTotal(unknownInterfaceCount, total)}");
 
             logger.Warning(
                 UNKNOWN_INTERFACE + " Затронуто {Count} из {Total} DNS-адресов.",
-                unknownInterfaceCount, rawData.Count);
+                unknownInterfaceCount, total);
         }
-
-        return ProvideResult<IReadOnlyList<Dns>>.Ok(dnsAddresses, warnings);
     }
 }

@@ -22,6 +22,26 @@ public class IpAddressAnalyzer(ILogger logger)
                 result.CriticalErrors);
         }
 
+        var (
+            ipAddresses,
+            unknownAddressCount, unknownSubnetCount, unknownInterfaceCount) = BuildIpList(rawData);
+
+        AppendCountWarnings(
+            warnings,
+            logger,
+            unknownAddressCount,
+            unknownSubnetCount,
+            unknownInterfaceCount,
+            rawData.Count);
+
+        return ProvideResult<IReadOnlyList<IpAddress>>.Ok(ipAddresses, warnings);
+    }
+
+    private static (
+        List<IpAddress> IpAddresses,
+        int UnknownAddressCount, int UnknownSubnetCount, int UnknownInterfaceCount)
+        BuildIpList(IReadOnlyList<IpAddressRawModel> rawData)
+    {
         var ipAddresses = new List<IpAddress>();
         int unknownAddressCount = 0;
         int unknownSubnetCount = 0;
@@ -51,31 +71,40 @@ public class IpAddressAnalyzer(ILogger logger)
             ipAddresses.Add(new IpAddress(ipAddress, ipSubnet, ipInterface));
         }
 
+        return (ipAddresses, unknownAddressCount, unknownSubnetCount, unknownInterfaceCount);
+    }
+
+    private static void AppendCountWarnings(
+        List<string> warnings,
+        ILogger logger,
+        int unknownAddressCount,
+        int unknownSubnetCount,
+        int unknownInterfaceCount,
+        int total)
+    {
         if (unknownAddressCount > 0)
         {
-            warnings.Add($"{UNKNOWN_ADDRESS} {CountOfTotal(unknownAddressCount, rawData.Count)}");
+            warnings.Add($"{UNKNOWN_ADDRESS} {CountOfTotal(unknownAddressCount, total)}");
 
             logger.Warning(
                 UNKNOWN_ADDRESS + " Затронуто {Count} из {Total} IP-адресов.",
-                unknownAddressCount, rawData.Count);
+                unknownAddressCount, total);
         }
         if (unknownSubnetCount > 0)
         {
-            warnings.Add($"{UNKNOWN_SUBNET} {CountOfTotal(unknownSubnetCount, rawData.Count)}");
+            warnings.Add($"{UNKNOWN_SUBNET} {CountOfTotal(unknownSubnetCount, total)}");
 
             logger.Warning(
                 UNKNOWN_SUBNET + " Затронуто {Count} из {Total} IP-адресов.",
-                unknownSubnetCount, rawData.Count);
+                unknownSubnetCount, total);
         }
         if (unknownInterfaceCount > 0)
         {
-            warnings.Add($"{UNKNOWN_INTERFACE} {CountOfTotal(unknownInterfaceCount, rawData.Count)}");
+            warnings.Add($"{UNKNOWN_INTERFACE} {CountOfTotal(unknownInterfaceCount, total)}");
 
             logger.Warning(
                 UNKNOWN_INTERFACE + " Затронуто {Count} из {Total} IP-адресов.",
-                unknownInterfaceCount, rawData.Count);
+                unknownInterfaceCount, total);
         }
-
-        return ProvideResult<IReadOnlyList<IpAddress>>.Ok(ipAddresses, warnings);
     }
 }

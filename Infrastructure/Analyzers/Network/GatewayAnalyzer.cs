@@ -22,6 +22,21 @@ public class GatewayAnalyzer(ILogger logger)
                 result.CriticalErrors);
         }
 
+        var (gateways, unknownAddressCount, unknownInterfaceCount) = BuildGatewayList(rawData);
+
+        AppendCountWarnings(
+            warnings,
+            logger,
+            unknownAddressCount,
+            unknownInterfaceCount,
+            rawData.Count);
+
+        return ProvideResult<IReadOnlyList<Gateway>>.Ok(gateways, warnings);
+    }
+
+    private static (List<Gateway> Gateways, int UnknownAddressCount, int UnknownInterfaceCount) BuildGatewayList(
+        IReadOnlyList<GatewayRawModel> rawData)
+    {
         var gateways = new List<Gateway>();
         int unknownAddressCount = 0;
         int unknownInterfaceCount = 0;
@@ -44,23 +59,31 @@ public class GatewayAnalyzer(ILogger logger)
             gateways.Add(new Gateway(gatewayAddress, gatewayInterface));
         }
 
+        return (gateways, unknownAddressCount, unknownInterfaceCount);
+    }
+
+    private static void AppendCountWarnings(
+        List<string> warnings,
+        ILogger logger,
+        int unknownAddressCount,
+        int unknownInterfaceCount,
+        int total)
+    {
         if (unknownAddressCount > 0)
         {
-            warnings.Add($"{UNKNOWN_ADDRESS} {CountOfTotal(unknownAddressCount, rawData.Count)}");
+            warnings.Add($"{UNKNOWN_ADDRESS} {CountOfTotal(unknownAddressCount, total)}");
 
             logger.Warning(
                 UNKNOWN_ADDRESS + " Затронуто {Count} из {Total} шлюзов.",
-                unknownAddressCount, rawData.Count);
+                unknownAddressCount, total);
         }
         if (unknownInterfaceCount > 0)
         {
-            warnings.Add($"{UNKNOWN_INTERFACE} {CountOfTotal(unknownInterfaceCount, rawData.Count)}");
+            warnings.Add($"{UNKNOWN_INTERFACE} {CountOfTotal(unknownInterfaceCount, total)}");
 
             logger.Warning(
                 UNKNOWN_INTERFACE + " Затронуто {Count} из {Total} шлюзов.",
-                unknownInterfaceCount, rawData.Count);
+                unknownInterfaceCount, total);
         }
-
-        return ProvideResult<IReadOnlyList<Gateway>>.Ok(gateways, warnings);
     }
 }

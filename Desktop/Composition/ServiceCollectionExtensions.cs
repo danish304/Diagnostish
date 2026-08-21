@@ -4,11 +4,10 @@ using Application.Mappers.OperatingSystem;
 using Application.Pipelines;
 using Application.Services;
 using Desktop.Controllers;
-using Desktop.Views;
-using Desktop.Views.ConsoleViews;
-using Desktop.Views.FileViews;
-using Desktop.Views.FileViews.Common;
-using Desktop.Views.UserInterfaces;
+using Desktop.Views.Common.Printers;
+using Desktop.Views.ConsoleOutput;
+using Desktop.Views.Dispatchers;
+using Desktop.Views.FileOutput;
 using Domain.Models.Entities.Hardware;
 using Domain.Models.Entities.Network;
 using Domain.Models.Entities.OperatingSystem;
@@ -91,21 +90,34 @@ public static class ServiceCollectionExtensions
 
             .AddComponent<NetworkReport, DnsRawModel, IReadOnlyList<Dns>,
                 DnsWmiProvider, DnsAnalyzer, DnsReportMapper>();
-
     }
 
-    public static IServiceCollection AddPrinters(this IServiceCollection services)
+    public static IServiceCollection AddConsolePrinters(this IServiceCollection services)
+    {
+        return services
+            .AddSingleton<IReportPrinter<HardwareReport>>(sp =>
+                new HardwarePrinter(Console.Out, new ConsoleLineWriter()))
+
+            .AddSingleton<IReportPrinter<OperatingSystemReport>>(sp =>
+                new OperatingSystemPrinter(Console.Out, new ConsoleLineWriter()))
+
+            .AddSingleton<IReportPrinter<NetworkReport>>(sp =>
+                new NetworkPrinter(Console.Out, new ConsoleLineWriter()));
+    }
+
+    public static IServiceCollection AddFilePrinters(this IServiceCollection services)
     {
         services.AddSingleton<CommonReportFile>();
 
         return services
-            .AddPrinter<HardwareReport, HardwareConsolePrinter>()
-            .AddPrinter<OperatingSystemReport, OperatingSystemConsolePrinter>()
-            .AddPrinter<NetworkReport, NetworkConsolePrinter>()
+            .AddSingleton<IReportPrinter<HardwareReport>>(sp =>
+                new HardwarePrinter(sp.GetRequiredService<CommonReportFile>().Writer))
 
-            .AddPrinter<HardwareReport, HardwareFilePrinter>()
-            .AddPrinter<OperatingSystemReport, OperatingSystemFilePrinter>()
-            .AddPrinter<NetworkReport, NetworkFilePrinter>();
+            .AddSingleton<IReportPrinter<OperatingSystemReport>>(sp =>
+                new OperatingSystemPrinter(sp.GetRequiredService<CommonReportFile>().Writer))
+
+            .AddSingleton<IReportPrinter<NetworkReport>>(sp =>
+                new NetworkPrinter(sp.GetRequiredService<CommonReportFile>().Writer));
     }
 
     public static IServiceCollection AddUserInterfaces(this IServiceCollection services)
@@ -137,13 +149,6 @@ public static class ServiceCollectionExtensions
             return report => mapper.MapInto(report, result);
         }));
 
-        return services;
-    }
-
-    private static IServiceCollection AddPrinter<TReport, TPrinter>(this IServiceCollection services)
-        where TPrinter : class, IReportPrinter<TReport>
-    {
-        services.AddSingleton<IReportPrinter<TReport>, TPrinter>();
         return services;
     }
 }
